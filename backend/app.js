@@ -8,6 +8,7 @@ require('dotenv').config();
 const connectRouter = require('./routes/connect'); // Ruta del microservicio
 const clientesRouter = require('./routes/clientes'); // Ruta para clientes
 const canchasRouter = require('./routes/canchas'); // Ruta de las canchas
+const mantenimientosRouter = require('./routes/mantenimientos'); // Ruta para mantenimientos
 
 
 const app = express();
@@ -101,6 +102,7 @@ app.use('/connect', connectRouter);
 
 app.use('/clientes', clientesRouter);  //Ruta para clientes
 app.use('/api/canchas', canchasRouter);
+app.use('/api/mantenimientos', mantenimientosRouter); //Ruta para mantenimientos
 
 
 // Ruta para 404
