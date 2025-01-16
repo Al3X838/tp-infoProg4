@@ -24,24 +24,31 @@ const handleDbError = (err, res, action) => {
 
 // Ruta para obtener todas las clientes
 router.get('/', async (req, res) => {
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         const result = await connection.query('SELECT * FROM clientes;');
-        await connection.close();
         res.json({ success: true, clientes: result });
     } catch (err) {
         handleDbError(err, res, 'fetching clientes');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
 // Ruta GET para obtener un cliente específica por su ID
 router.get('/cliente/:id', async (req, res) => {
     const { id } = req.params;
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         const result = await connection.query(`SELECT * FROM clientes WHERE id_cliente = ?`, [id]);
-        await connection.close();
-
         if (result.length > 0) {
             res.json({ success: true, cliente: result[0] });
         } else {
@@ -49,6 +56,14 @@ router.get('/cliente/:id', async (req, res) => {
         }
     } catch (err) {
         handleDbError(err, res, 'fetching cliente by ID');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
@@ -56,13 +71,21 @@ router.get('/cliente/:id', async (req, res) => {
 // Ruta para agregar un nueva cliente
 router.post('/add', async (req, res) => {
     const { documento_id, nombre, apellido, fecha_nacimiento, direccion, telefono, email, nacionalidad, ciudad } = req.body;
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         await connection.query(`INSERT INTO clientes (DOCUMENTO_ID, NOMBRE, APELLIDO, FECHA_NACIMIENTO, CIUDAD, DIRECCION, TELEFONO, EMAIL, NACIONALIDAD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [documento_id, nombre, apellido, fecha_nacimiento, ciudad, direccion, telefono, email, nacionalidad]);
-        await connection.close();
         res.json({ success: true });
     } catch (err) {
         handleDbError(err, res, 'adding cliente');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
@@ -71,13 +94,21 @@ router.post('/add', async (req, res) => {
 router.post('/update/:id', async (req, res) => {
     const { id } = req.params;
     const { documento_id, nombre, apellido, fecha_nacimiento, direccion, telefono, email, nacionalidad, ciudad, estado, motivo_bloqueo } = req.body;
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         await connection.query(`UPDATE clientes SET DOCUMENTO_ID = ?, NOMBRE = ?, APELLIDO = ?, FECHA_NACIMIENTO = ?, DIRECCION = ?, TELEFONO = ?, EMAIL = ?, NACIONALIDAD = ?, CIUDAD = ?, ESTADO = ?, MOTIVO_BLOQUEO = ? WHERE id_cliente = ?`, [documento_id, nombre, apellido, fecha_nacimiento, direccion, telefono, email, nacionalidad, ciudad, estado, motivo_bloqueo, id]);
-        await connection.close();
         res.json({ success: true });
     } catch (err) {
         handleDbError(err, res, 'updating cliente');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 

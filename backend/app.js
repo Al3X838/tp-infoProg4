@@ -8,6 +8,7 @@ require('dotenv').config();
 const connectRouter = require('./routes/connect'); // Ruta del microservicio
 const clientesRouter = require('./routes/clientes'); // Ruta para clientes
 const canchasRouter = require('./routes/canchas'); // Ruta de las canchas
+const mantenimientosRouter = require('./routes/mantenimientos'); // Ruta para mantenimientos
 
 
 const app = express();
@@ -86,12 +87,25 @@ app.get('/add_cliente', isAuthenticated, (req, res) => {
 app.get('/upd_cliente', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/upd_cliente.html'));
 });
+
 app.get('/list_canchas', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/list_canchas.html'));
 });
 
 app.get('/add_cancha', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/add_cancha.html'));
+});
+
+app.get('/list_mantenimientos', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/list_mantenimientos.html'));
+});
+
+app.get('/add_mantenimiento', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/add_mantenimiento.html'));
+});
+
+app.get('/upd_mantenimiento', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/upd_mantenimiento.html'));
 });
 
 
@@ -101,6 +115,7 @@ app.use('/connect', connectRouter);
 
 app.use('/clientes', clientesRouter);  //Ruta para clientes
 app.use('/api/canchas', canchasRouter);
+app.use('/mantenimientos', mantenimientosRouter); //Ruta para mantenimientos
 
 
 // Ruta para 404
