@@ -29,7 +29,12 @@ const handleDbError = (err, res, action) => {
 router.get('/', async (req, res) => {
     try {
         const connection = await getConnection();
-        const result = await connection.query('SELECT * FROM CANCHAS ORDER BY NUMERO');
+        const result = await connection.query(`
+            SELECT c.*,
+            ts.NOMBRE AS NOMBE_TIPO_SUELO 
+            FROM CANCHAS c
+            JOIN TIPOS_SUELO ts ON c.TIPO_SUELO = ts.ID_TIPO_SUELO 
+            ORDER BY NUMERO`);
         await connection.close();
         res.json({ success: true, canchas: result });
     } catch (err) {
