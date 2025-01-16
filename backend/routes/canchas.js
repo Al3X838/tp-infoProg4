@@ -31,9 +31,9 @@ router.get('/', async (req, res) => {
         const connection = await getConnection();
         const result = await connection.query(`
             SELECT c.*,
-            ts.NOMBRE AS NOMBE_TIPO_SUELO 
+            ts.NOMBRE AS NOMBRE_TIPO_SUELO 
             FROM CANCHAS c
-            JOIN TIPOS_SUELO ts ON c.TIPO_SUELO = ts.ID_TIPO_SUELO 
+            JOIN TIPO_SUELOS ts ON c.TIPO_SUELO = ts.ID_TIPO_SUELO 
             ORDER BY NUMERO`);
         await connection.close();
         res.json({ success: true, canchas: result });
@@ -47,7 +47,13 @@ router.get('/cancha/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const connection = await getConnection();
-        const result = await connection.query(`SELECT * FROM CANCHAS WHERE ID_CANCHA = ?`, [id]);
+        const result = await connection.query(`
+            SELECT c.*, ts.NOMBRE as NOMBRE_TIPO_SUELO 
+            FROM CANCHAS c
+            LEFT JOIN TIPO_SUELOS ts ON c.TIPO_SUELO = ts.ID_TIPO_SUELO
+            WHERE c.ID_CANCHA = ?`, 
+            [id]
+        );
         await connection.close();
 
         if (result.length > 0) {
@@ -56,7 +62,7 @@ router.get('/cancha/:id', async (req, res) => {
             res.json({ success: false, error: 'Cancha not found.' });
         }
     } catch (err) {
-        handleDbError(err, res, 'fetching marca by ID');
+        handleDbError(err, res, 'fetching cancha by ID');
     }
 });
 // agregar cancha

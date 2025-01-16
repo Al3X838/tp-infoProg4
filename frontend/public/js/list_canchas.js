@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success !== false) {
+                    console.log(data);
+                    
                     canchasList.innerHTML = data.canchas.map(cancha => `
                         <div class="col-md-4 mb-4">
                             <div class="card ${cancha.ESTADO !== 'D' ? 'no-disponible' : ''}">
@@ -31,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <h5 class="card-title">Cancha ${cancha.NUMERO}</h5>
                                     <p class="card-text">
                                         <strong>Ubicación:</strong> ${cancha.UBICACION}<br>
-                                        <strong>Tipo:</strong> ${cancha.TIPO_SUELO}
+                                        <strong>Tipo:</strong> ${cancha.NOMBRE_TIPO_SUELO}
                                     </p>
                                     <div class="d-grid gap-2">
                                         ${cancha.ESTADO === 'D' 
@@ -51,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <small>
                                         <strong>ID:</strong> ${cancha.ID_CANCHA}<br>
                                         <strong>Número:</strong> ${cancha.NUMERO}<br>
-                                        <strong>Tipo de Suelo:</strong> ${cancha.TIPO_SUELO}
+                                        <strong>Tipo de Suelo:</strong> ${cancha.NOMBRE_TIPO_SUELO}
                                     </small>
                                 </div>
                             </div>
