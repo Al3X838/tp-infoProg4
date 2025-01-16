@@ -115,7 +115,7 @@ app.use('/connect', connectRouter);
 
 app.use('/clientes', clientesRouter);  //Ruta para clientes
 app.use('/api/canchas', canchasRouter);
-app.use('/api/mantenimientos', mantenimientosRouter); //Ruta para mantenimientos
+app.use('/mantenimientos', mantenimientosRouter); //Ruta para mantenimientos
 
 
 // Ruta para 404
