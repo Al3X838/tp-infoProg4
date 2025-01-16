@@ -38,6 +38,7 @@ function showErrorToast(message) {
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = '/mantenimientos'; // URL base para los endpoints
     const clientsList = document.getElementById('mantenimientos-list');
+    const clearFiltersBtn = document.getElementById('clearFilters'); // Botón para limpiar los filtros
     let mantenimientos = []; // Array global para los datos de mantenimientos
     let canchas = []; // Array global para los datos de canchas
     let sortDirection = [];
@@ -115,6 +116,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Limpiar filtros
+    window.clearFilters = function () {
+        canchaFilter.value = '';
+        fechaFilter.value = '';
+        renderMantenimientos(mantenimientos);
+        updateClearFiltersButton();
+    };
+
+    // Actualizar el estado del botón "Limpiar Filtros"
+    const updateClearFiltersButton = () => {
+        clearFiltersBtn.classList.toggle('btn-danger', canchaFilter.value || fechaFilter.value);
+        clearFiltersBtn.classList.toggle('btn-secondary', !canchaFilter.value && !fechaFilter.value);
+    };
+
     // Función para ordenar la tabla
     window.sortTable = function (columnIndex) {
         // Inicializar la dirección si aún no está definida
@@ -174,6 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Renderizar los mantenimientos filtrados
         renderMantenimientos(filteredMantenimientos);
+        updateClearFiltersButton();
     }
 
     // Escuchar cambios en los filtros
