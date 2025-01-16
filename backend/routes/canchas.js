@@ -66,11 +66,26 @@ router.get('/cancha/:id', async (req, res) => {
     }
 });
 // agregar cancha
-router.post('/agregar', async (req, res) => {
-    const { numero, ubicacion, tipo_suelo } = req.body;
+router.post('/add', async (req, res) => {
+    const { 
+        NUMERO, 
+        UBICACION, 
+        TIPO_SUELO, 
+        LUMINICA, 
+        BEBEDERO, 
+        BANOS, 
+        CAMBIADOR, 
+        ESTADO 
+    } = req.body;
+
     try {
         const connection = await getConnection();
-        await connection.query('INSERT INTO CANCHAS (NUMERO, UBICACION, TIPO_SUELO, LUMINICA, BEBEDERO, BANOS CAMBIADOR, ESTADO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', [numero, ubicacion, tipo_suelo, luminica, bebedero, banos, cambiador, estado]);
+        await connection.query(
+            `INSERT INTO CANCHAS 
+            (NUMERO, UBICACION, TIPO_SUELO, LUMINICA, BEBEDERO, BANOS, CAMBIADOR, ESTADO) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
+            [NUMERO, UBICACION, TIPO_SUELO, LUMINICA, BEBEDERO, BANOS, CAMBIADOR, ESTADO]
+        );
         await connection.close();
         res.json({ success: true, message: 'Cancha agregada correctamente.' });
     } catch (err) {

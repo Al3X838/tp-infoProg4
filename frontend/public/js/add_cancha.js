@@ -1,108 +1,98 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('addCanchaForm');
     const cancelButton = document.getElementById('cancel-button');
+    const tipoSueloSelect = document.getElementById('tipo_suelo');
 
-    // Cargar lista de tipos de suelo
     const loadTiposDeSuelo = () => {
-        fetch('/tipos-suelo/')
+        if (!tipoSueloSelect) return;
+        
+        fetch('/api/tiposuelos')
             .then(response => {
                 if (!response.ok) throw new Error('Network response was not ok');
                 return response.json();
             })
             .then(data => {
-                if (data.success) {
-                    const tipoSueloSelect = document.getElementById('tipo');
-                    const defaultOption = document.createElement('option');
-                    defaultOption.value = '';
-                    defaultOption.textContent = 'Selecciona un tipo de suelo';
-                    defaultOption.selected = true;
-                    defaultOption.disabled = true;
-                    tipoSueloSelect.appendChild(defaultOption);
-
-                    data.tipos.forEach(tipo => {
+                console.log('Data received:', data);
+                tipoSueloSelect.innerHTML = '<option value="">Seleccione el tipo de suelo</option>';
+                
+                if (data.success && Array.isArray(data.tiposuelos)) {
+                    data.tiposuelos.forEach(tipo => {
                         const option = document.createElement('option');
-                        option.value = tipo.ID;
+                        option.value = tipo.ID_TIPO_SUELO;
                         option.textContent = tipo.NOMBRE;
                         tipoSueloSelect.appendChild(option);
                     });
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.error || 'Error al cargar los tipos de suelo.',
-                        confirmButtonText: 'Aceptar'
-                    });
+                    throw new Error('No hay tipos de suelo disponibles');
                 }
             })
             .catch(error => {
-                console.error('Error al cargar tipos de suelo:', error);
+                console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error de conexión',
-                    text: 'No se pudo conectar con el servidor para cargar los tipos de suelo.',
+                    title: 'Error',
+                    text: 'No se pudieron cargar los tipos de suelo',
                     confirmButtonText: 'Aceptar'
                 });
             });
     };
 
-    // Llamar a la función para cargar tipos de suelo
-    loadTiposDeSuelo();
 
-    // Procesar el formulario
     form.addEventListener('submit', function (event) {
         event.preventDefault();
 
         const canchaData = {
-            numero: document.getElementById('numero').value.trim(),
-            ubicacion: document.getElementById('ubicacion').value.trim(),
-            tipo_suelo: document.getElementById('tipo_suelo').value,
-            luminica: document.getElementById('luminica').checked ? 1 : 0,
-            bebedero: document.getElementById('bebedero').checked ? 1 : 0,
-            banos: document.getElementById('banos').checked ? 1 : 0,
-            cambiador: document.getElementById('cambiador').checked ? 1 : 0,
-            estado: document.getElementById('estado').value.trim()
+            NUMERO: document.getElementById('numero').value.trim(),
+            UBICACION: document.getElementById('ubicacion').value.trim(),
+            TIPO_SUELO: document.getElementById('tipo_suelo').value,
+            LUMINICA: document.getElementById('luminica').checked ? 'S' : 'N',
+            BEBEDERO: document.getElementById('bebedero').checked ? 'S' : 'N',
+            BANOS: document.getElementById('banos').checked ? 'S' : 'N',
+            CAMBIADOR: document.getElementById('cambiador').checked ? 'S' : 'N',
+            ESTADO: document.getElementById('estado').value
         };
 
-        fetch('/api/canchas', {
+        fetch('/api/canchas/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(canchaData)
         })
-        .then(response => response.json())
+        .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.error || 'Error al agregar la cancha');
+            }
+            return data;
+        })
         .then(data => {
             if (data.success) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Cancha agregada',
-                    text: 'La cancha se ha agregado correctamente.',
+                    title: 'Éxito',
+                    text: 'La cancha se ha agregado correctamente',
                     confirmButtonText: 'Aceptar'
                 }).then(() => {
-                    window.location.href = './canchas.html'; // Redirige tras el éxito
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.error || 'Error al agregar la cancha.',
-                    confirmButtonText: 'Aceptar'
+                    window.location.href = '/list_canchas.html';
                 });
             }
         })
         .catch(error => {
-            console.error('Error al agregar cancha:', error);
+            console.error('Error:', error);
             Swal.fire({
                 icon: 'error',
-                title: 'Error de conexión',
-                text: 'No se pudo conectar con el servidor para agregar la cancha.',
+                title: 'Error',
+                text: error.message || 'No se pudo agregar la cancha',
                 confirmButtonText: 'Aceptar'
             });
         });
     });
 
+    loadTiposDeSuelo();
+
     // Manejar el botón de cancelar
     if (cancelButton) {
         cancelButton.addEventListener('click', function () {
-            window.location.href = '/canchas'; // Redirige a la lista de canchas
+            window.location.href = '/list_canchas'; // Regresa a la lista de canchas
         });
     }
 });
