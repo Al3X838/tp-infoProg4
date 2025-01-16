@@ -28,7 +28,6 @@ router.get('/', async (req, res) => {
     try {
         connection = await getConnection();
         const result = await connection.query('SELECT * FROM clientes;');
-        await connection.close();
         res.json({ success: true, clientes: result });
     } catch (err) {
         handleDbError(err, res, 'fetching clientes');

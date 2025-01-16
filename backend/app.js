@@ -87,12 +87,25 @@ app.get('/add_cliente', isAuthenticated, (req, res) => {
 app.get('/upd_cliente', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/upd_cliente.html'));
 });
+
 app.get('/list_canchas', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/list_canchas.html'));
 });
 
 app.get('/add_cancha', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/add_cancha.html'));
+});
+
+app.get('/list_mantenimientos', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/list_mantenimientos.html'));
+});
+
+app.get('/add_mantenimiento', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/add_mantenimiento.html'));
+});
+
+app.get('/upd_mantenimiento', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/upd_mantenimiento.html'));
 });
 
 
