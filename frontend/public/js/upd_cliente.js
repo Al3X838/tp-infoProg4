@@ -141,7 +141,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const newEstado = document.getElementById('estado').value.trim();
         const newMotivoBloqueo = document.getElementById('motivo_bloqueo').value.trim() || null;
 
-        console.log({ documento_id: newDocumentoId, nombre: newNombre, apellido: newApellido, fecha_nacimiento: newFechaNacimiento, ciudad: newCiudad, direccion: newDireccion, telefono: newTelefono, email: newEmail, nacionalidad: newNacionalidad, estado: newEstado, motivo_bloqueo: newMotivoBloqueo });
         fetch(`/clientes/update/${clienteId}`, {  // Método POST explícito
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
