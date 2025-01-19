@@ -47,13 +47,21 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <button class="btn btn-info text-white" onclick="mostrarDetalles(${cancha.ID_CANCHA})">
                                             <i class="fas fa-info-circle"></i> Ver detalles
                                         </button>
+                                        <button class="btn btn-info text-white" onclick="editCancha(${cancha.ID_CANCHA})">
+                                            <i class="fas fa-info-circle"></i> Actualizar
+                                        </button>
+                                        <button class="btn btn-danger" onclick="confirmDelete(${cancha.ID_CANCHA})">
+                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                        </button>
                                     </div>
                                 </div>
                                 <div id="detalles${cancha.ID_CANCHA}" class="card-footer bg-light d-none">
                                     <small>
-                                        <strong>ID:</strong> ${cancha.ID_CANCHA}<br>
-                                        <strong>Número:</strong> ${cancha.NUMERO}<br>
-                                        <strong>Tipo de Suelo:</strong> ${cancha.NOMBRE_TIPO_SUELO}
+                                        
+                                        ${cancha.LUMINICA === 'S' ? '<strong>Luminica</strong><br>' : ''}
+                                        ${cancha.BEBEDERO === 'S' ? '<strong>Bebedero</strong><br>' : ''}
+                                        ${cancha.BANOS === 'S' ? '<strong>Baños</strong><br>' : ''}
+                                        ${cancha.CAMBIADOR === 'S' ? '<strong>Cambiador</strong><br>' : ''}
                                     </small>
                                 </div>
                             </div>
@@ -70,11 +78,65 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('error-message').classList.remove('d-none');
             });
     }
+    window.editCancha = function (id) {
+        window.location.href = `/upd_cancha?id=${id}`;
+    };
 
     window.mostrarDetalles = function(id) {
         const detalles = document.getElementById(`detalles${id}`);
         detalles.classList.toggle('d-none');
     };
+
+    window.confirmDelete = function (id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción eliminará la Cancha de forma permanente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteCancha(id, loadCanchas);
+            }
+        });
+    };
+
+    function deleteCancha(id, callback) {
+        fetch(`/api/canchas/delete/${id}`, { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: 'El Cancha fue eliminado exitosamente.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    callback(); // Recarga la lista de Canchas
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error || 'Error al eliminar el Cancha.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error en la conexión con el servidor.',
+                    confirmButtonText: 'Aceptar'
+                });
+                console.error('Error al eliminar el Cancha:', error);
+            });
+    }
+
+
 
     loadCanchas();
 });
