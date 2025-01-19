@@ -92,5 +92,47 @@ router.post('/add', async (req, res) => {
         handleDbError(err, res, 'agregando cancha');
     }
 });
+// actualizar cancha
+router.put('/update/:id', async (req, res) => {
+    const { 
+        NUMERO, 
+        UBICACION, 
+        TIPO_SUELO, 
+        LUMINICA, 
+        BEBEDERO, 
+        BANOS, 
+        CAMBIADOR, 
+        ESTADO 
+    } = req.body;
+    const { id } = req.params;
+
+    try {
+        const connection = await getConnection();
+        await connection.query(
+            `UPDATE CANCHAS 
+            SET NUMERO = ?, UBICACION = ?, TIPO_SUELO = ?, LUMINICA = ?, BEBEDERO = ?, BANOS = ?, CAMBIADOR = ?, ESTADO = ? 
+            WHERE ID_CANCHA = ?`, 
+            [NUMERO, UBICACION, TIPO_SUELO, LUMINICA, BEBEDERO, BANOS, CAMBIADOR, ESTADO, id]
+        );
+        await connection.close();
+        res.json({ success: true, message: 'Cancha actualizada correctamente.' });
+    } catch (err) {
+        handleDbError(err, res, 'actualizando cancha');
+    }
+});
+// eliminar cancha
+router.delete('/delete/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const connection = await getConnection();
+        await connection.query(`DELETE FROM CANCHAS WHERE ID_CANCHA = ?`, [id]);
+        await connection.close();
+        res.json({ success: true});
+    } catch (err) {
+        handleDbError(err, res, 'eliminando cancha');
+    }
+});
+
 
 module.exports = router;
