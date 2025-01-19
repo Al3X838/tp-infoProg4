@@ -9,6 +9,7 @@ const connectRouter = require('./routes/connect'); // Ruta del microservicio
 const clientesRouter = require('./routes/clientes'); // Ruta para clientes
 const canchasRouter = require('./routes/canchas'); // Ruta de las canchas
 const mantenimientosRouter = require('./routes/mantenimientos'); // Ruta para mantenimientos
+const tiposuelosRouter = require('./routes/tiposuelos'); // Ruta para tipos de suelos
 
 
 const app = express();
@@ -96,6 +97,10 @@ app.get('/add_cancha', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/add_cancha.html'));
 });
 
+app.get('/upd_cancha', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/upd_cancha.html'));
+});
+
 app.get('/list_mantenimientos', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/list_mantenimientos.html'));
 });
@@ -116,6 +121,8 @@ app.use('/connect', connectRouter);
 app.use('/clientes', clientesRouter);  //Ruta para clientes
 app.use('/api/canchas', canchasRouter);
 app.use('/mantenimientos', mantenimientosRouter); //Ruta para mantenimientos
+app.use('/tiposuelos', tiposuelosRouter); //Ruta para tipos de suelos
+
 
 
 // Ruta para 404
