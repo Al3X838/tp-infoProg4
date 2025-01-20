@@ -72,11 +72,14 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('/api/canchas', { method: 'GET' })
         .then(response => response.json())
         .then(data => {
-            document.getElementById('cancha').innerHTML = data.canchas.map(cancha => `
-        <option value="${cancha.ID_CANCHA}">${'Cancha ' + cancha.NUMERO}</option>
-    `).join('');
+            if (data.success === false) {
+                showErrorToast(data.error || 'Error desconocido.');
+            } else {
+                document.getElementById('cancha').innerHTML = data.canchas.map(cancha => `
+                    <option value="${cancha.ID_CANCHA}">${'Cancha ' + cancha.NUMERO}</option>
+                `).join('');
+            }
             document.getElementById('cancha').insertAdjacentHTML('afterbegin', '<option value="" disabled selected hidden>Elige la Cancha</option>');
-
             // Solo continúa si existe un mantenimientoId
             if (mantenimientoId) {
                 return fetch(`/mantenimientos/mantenimiento/${mantenimientoId}`, { method: 'GET' });
@@ -88,7 +91,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         })
         .then(data => {
-            if (data && data.success && data.mantenimiento) {
+            if (data.success === false) {
+                showErrorToast(data.error || 'No se encontró el cliente.');
+            }
+            else {
                 // Actualiza los campos del formulario con los datos del mantenimiento
                 mantenimientoIdInput.value = data.mantenimiento.ID_MANTENIMIENTO;
                 canchaInput.value = data.mantenimiento.ID_CANCHA;
@@ -98,9 +104,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 horaFinInput.value = data.mantenimiento.HORA_FIN;
                 descripcionInput.value = data.mantenimiento.DESCRIPCION;
                 estadoInput.value = data.mantenimiento.ESTADO;
-            } else if (mantenimientoId) {
-                // Muestra un mensaje si no se encontró el mantenimiento
-                showErrorToast('No se encontró el mantenimiento.');
             }
         })
         .catch(error => {

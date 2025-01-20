@@ -87,7 +87,9 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`/clientes/cliente/${clienteId}`, { method: 'GET' })
             .then(response => response.json())
             .then(data => {
-                if (data.success && data.cliente) {
+                if (data.success === false) {
+                    showErrorToast(data.error || 'No se encontró el cliente.');
+                } else {
                     // Actualiza los campos del formulario con los datos del cliente
                     clienteIdInput.value = data.cliente.ID_CLIENTE
                     clienteDocumentoIdInput.value = data.cliente.DOCUMENTO_ID
@@ -103,9 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     clienteMotivoBloqueoInput.value = data.cliente.MOTIVO_BLOQUEO
 
                     toggleMotivoBloqueo();
-                } else {
-                    // Muestra un mensaje si no se encontró el cliente
-                    showErrorToast('No se encontró el cliente.');
                 }
             })
             .catch(error => {

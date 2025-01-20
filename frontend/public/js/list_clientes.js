@@ -47,7 +47,11 @@ document.addEventListener('DOMContentLoaded', function () {
         return fetch(apiUrl, { method: 'GET' })
             .then(response => response.json())
             .then(data => {
-                clientes = data.clientes || []; // Guardar datos en el array global
+                if (data.success === false) {
+                    showErrorToast(data.error || 'Error desconocido.');
+                } else {
+                    clientes = data.clientes || [];
+                }
             })
             .catch(error => {
                 showErrorToast(error || 'Error al cargar los clientes.');
