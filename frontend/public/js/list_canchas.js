@@ -17,18 +17,15 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success !== false) {
-                    console.log(data);
-                    
                     canchasList.innerHTML = data.canchas.map(cancha => `
                         <div class="col-md-4 mb-4">
-                            <div class="card ${cancha.ESTADO !== 'D' ? 'no-disponible' : ''}">
+                            <div class="card">
                                 <span class="status-badge ${cancha.ESTADO === 'D' ? 'bg-success' : 'bg-danger'}">
                                     ${cancha.ESTADO === 'D' ? 'Disponible' : 'No Disponible'}
                                 </span>   
-                                <img src="/images/canchaFuol.jpg alt="cancha"" 
+                                <img src="/images/canchaFuol.jpg" 
                                      class="card-img-top" 
-                                     alt="Cancha ${cancha.NUMERO}"
-                                     onerror="this.src='/images/canchaFuol.jpg'">
+                                     alt="Cancha ${cancha.NUMERO}">
                                 <div class="card-body">
                                     <h5 class="card-title">Cancha ${cancha.NUMERO}</h5>
                                     <p class="card-text">
@@ -36,33 +33,23 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <strong>Tipo:</strong> ${cancha.NOMBRE_TIPO_SUELO}
                                     </p>
                                     <div class="d-grid gap-2">
-                                        ${cancha.ESTADO === 'D' 
-                                            ? `<button class="btn btn-primary" onclick="reservarCancha(${cancha.ID_CANCHA})">
-                                                <i class="fas fa-calendar-check"></i> Reservar
-                                               </button>`
-                                            : `<button class="btn btn-secondary" disabled>
-                                                <i class="fas fa-times-circle"></i> No Disponible
-                                               </button>`
-                                        }
+                                        <!-- Solo este botón cambia según el estado -->
+                                        <button class="btn ${cancha.ESTADO === 'D' ? 'btn-primary' : 'btn-secondary'}" 
+                                                onclick="reservarCancha(${cancha.ID_CANCHA})"
+                                                ${cancha.ESTADO !== 'D' ? 'disabled' : ''}>
+                                            <i class="fas fa-calendar-check"></i> Reservar
+                                        </button>
+                                        <!-- Estos botones mantienen su estilo original -->
                                         <button class="btn btn-info text-white" onclick="mostrarDetalles(${cancha.ID_CANCHA})">
                                             <i class="fas fa-info-circle"></i> Ver detalles
                                         </button>
-                                        <button class="btn btn-info text-white" onclick="editCancha(${cancha.ID_CANCHA})">
-                                            <i class="fas fa-info-circle"></i> Actualizar
+                                        <button class="btn btn-warning" onclick="editCancha(${cancha.ID_CANCHA})">
+                                            <i class="fas fa-edit"></i> Actualizar
                                         </button>
                                         <button class="btn btn-danger" onclick="confirmDelete(${cancha.ID_CANCHA})">
                                             <i class="fas fa-trash-alt"></i> Eliminar
                                         </button>
                                     </div>
-                                </div>
-                                <div id="detalles${cancha.ID_CANCHA}" class="card-footer bg-light d-none">
-                                    <small>
-                                        
-                                        ${cancha.LUMINICA === 'S' ? '<strong>Luminica</strong><br>' : ''}
-                                        ${cancha.BEBEDERO === 'S' ? '<strong>Bebedero</strong><br>' : ''}
-                                        ${cancha.BANOS === 'S' ? '<strong>Baños</strong><br>' : ''}
-                                        ${cancha.CAMBIADOR === 'S' ? '<strong>Cambiador</strong><br>' : ''}
-                                    </small>
                                 </div>
                             </div>
                         </div>
