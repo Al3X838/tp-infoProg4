@@ -52,7 +52,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const fetchMantenimientos = fetch(apiUrl, { method: 'GET' })
             .then(response => response.json())
             .then(data => {
-                mantenimientos = data.mantenimientos || []; // Guardar los mantenimientos en el array global
+                if (data.success === false) {
+                    showErrorToast(data.error || 'Error desconocido.');
+                } else {
+                    mantenimientos = data.mantenimientos || [];
+                }
             })
             .catch(error => {
                 showErrorToast(error || 'Error al cargar los mantenimientos.');

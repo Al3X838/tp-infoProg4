@@ -51,9 +51,13 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('/api/canchas', { method: 'GET' })  // Método GET explícito
         .then(response => response.json())
         .then(data => {
-            document.getElementById('cancha').innerHTML = data.canchas.map(cancha => `
-                <option value="${cancha.ID_CANCHA}">${'Cancha ' + cancha.NUMERO}</option>
-            `).join('');
+            if (data.success === false) {
+                showErrorToast(data.error || 'Error desconocido.');
+            } else {
+                document.getElementById('cancha').innerHTML = data.canchas.map(cancha => `
+                    <option value="${cancha.ID_CANCHA}">${'Cancha ' + cancha.NUMERO}</option>
+                `).join('');
+            }
             document.getElementById('cancha').insertAdjacentHTML('afterbegin', '<option value="" disabled selected hidden>Elige la Cancha</option>');
         })
         .catch(error => {
