@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     const canchasList = document.getElementById('canchas-list');
     
-    const imagenesCanchas ={
-        'FUOL': '/images/canchaFuol.jpg',
-        'FUTSAL' : '/images/canchaFutsal.jpg',
+    const imagenesCanchas = {
+        'Cemento': '/images/canchaBasquetbol.jpg',
+        'Cesped Natural': '/images/canchaFutbol.jpg',
         'default': '/images/canchaDefault.jpg'
-    }
+    };
 
     // sin terminar. agregar tipoCancha maybe
     function getImagenCancha(TIPO_SUELO) {
@@ -17,13 +17,16 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success !== false) {
-                    canchasList.innerHTML = data.canchas.map(cancha => `
+                    canchasList.innerHTML = data.canchas.map(cancha => {
+                        const imagen = getImagenCancha(cancha.NOMBRE_TIPO_SUELO);
+                        console.log(imagen);
+                        return`
                         <div class="col-md-4 mb-4">
                             <div class="card">
                                 <span class="status-badge ${cancha.ESTADO === 'D' ? 'bg-success' : 'bg-danger'}">
                                     ${cancha.ESTADO === 'D' ? 'Disponible' : 'No Disponible'}
                                 </span>   
-                                <img src="/images/canchaFuol.jpg" 
+                                <img src="${imagen}" 
                                      class="card-img-top" 
                                      alt="Cancha ${cancha.NUMERO}">
                                 <div class="card-body">
@@ -53,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </div>
                             </div>
                         </div>
-                    `).join('');
+                    `}).join('');
                 } else {
                     document.getElementById('error-message').textContent = data.error || 'Error al cargar canchas';
                     document.getElementById('error-message').classList.remove('d-none');
