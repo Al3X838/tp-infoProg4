@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
     const canchasList = document.getElementById('canchas-list');
     
-    const imagenesCanchas ={
-        'FUOL': '/images/canchaFuol.jpg',
-        'FUTSAL' : '/images/canchaFutsal.jpg',
+    const imagenesCanchas = {
+        'Cemento': '/images/canchaBasquetbol.jpg',
+        'Cesped Natural': '/images/canchaFutbol.jpg',
+        'Cesped Sintetico': '/images/canchaFutbol.jpg',
         'default': '/images/canchaDefault.jpg'
-    }
+    };
 
     // sin terminar. agregar tipoCancha maybe
     function getImagenCancha(TIPO_SUELO) {
@@ -17,18 +18,18 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success !== false) {
-                    console.log(data);
-                    
-                    canchasList.innerHTML = data.canchas.map(cancha => `
+                    canchasList.innerHTML = data.canchas.map(cancha => {
+                        const imagen = getImagenCancha(cancha.NOMBRE_TIPO_SUELO);
+                        console.log(imagen);
+                        return`
                         <div class="col-md-4 mb-4">
-                            <div class="card ${cancha.ESTADO !== 'D' ? 'no-disponible' : ''}">
+                            <div class="card">
                                 <span class="status-badge ${cancha.ESTADO === 'D' ? 'bg-success' : 'bg-danger'}">
                                     ${cancha.ESTADO === 'D' ? 'Disponible' : 'No Disponible'}
                                 </span>   
-                                <img src="/images/canchaFuol.jpg alt="cancha"" 
-                                     class="card-img-top" 
-                                     alt="Cancha ${cancha.NUMERO}"
-                                     onerror="this.src='/images/canchaFuol.jpg'">
+                                <img src="${imagen}" 
+                                    class="card-img-top" 
+                                    alt="Cancha ${cancha.NUMERO}">
                                 <div class="card-body">
                                     <h5 class="card-title">Cancha ${cancha.NUMERO}</h5>
                                     <p class="card-text">
@@ -36,29 +37,36 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <strong>Tipo:</strong> ${cancha.NOMBRE_TIPO_SUELO}
                                     </p>
                                     <div class="d-grid gap-2">
-                                        ${cancha.ESTADO === 'D' 
-                                            ? `<button class="btn btn-primary" onclick="reservarCancha(${cancha.ID_CANCHA})">
-                                                <i class="fas fa-calendar-check"></i> Reservar
-                                               </button>`
-                                            : `<button class="btn btn-secondary" disabled>
-                                                <i class="fas fa-times-circle"></i> No Disponible
-                                               </button>`
-                                        }
+                                        <!-- Solo este botón cambia según el estado -->
+                                        <button class="btn ${cancha.ESTADO === 'D' ? 'btn-primary' : 'btn-secondary'}" 
+                                                onclick="reservarCancha(${cancha.ID_CANCHA})"
+                                                ${cancha.ESTADO !== 'D' ? 'disabled' : ''}>
+                                            <i class="fas fa-calendar-check"></i> Reservar
+                                        </button>
+                                        <!-- Estos botones mantienen su estilo original -->
                                         <button class="btn btn-info text-white" onclick="mostrarDetalles(${cancha.ID_CANCHA})">
                                             <i class="fas fa-info-circle"></i> Ver detalles
+                                        </button>
+                                        <button class="btn btn-warning" onclick="editCancha(${cancha.ID_CANCHA})">
+                                            <i class="fas fa-edit"></i> Actualizar
+                                        </button>
+                                        <button class="btn btn-danger" onclick="confirmDelete(${cancha.ID_CANCHA})">
+                                            <i class="fas fa-trash-alt"></i> Eliminar
                                         </button>
                                     </div>
                                 </div>
                                 <div id="detalles${cancha.ID_CANCHA}" class="card-footer bg-light d-none">
                                     <small>
-                                        <strong>ID:</strong> ${cancha.ID_CANCHA}<br>
-                                        <strong>Número:</strong> ${cancha.NUMERO}<br>
-                                        <strong>Tipo de Suelo:</strong> ${cancha.NOMBRE_TIPO_SUELO}
+                                        <strong>Tipo de Suelo:</strong> ${cancha.NOMBRE_TIPO_SUELO}<br>
+                                        ${cancha.LUMINICA === 'S' ? '<strong>Luminica:</strong> Sí<br>' : ''}
+                                        ${cancha.BEBEDERO === 'S' ? '<strong>Bebedero:</strong> Sí<br>' : ''}
+                                        ${cancha.BANOS === 'S' ? '<strong>Baños:</strong> Sí<br>' : ''}
+                                        ${cancha.CAMBIADOR === 'S' ? '<strong>Cambiador:</strong> Sí<br>' : ''}
                                     </small>
                                 </div>
                             </div>
                         </div>
-                    `).join('');
+                    `}).join('');
                 } else {
                     document.getElementById('error-message').textContent = data.error || 'Error al cargar canchas';
                     document.getElementById('error-message').classList.remove('d-none');
@@ -70,10 +78,73 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('error-message').classList.remove('d-none');
             });
     }
+    window.editCancha = function (id) {
+        window.location.href = `/upd_cancha?id=${id}`;
+    };
 
-    window.mostrarDetalles = function(id) {
+    window.mostrarDetalles = function (id) {
         const detalles = document.getElementById(`detalles${id}`);
-        detalles.classList.toggle('d-none');
+        if (detalles) {
+            detalles.classList.toggle("d-none");
+        } else {
+            console.error(`No se encontró el elemento con id detalles${id}`);
+        }
+    };
+
+    window.confirmDelete = function (id) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción eliminará la cancha de forma permanente.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                eliminarCancha(id);
+            }
+        });
+    };
+
+    window.eliminarCancha = function (id) {
+        fetch(`/api/canchas/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la solicitud DELETE');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Cancha eliminada exitosamente.',
+                    confirmButtonText: 'Aceptar'
+                });
+                loadCanchas(); // Recargar la lista de canchas
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'Error al eliminar la cancha.',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error en la conexión con el servidor.',
+                confirmButtonText: 'Aceptar'
+            });
+        });
     };
 
     loadCanchas();
