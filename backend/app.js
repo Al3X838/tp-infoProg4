@@ -112,6 +112,17 @@ app.get('/upd_mantenimiento', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/upd_mantenimiento.html'));
 });
 
+app.get('/list_tipo_suelos', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/list_tipo_suelo.html'));
+});
+
+app.get('/add_tipo_suelo', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/add_tipo_suelo.html'));
+});
+
+app.get('/upd_tipo_suelo', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/upd_tipo_suelo.html'));
+});
 
 
 // Usar el microservicio de conexión

@@ -58,10 +58,10 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <div id="detalles${cancha.ID_CANCHA}" class="card-footer bg-light d-none">
                                     <small>
                                         <strong>Tipo de Suelo:</strong> ${cancha.NOMBRE_TIPO_SUELO}<br>
-                                        ${cancha.LUMINICA === 'S' ? '<strong>Luminica:</strong> Sí<br>' : ''}
-                                        ${cancha.BEBEDERO === 'S' ? '<strong>Bebedero:</strong> Sí<br>' : ''}
-                                        ${cancha.BANOS === 'S' ? '<strong>Baños:</strong> Sí<br>' : ''}
-                                        ${cancha.CAMBIADOR === 'S' ? '<strong>Cambiador:</strong> Sí<br>' : ''}
+                                        ${cancha.LUMINICA === 'S' ? '<strong>Luminica:</strong> Sí<br>' : '<strong>Luminica:</strong> No<br>'}
+                                        ${cancha.BEBEDERO === 'S' ? '<strong>Bebedero:</strong> Sí<br>' : '<strong>Bebedero:</strong> No<br>'}
+                                        ${cancha.BANOS === 'S' ? '<strong>Baños:</strong> Sí<br>' : '<strong>Baños:</strong> No<br>'}
+                                        ${cancha.CAMBIADOR === 'S' ? '<strong>Cambiador:</strong> Sí<br>' : '<strong>Cambiador:</strong> No<br>'}
                                     </small>
                                 </div>
                             </div>
