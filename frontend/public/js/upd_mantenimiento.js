@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch(error => {
-                showErrorToast(data.error || 'Error en la conexión con el servidor.');
+                showErrorToast(error || 'Error en la conexión con el servidor.');
             });
     });
 });
