@@ -1,51 +1,3 @@
-function showErrorToast(message) {
-    const toastContainer = document.getElementById('toast-container');
-
-    // Verificar si el contenedor existe
-    if (!toastContainer) {
-        console.error('¡Elemento del contenedor del Toast no encontrado!');
-        return;
-    }
-
-    // Crear un nuevo elemento Toast
-    const newToast = document.createElement('div');
-    newToast.className = 'toast align-items-center text-bg-danger border-0';
-    newToast.setAttribute('role', 'alert');
-    newToast.setAttribute('aria-live', 'assertive');
-    newToast.setAttribute('aria-atomic', 'true');
-
-    // Crear la estructura interna del Toast
-    newToast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${message}</div>
-            <button
-                type="button"
-                class="btn-close btn-close-white me-2 m-auto"
-                data-bs-dismiss="toast"
-                aria-label="Close"></button>
-        </div>
-    `;
-
-    // Agregar el nuevo Toast al contenedor
-    toastContainer.appendChild(newToast);
-
-    // Crear una instancia del Toast de Bootstrap
-    const bootstrapToast = new bootstrap.Toast(newToast, {
-        delay: 5000 // Ocultar automáticamente después de 5 segundos
-    });
-
-    // Mostrar el Toast
-    bootstrapToast.show();
-
-    // Eliminar el Toast del DOM después de que se cierre
-    newToast.addEventListener('hidden.bs.toast', () => {
-        newToast.remove();
-    });
-}
-// // Ejemplo de uso
-// showErrorToast('Error al actualizar el cliente 1.');
-
-// Función para bloquear o desbloquear el campo de motivo de bloqueo
 function toggleMotivoBloqueo() {
     const estado = document.getElementById("estado").value;
     const motivoBloqueo = document.getElementById("motivo_bloqueo");
@@ -54,21 +6,38 @@ function toggleMotivoBloqueo() {
         motivoBloqueo.disabled = false;
     } else {
         motivoBloqueo.disabled = true;
-        motivoBloqueo.value = ""; // Opcional: Limpiar el campo cuando está deshabilitado
+        motivoBloqueo.value = ""; // Optional: Limpiar el campo cuando está deshabilitado
     }
 }
 
+// Universelle SweetAlert-Funktionen
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Cargando...',
+        text: 'Estamos obteniendo los datos del cliente.',
+        allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
+        didOpen: () => {
+            Swal.showLoading(); // Muestra el spinner de carga
+        }
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function () {
-
     const form = document.getElementById('update-cliente-form');
     const clienteIdInput = document.getElementById('id-cliente');
 
-    // Obtiene el ID del cliente de los parámetros de la URL
     const urlParams = new URLSearchParams(window.location.search);
     const clienteId = urlParams.get('id');
 
-    // Obtiene los campos del formulario donde se mostrará la información del cliente
     const clienteDocumentoIdInput = document.getElementById('documento_id');
     const clienteNombreInput = document.getElementById('nombre');
     const clienteApellidoInput = document.getElementById('apellido');
@@ -81,82 +50,80 @@ document.addEventListener('DOMContentLoaded', function () {
     const clientEstadoInput = document.getElementById('estado');
     const clienteMotivoBloqueoInput = document.getElementById('motivo_bloqueo');
 
-
-    // Verifica si existe un ID de cliente
     if (clienteId) {
+        showLoadingAlert();
+
         fetch(`/clientes/cliente/${clienteId}`, { method: 'GET' })
             .then(response => response.json())
             .then(data => {
-                if (data.success && data.cliente) {
-                    // Actualiza los campos del formulario con los datos del cliente
-                    clienteIdInput.value = data.cliente.ID_CLIENTE
-                    clienteDocumentoIdInput.value = data.cliente.DOCUMENTO_ID
-                    clienteNombreInput.value = data.cliente.NOMBRE
-                    clienteApellidoInput.value = data.cliente.APELLIDO
-                    clienteFechaNacimientoInput.value = data.cliente.FECHA_NACIMIENTO
-                    clienteCiudadInput.value = data.cliente.CIUDAD
-                    clienteDireccionInput.value = data.cliente.DIRECCION
-                    clienteTelefonoInput.value = data.cliente.TELEFONO
-                    clienteEmailInput.value = data.cliente.EMAIL
-                    clienteNacionalidadInput.value = data.cliente.NACIONALIDAD
-                    clientEstadoInput.value = data.cliente.ESTADO
-                    clienteMotivoBloqueoInput.value = data.cliente.MOTIVO_BLOQUEO
+                Swal.close(); // Cierra el popup de carga
 
-                    toggleMotivoBloqueo();
+                if (data.success === false) {
+                    showErrorAlert(data.error || 'No se encontró el cliente.');
                 } else {
-                    // Muestra un mensaje si no se encontró el cliente
-                    showErrorToast('No se encontró el cliente.');
+                    clienteIdInput.value = data.cliente.ID_CLIENTE;
+                    clienteDocumentoIdInput.value = data.cliente.DOCUMENTO_ID;
+                    clienteNombreInput.value = data.cliente.NOMBRE;
+                    clienteApellidoInput.value = data.cliente.APELLIDO;
+                    clienteFechaNacimientoInput.value = data.cliente.FECHA_NACIMIENTO;
+                    clienteCiudadInput.value = data.cliente.CIUDAD;
+                    clienteDireccionInput.value = data.cliente.DIRECCION;
+                    clienteTelefonoInput.value = data.cliente.TELEFONO;
+                    clienteEmailInput.value = data.cliente.EMAIL;
+                    clienteNacionalidadInput.value = data.cliente.NACIONALIDAD;
+                    clientEstadoInput.value = data.cliente.ESTADO;
+                    clienteMotivoBloqueoInput.value = data.cliente.MOTIVO_BLOQUEO;
+
+                    toggleMotivoBloqueo(); // Llama a la función para gestionar el motivo de bloqueo
                 }
             })
             .catch(error => {
-                // Manejo de errores en cualquiera de las solicitudes
-                showErrorToast('Ocurrió un error al cargar los datos.');
+                Swal.close();
+                showErrorAlert('Ocurrió un error al cargar los datos.');
                 console.error('Error:', error);
             });
     }
 
-    window.toggleMotivoBloqueo = function () {
-        const estado = document.getElementById("estado").value;
-        const motivoBloqueo = document.getElementById("motivo_bloqueo");
-
-        if (estado === "B") {
-            motivoBloqueo.disabled = false;
-        } else {
-            motivoBloqueo.disabled = true;
-            motivoBloqueo.value = ""; // Optional: Clear the field when disabled
-        }
-    }
-
     form.addEventListener('submit', function (event) {
         event.preventDefault();
-        const newDocumentoId = document.getElementById('documento_id').value.trim()
-        const newNombre = document.getElementById('nombre').value.trim();
-        const newApellido = document.getElementById('apellido').value.trim();
-        const newFechaNacimiento = document.getElementById('fecha_nacimiento').value;
-        const newCiudad = document.getElementById('ciudad').value.trim();
-        const newDireccion = document.getElementById('direccion').value.trim();
-        const newTelefono = document.getElementById('telefono').value.trim();
-        const newEmail = document.getElementById('email').value.trim();
-        const newNacionalidad = document.getElementById('nacionalidad').value.trim();
-        const newEstado = document.getElementById('estado').value.trim();
-        const newMotivoBloqueo = document.getElementById('motivo_bloqueo').value.trim() || null;
 
-        console.log({ documento_id: newDocumentoId, nombre: newNombre, apellido: newApellido, fecha_nacimiento: newFechaNacimiento, ciudad: newCiudad, direccion: newDireccion, telefono: newTelefono, email: newEmail, nacionalidad: newNacionalidad, estado: newEstado, motivo_bloqueo: newMotivoBloqueo });
-        fetch(`/clientes/update/${clienteId}`, {  // Método POST explícito
+        const newClienteData = {
+            documento_id: clienteDocumentoIdInput.value.trim(),
+            nombre: clienteNombreInput.value.trim(),
+            apellido: clienteApellidoInput.value.trim(),
+            fecha_nacimiento: clienteFechaNacimientoInput.value,
+            ciudad: clienteCiudadInput.value.trim(),
+            direccion: clienteDireccionInput.value.trim(),
+            telefono: clienteTelefonoInput.value.trim(),
+            email: clienteEmailInput.value.trim(),
+            nacionalidad: clienteNacionalidadInput.value.trim(),
+            estado: clientEstadoInput.value.trim(),
+            motivo_bloqueo: clienteMotivoBloqueoInput.value.trim() || null
+        };
+
+        fetch(`/clientes/update/${clienteId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ documento_id: newDocumentoId, nombre: newNombre, apellido: newApellido, fecha_nacimiento: newFechaNacimiento, ciudad: newCiudad, direccion: newDireccion, telefono: newTelefono, email: newEmail, nacionalidad: newNacionalidad, estado: newEstado, motivo_bloqueo: newMotivoBloqueo })
+            body: JSON.stringify(newClienteData)
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.location.href = '/list_clientes';
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: 'El cliente se ha actualizado correctamente',
+                        confirmButtonText: 'Aceptar'
+                    }).then(() => {
+                        window.location.href = '/list_clientes';
+                    });
                 } else {
-                    showErrorToast(data.error || 'Error al actualizar el cliente.');
+                    showErrorAlert(data.error || 'Error desconocido.');
                 }
             })
             .catch(error => {
-                showErrorToast(data.error || 'Error en la conexión con el servidor.');
+                showErrorAlert('Error en la conexión con el servidor.');
+                console.error('Error:', error);
             });
     });
 });

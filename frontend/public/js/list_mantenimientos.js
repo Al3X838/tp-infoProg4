@@ -1,39 +1,22 @@
-// Función para mostrar un toast de error
-function showErrorToast(message) {
-    const toastContainer = document.getElementById('toast-container');
-
-    if (!toastContainer) {
-        console.error('¡Elemento del contenedor del Toast no encontrado!');
-        return;
-    }
-
-    const newToast = document.createElement('div');
-    newToast.className = 'toast align-items-center text-bg-danger border-0';
-    newToast.setAttribute('role', 'alert');
-    newToast.setAttribute('aria-live', 'assertive');
-    newToast.setAttribute('aria-atomic', 'true');
-
-    newToast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${message}</div>
-            <button
-                type="button"
-                class="btn-close btn-close-white me-2 m-auto"
-                data-bs-dismiss="toast"
-                aria-label="Close"></button>
-        </div>
-    `;
-
-    toastContainer.appendChild(newToast);
-
-    const bootstrapToast = new bootstrap.Toast(newToast, { delay: 5000 });
-    bootstrapToast.show();
-
-    newToast.addEventListener('hidden.bs.toast', () => {
-        newToast.remove();
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
     });
 }
 
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Cargando...',
+        text: 'Estamos obteniendo los datos del cliente.',
+        allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
+        didOpen: () => {
+            Swal.showLoading(); // Muestra el spinner de carga
+        }
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = '/mantenimientos'; // URL base para los endpoints
@@ -50,12 +33,20 @@ document.addEventListener('DOMContentLoaded', function () {
     function fetchData() {
         // Fetch para obtener los mantenimientos
         const fetchMantenimientos = fetch(apiUrl, { method: 'GET' })
-            .then(response => response.json())
+            .then(response => {
+                showLoadingAlert(); // Muestra el loading screen al inicio
+                return response.json();
+            })
             .then(data => {
-                mantenimientos = data.mantenimientos || []; // Guardar los mantenimientos en el array global
+                Swal.close(); // Cierra el loading screen después de obtener la respuesta
+                if (data.success === false) {
+                    showErrorAlert(data.error || 'Error desconocido.');
+                } else {
+                    mantenimientos = data.mantenimientos || [];
+                }
             })
             .catch(error => {
-                showErrorToast(error || 'Error al cargar los mantenimientos.');
+                showErrorAlert(error || 'Error al cargar los mantenimientos.');
             });
 
         // Fetch para obtener las canchas
@@ -66,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 populateCanchaFilter(); // Llenar el filtro de cancha
             })
             .catch(error => {
-                showErrorToast(error || 'Error al cargar las canchas.');
+                showErrorAlert(error || 'Error al cargar las canchas.');
             });
 
         // Ejecutar ambos fetch en paralelo
@@ -212,35 +203,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para confirmar y eliminar un mantenimiento
     window.confirmDelete = function (id, Name) {
-        // Establecer el nombre del mantenimiento en el modal
-        document.getElementById('NameDeleteModal').textContent = Name;
-
-        // Mostrar el modal
-        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-        deleteModal.show();
-
-        // Cuando el usuario haga clic en "Eliminar", eliminar el elemento
-        document.getElementById('confirmDeleteBtn').onclick = function () {
-            deleteMantenimientos(id, loadMantenimientos);
-            deleteModal.hide(); // Ocultar el modal
-        };
+        // Usar SweetAlert para confirmación de eliminación
+        Swal.fire({
+            title: `¿Estás seguro de eliminar el mantenimiento de ${Name}?`,
+            text: "¡Esta acción no se puede deshacer!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteMantenimientos(id, loadMantenimientos);
+            }
+        });
     };
 
     // Función para enviar la solicitud DELETE al servidor
     function deleteMantenimientos(id, callback) {
-        fetch(`${apiUrl}/delete/${id}`,
-            { method: 'DELETE' })
+        fetch(`${apiUrl}/delete/${id}`, { method: 'DELETE' })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     callback(); // Recargar la lista si la eliminación fue exitosa
+                    Swal.fire('Eliminado!', 'El mantenimiento ha sido eliminado.', 'success');
                 } else {
-                    showErrorToast(data.error || 'Error al eliminar el mantenimiento.');
+                    showErrorAlert(data.error || 'Error al eliminar el mantenimiento.');
                 }
             })
             .catch(error => {
                 console.error('Error al eliminar mantenimiento:', error);
-                showErrorToast(data.error || 'Error en la conexión con el servidor.');
+                showErrorAlert('Error en la conexión con el servidor.');
             });
     }
 });

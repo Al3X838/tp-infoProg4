@@ -1,41 +1,3 @@
-// Función para mostrar un toast de error
-function showErrorToast(message) {
-    const toastContainer = document.getElementById('toast-container');
-
-    if (!toastContainer) {
-        console.error('¡Elemento del contenedor del Toast no encontrado!');
-        return;
-    }
-
-    const newToast = document.createElement('div');
-    newToast.className = 'toast align-items-center text-bg-danger border-0';
-    newToast.setAttribute('role', 'alert');
-    newToast.setAttribute('aria-live', 'assertive');
-    newToast.setAttribute('aria-atomic', 'true');
-
-    newToast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${message}</div>
-            <button
-                type="button"
-                class="btn-close btn-close-white me-2 m-auto"
-                data-bs-dismiss="toast"
-                aria-label="Close"></button>
-        </div>
-    `;
-
-    toastContainer.appendChild(newToast);
-
-    const bootstrapToast = new bootstrap.Toast(newToast, { delay: 5000 });
-    bootstrapToast.show();
-
-    newToast.addEventListener('hidden.bs.toast', () => {
-        newToast.remove();
-    });
-}
-
-
-
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = '/clientes'; // URL base para los endpoints
     const clientsList = document.getElementById('clientes-list');
@@ -44,13 +6,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para obtener datos de la API
     function fetchData() {
+        // Mostrar el popup de carga
+        Swal.fire({
+            title: 'Cargando...',
+            text: 'Por favor, espera mientras se cargan los datos.',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading(); // Activar el indicador de carga
+            }
+        });
+
         return fetch(apiUrl, { method: 'GET' })
             .then(response => response.json())
             .then(data => {
-                clientes = data.clientes || []; // Guardar datos en el array global
+                // Cierra el popup de carga
+                Swal.close();
+
+                if (data.success === false) {
+                    // Utilizar la función showErrorAlert para mostrar errores
+                    showErrorAlert(data.error || 'Error desconocido.');
+                } else {
+                    // Actualiza la lista de clientes
+                    clientes = data.clientes || [];
+                }
             })
             .catch(error => {
-                showErrorToast(error || 'Error al cargar los clientes.');
+                // Cierra el popup de carga y utiliza showErrorAlert para errores de conexión
+                Swal.close();
+                showErrorAlert(error.message || 'Error al cargar los clientes.');
             });
     }
 
@@ -134,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
         renderClientes(sortedClientes);
     };
 
-
     // Función para filtrar los clientes según el término de búsqueda
     window.filterClientes = function () {
         const searchValue = document.getElementById("searchField").value.toLowerCase();
@@ -160,18 +143,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para confirmar y eliminar un cliente
     window.confirmDelete = function (id, Name) {
-        // Establecer el nombre del cliente en el modal
-        document.getElementById('NameDeleteModal').textContent = Name;
-
-        // Mostrar el modal
-        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-        deleteModal.show();
-
-        // Cuando el usuario haga clic en "Eliminar", eliminar el elemento
-        document.getElementById('confirmDeleteBtn').onclick = function () {
-            deleteCliente(id, loadClientes);
-            deleteModal.hide(); // Ocultar el modal
-        };
+        // Usar SweetAlert para confirmación de eliminación
+        Swal.fire({
+            title: `¿Estás seguro de eliminar a ${Name}?`,
+            text: "¡Esta acción no se puede deshacer!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteCliente(id, loadClientes);
+            }
+        });
     };
 
     // Función para enviar la solicitud DELETE al servidor
@@ -182,13 +167,24 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.success) {
                     callback(); // Recargar la lista si la eliminación fue exitosa
+                    Swal.fire('Eliminado!', 'El cliente ha sido eliminado.', 'success');
                 } else {
-                    showErrorToast(data.error || 'Error al eliminar el cliente.');
+                    showErrorAlert(data.error || 'Error al eliminar el cliente.');
                 }
             })
             .catch(error => {
                 console.error('Error al eliminar cliente:', error);
-                showErrorToast(data.error || 'Error en la conexión con el servidor.');
+                showErrorAlert('Error en la conexión con el servidor.');
             });
+    }
+
+    // Función para mostrar alertas de error con SweetAlert
+    function showErrorAlert(message) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: message,
+            confirmButtonText: 'Aceptar'
+        });
     }
 });
