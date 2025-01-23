@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     window.eliminarCancha = function (id) {
-        fetch(`/api/canchas/${id}`, {
+        fetch(`/api/canchas/delete/${id}`, {
             method: 'DELETE'
         })
         .then(response => {
