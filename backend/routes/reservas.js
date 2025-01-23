@@ -15,9 +15,12 @@ const getConnection = async () => {
 
 // Función para manejar errores de la base de datos
 const handleDbError = (err, res, action) => {
-    const errorMessage = err?.odbcErrors?.[0]?.message || err.message || 'Unknown database error';
+    let errorMessage = err?.odbcErrors?.[0]?.message || err.message || 'Unknown database error';
+    if (errorMessage.includes("is referenced by foreign key")) {
+        errorMessage = "No se puede realizar la operación porque el registro está relacionado con otros datos.";
+    }
     console.error(`Error al ${action}:`, errorMessage);
-    res.status(500).json({ success: false, error: errorMessage });
+    res.status(500).json({ success: false, error: `Error al ${action}: ${errorMessage}` });
 };
 
 // Ruta para obtener todas las reservas
@@ -25,9 +28,20 @@ router.get('/', async (req, res) => {
     let connection = null;
     try {
         connection = await getConnection();
-        const result = await connection.query(`SELECT * FROM RESERVAS;`);
+        const result = await connection.query(`
+            SELECT 
+                R.*,
+                C.NOMBRE AS NOMBRE_CLIENTE,
+                C.APELLIDO AS APELLIDO_CLIENTE,
+                CA.NUMERO AS NUMERO_CANCHA 
+            FROM RESERVAS R
+            JOIN CLIENTES C ON R.ID_CLIENTE = C.ID_CLIENTE
+            JOIN CANCHAS CA ON R.ID_CANCHA = CA.ID_CANCHA;
+        `);
+        console.log('Query Result:', result); 
         res.json({ success: true, reservas: result });
     } catch (err) {
+        console.error('Full Error:', err); 
         handleDbError(err, res, 'obtener reservas');
     } finally {
         if (connection) {
@@ -42,7 +56,7 @@ router.get('/reserva/:id', async (req, res) => {
     let connection = null;
     try {
         connection = await getConnection();
-        const result = await connection.query(`SELECT 
+        const result = await connection.query(`SELECT
             R.*,
             C.NOMBRE AS NOMBRE_CLIENTE,
             C.APELLIDO AS APELLIDO_CLIENTE,
@@ -50,6 +64,7 @@ router.get('/reserva/:id', async (req, res) => {
             FROM RESERVAS R
             JOIN CLIENTES C ON R.ID_CLIENTE = C.ID_CLIENTE
             JOIN CANCHAS CA ON R.ID_CANCHA = CA.ID_CANCHA 
+
             WHERE ID_RESERVA = ?;`, [id]);
         if (result.length > 0) {
             res.json({ success: true, reserva: result[0] });
@@ -67,22 +82,22 @@ router.get('/reserva/:id', async (req, res) => {
 
 // Ruta para agregar una nueva reserva
 router.post('/add', async (req, res) => {
-    const { id_cliente, id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, estado_reserva, fecha_limite_cancelacion, estado_cancelacion, porcentaje_promocion } = req.body;
-    let connection = null;
+    const {
+        cliente, cancha, fechaInicio, fechaFin, horaInicio, horaFin,
+        estadoReserva, fechaLimiteCancelacion, estadoCancelacion, porcentajePromocion
+    } = req.body;
+
     try {
-        connection = await getConnection();
-        await connection.query(
-            `INSERT INTO RESERVAS (ID_CLIENTE, ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, ESTADO_RESERVA, FECHA_LIMITE_CANCELACION, ESTADO_CANCELACION, PORCENTAJE_PROMOCION) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-            [id_cliente, id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, estado_reserva, fecha_limite_cancelacion, estado_cancelacion, porcentaje_promocion]
+        const connection = await getConnection();
+        const result = await connection.query(`
+            INSERT INTO RESERVAS (ID_CLIENTE, ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, ESTADO_RESERVA, FECHA_LIMITE_CANCELACION, ESTADO_CANCELACION, PORCENTAJE_PROMOCION)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [parseInt(cliente), parseInt(cancha), fechaInicio, fechaFin, horaInicio, horaFin, estadoReserva, fechaLimiteCancelacion, estadoCancelacion, parseFloat(porcentajePromocion)]
         );
-        res.json({ success: true, message: 'Reserva agregada exitosamente' });
+        await connection.close();
+        res.json({ success: true });
     } catch (err) {
-        handleDbError(err, res, 'agregar una reserva');
-    } finally {
-        if (connection) {
-            await connection.close();
-        }
+        handleDbError(err, res, 'añadir la reserva');
     }
 });
 
