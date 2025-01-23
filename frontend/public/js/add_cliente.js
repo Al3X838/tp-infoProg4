@@ -1,3 +1,13 @@
+// Función para mostrar alertas de error usando SweetAlert
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('add-cliente-form');
 
@@ -34,11 +44,16 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Redirige a la lista de clientes si la operación fue exitosa
-                    window.location.href = '/list_clientes';
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: 'El cliente se ha agregado correctamente',
+                        confirmButtonText: 'Aceptar'
+                    }).then(() => {
+                        window.location.href = '/list_clientes';
+                    });
                 } else {
-                    // Muestra un mensaje de error usando SweetAlert
-                    showErrorAlert(data.error || 'Error al agregar el cliente.');
+                    showErrorAlert(data.error || 'Error desconocido.');
                 }
             })
             .catch(error => {
@@ -46,14 +61,4 @@ document.addEventListener('DOMContentLoaded', function () {
                 showErrorAlert(error.message || 'Error en la conexión con el servidor.');
             });
     });
-
-    // Función para mostrar alertas de error usando SweetAlert
-    function showErrorAlert(message) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: message,
-            confirmButtonText: 'Aceptar'
-        });
-    }
 });

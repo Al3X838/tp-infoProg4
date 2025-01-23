@@ -10,7 +10,6 @@
       rel="stylesheet"
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous" />
-
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
@@ -42,7 +41,7 @@
               <a class="nav-link" aria-current="page" href="/home">Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/list_tipo_suelo">Tipo Suelos</a>
+              <a class="nav-link active" href="/list_tipo_suelo">Tipo Suelos</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/list_deportes">Deportes</a>
@@ -54,7 +53,7 @@
               <a class="nav-link" href="/list_mantenimientos">Mantenimientos</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="/list_clientes">Clientes</a>
+              <a class="nav-link" href="/list_clientes">Clientes</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/list_reservas">Reservas</a>
@@ -72,61 +71,13 @@
       </nav>
     </div>
 
-    <!-- Modal Confirmacion de Eliminacion -->
-    <div
-      class="modal fade"
-      id="deleteModal"
-      tabindex="-1"
-      aria-labelledby="deleteModalLabel"
-      aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteModalLabel">
-              Confirmar eliminación
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            ¿Estás seguro de que quieres eliminar este tipo de Suelo?
-            <br />
-            <strong id="NameDeleteModal"></strong>
-            <!-- Nombre del item -->
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal">
-              Cancelar
-            </button>
-            <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="container container-xl mt-4">
       <!-- Título y botón para agregar el tipo de suelo -->
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Tipo de Suelo</h2>
-        <a class="btn btn-primary" href="/add_tipo_suelo"> Añadir Tipo de Suelo </a>
-      </div>
-
-      <!-- Campo de búsqueda -->
-      <div class="mb-3">
-        <input
-          type="text"
-          id="searchField"
-          class="form-control"
-          placeholder="Buscar tipos de Suelo..."
-          oninput="filterTiposDeSuelos()" />
+        <a class="btn btn-primary" href="/add_tipo_suelo">
+          Añadir Tipo de Suelo
+        </a>
       </div>
 
       <!-- Tabla -->
@@ -146,14 +97,11 @@
       </div>
     </div>
 
-    <div
-      class="toast-container position-fixed bottom-0 end-0 p-3"
-      id="toast-container"></div>
-
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/list_tipo_suelo.js"></script>
     <script src="js/script.js"></script>
   </body>

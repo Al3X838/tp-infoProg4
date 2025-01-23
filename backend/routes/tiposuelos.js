@@ -55,7 +55,7 @@ router.get('/tiposuelo/:id', async (req, res) => {
 //Falta hacer
 // Ruta para agregar un nuevo Tipo De Suelo
 router.post('/add', async (req, res) => {
-    const {nombre} = req.body;
+    const { nombre } = req.body;
     try {
         const connection = await getConnection();
         await connection.query(`INSERT INTO TIPO_SUELOS (NOMBRE) VALUES (?)`, [nombre]);
@@ -70,10 +70,10 @@ router.post('/add', async (req, res) => {
 // Ruta para actualizar un tipo de suelo existente
 router.post('/update/:id', async (req, res) => {
     const { id } = req.params;
-    const {nombre} = req.body;
+    const { nombre } = req.body;
     try {
         const connection = await getConnection();
-        await connection.query(`UPDATE TIPO_SUELO SET NOMBRE = ? WHERE ID_TIPO_SUELO = ?`, [nombre, id]);
+        await connection.query(`UPDATE TIPO_SUELOS SET NOMBRE = ? WHERE ID_TIPO_SUELO = ?`, [nombre, id]);
         await connection.close();
         res.json({ success: true });
     } catch (err) {
@@ -87,7 +87,7 @@ router.delete('/delete/:id', async (req, res) => {
     let connection = null;
     try {
         connection = await getConnection();
-        await connection.query(`DELETE FROM TIPO_SUELO WHERE ID_TIPO_SUELO = ?`, [id]);
+        await connection.query(`DELETE FROM TIPO_SUELOS WHERE ID_TIPO_SUELO = ?`, [id]);
         res.json({ success: true });
     } catch (err) {
         handleDbError(err, res, 'deleting tiposuelo');

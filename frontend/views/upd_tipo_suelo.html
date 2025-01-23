@@ -42,7 +42,7 @@
               <a class="nav-link" aria-current="page" href="/home">Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/list_tipo_suelo">Tipo Suelos</a>
+              <a class="nav-link active" href="/list_tipo_suelo">Tipo Suelos</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/list_deportes">Deportes</a>
@@ -54,7 +54,7 @@
               <a class="nav-link" href="/list_mantenimientos">Mantenimientos</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="/list_clientes">Clientes</a>
+              <a class="nav-link" href="/list_clientes">Clientes</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/list_reservas">Reservas</a>
@@ -78,7 +78,9 @@
         <h2>Actualizar Tipo de Suelo</h2>
       </div>
       <form id="update-tipoSuelo-form">
-        <label for="id-tipoSuelo" class="form-label">ID del Tipo de Suelo:</label>
+        <label for="id-tipoSuelo" class="form-label"
+          >ID del Tipo de Suelo:</label
+        >
         <input
           class="form-control"
           type="text"
@@ -91,25 +93,22 @@
         <input
           class="form-control"
           type="text"
-          placeholder="Nombre del Tipo de Suelo"
+          placeholder="Tipo de Suelo"
           aria-label="default input example"
           id="nombre"
           required />
 
         <button type="submit" class="btn btn-primary my-3">
-          <span class="bi bi-plus"> </span>Actualizar 
+          <span class="bi bi-plus"> </span>Actualizar
         </button>
       </form>
     </div>
-
-    <div
-      class="toast-container position-fixed bottom-0 end-0 p-3"
-      id="toast-container"></div>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/upd_tipo_suelo.js"></script>
     <script src="js/script.js"></script>
   </body>
