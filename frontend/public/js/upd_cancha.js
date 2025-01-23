@@ -43,10 +43,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('numero').value = data.cancha.NUMERO;
                     document.getElementById('ubicacion').value = data.cancha.UBICACION;
                     document.getElementById('tipo_suelo').value = data.cancha.TIPO_SUELO;
-                    document.getElementById('luminica').checked = data.cancha.LUMINICA;
-                    document.getElementById('bebedero').checked = data.cancha.BEBEDERO;
-                    document.getElementById('banos').checked = data.cancha.BANOS;
-                    document.getElementById('cambiador').checked = data.cancha.CAMBIADOR;
+                    document.getElementById('luminica').checked = data.cancha.LUMINICA === 'S';
+                    document.getElementById('bebedero').checked = data.cancha.BEBEDERO === 'S';
+                    document.getElementById('banos').checked = data.cancha.BANOS === 'S';
+                    document.getElementById('cambiador').checked = data.cancha.CAMBIADOR === 'S';
                     document.getElementById('estado').value = data.cancha.ESTADO;
                 } else {
                     Swal.fire({
@@ -85,31 +85,31 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedCanchaData)
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Actualizado!',
-                    text: 'La cancha ha sido actualizada correctamente.'
-                }).then(() => {
-                    window.location.href = '/list_canchas'; // Redirige tras el éxito
-                });
-            } else {
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Actualizado!',
+                        text: 'La cancha ha sido actualizada correctamente.'
+                    }).then(() => {
+                        window.location.href = '/list_canchas'; // Redirige tras el éxito
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error || 'Error al actualizar la cancha.'
+                    });
+                }
+            })
+            .catch(error => {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: data.error || 'Error al actualizar la cancha.'
+                    text: 'Error en la conexión con el servidor.'
                 });
-            }
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error en la conexión con el servidor.'
+                console.error('Error al actualizar cancha:', error);
             });
-            console.error('Error al actualizar cancha:', error);
-        });
     });
 });

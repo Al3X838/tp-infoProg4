@@ -1,80 +1,183 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Agregar Nueva Cancha</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
-        <h1 class="mb-4">Agregar Nueva Cancha</h1>
-        <form id="addCanchaForm" class="needs-validation" novalidate>
-            <!-- Número -->
-            <div class="form-group mb-3">
-                <label for="numero">Número:</label>
-                <input type="number" id="numero" name="NUMERO" class="form-control" min="1" required>
-            </div>
-
-            <!-- Ubicación -->
-            <div class="form-group mb-3">
-                <label for="ubicacion">Ubicación:</label>
-                <input type="text" id="ubicacion" name="UBICACION" class="form-control" required>
-            </div>
-
-            <!-- Tipo de Suelo -->
-            <div class="form-group mb-3">
-                <label for="tipo_suelo">Tipo de Suelo:</label>
-                <select id="tipo_suelo" name="TIPO_SUELO" class="form-select" required>
-                    <option value="">Seleccione el tipo de suelo</option>
-                </select>
-            </div>
-
-            <!-- Luminica -->
-            <div class="form-group form-check mb-3">
-                <input type="checkbox" id="luminica" name="LUMINICA" class="form-check-input">
-                <label for="luminica" class="form-check-label">Luminica</label>
-            </div>
-
-            <!-- Bebedero -->
-            <div class="form-group form-check mb-3">
-                <input type="checkbox" id="bebedero" name="BEBEDERO" class="form-check-input">
-                <label for="bebedero" class="form-check-label">Bebedero</label>
-            </div>
-
-            <!-- Baños -->
-            <div class="form-group form-check mb-3">
-                <input type="checkbox" id="banos" name="BANOS" class="form-check-input">
-                <label for="banos" class="form-check-label">Baños</label>
-            </div>
-
-            <!-- Cambiador -->
-            <div class="form-group form-check mb-3">
-                <input type="checkbox" id="cambiador" name="CAMBIADOR" class="form-check-input">
-                <label for="cambiador" class="form-check-label">Cambiador</label>
-            </div>
-
-            <!-- Estado -->
-            <div class="form-group mb-3">
-                <label for="estado">Estado:</label>
-                <select id="estado" name="ESTADO" class="form-select" required>
-                    <option value="">Seleccione el estado</option>
-                    <option value="D">Disponible</option>
-                    <option value="I">No disponible</option>
-                </select>
-            </div>
-
-            <!-- Botones de acción -->
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Guardar Cancha</button>
-                <button type="button" class="btn btn-secondary" onclick="window.location.href='/list_canchas'">Cancelar</button>
-            </div>
-        </form>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="shadow navbar-div">
+      <div class="text-center">
+        <a href="/home">
+          <img src="images/Logo.png" alt="Logo" class="logo" />
+        </a>
+      </div>
+      <nav class="navbar navbar-expand-lg">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-center"
+          id="navbarNav">
+          <ul class="navbar-nav text-center">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/home">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_tipo_suelo">Tipo Suelos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_deportes">Deportes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/list_canchas">Canchas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_mantenimientos">Mantenimientos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_clientes">Clientes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_reservas">Reservas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_pagos">Pagos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-danger" href="/salir"
+                ><i class="bi bi-box-arrow-right"></i><strong> Salir</strong></a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
     </div>
-    <script src="/js/add_cancha.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+    <div class="container container-large mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Agregar Nueva Cancha</h2>
+      </div>
+      <form id="addCanchaForm" class="needs-validation" novalidate>
+        <!-- Número -->
+        <div class="form-group mb-3">
+          <label for="numero">Número:</label>
+          <input
+            type="number"
+            id="numero"
+            name="NUMERO"
+            class="form-control"
+            min="1"
+            required />
+        </div>
 
-</body>
+        <!-- Ubicación -->
+        <div class="form-group mb-3">
+          <label for="ubicacion">Ubicación:</label>
+          <input
+            type="text"
+            id="ubicacion"
+            name="UBICACION"
+            class="form-control"
+            required />
+        </div>
+
+        <!-- Tipo de Suelo -->
+        <div class="form-group mb-3">
+          <label for="tipo_suelo">Tipo de Suelo:</label>
+          <select
+            id="tipo_suelo"
+            name="TIPO_SUELO"
+            class="form-select"
+            required>
+            <option value="">Seleccione el tipo de suelo</option>
+          </select>
+        </div>
+
+        <!-- Luminica -->
+        <div class="form-group form-check mb-3">
+          <input
+            type="checkbox"
+            id="luminica"
+            name="LUMINICA"
+            class="form-check-input" />
+          <label for="luminica" class="form-check-label">Luminica</label>
+        </div>
+
+        <!-- Bebedero -->
+        <div class="form-group form-check mb-3">
+          <input
+            type="checkbox"
+            id="bebedero"
+            name="BEBEDERO"
+            class="form-check-input" />
+          <label for="bebedero" class="form-check-label">Bebedero</label>
+        </div>
+
+        <!-- Baños -->
+        <div class="form-group form-check mb-3">
+          <input
+            type="checkbox"
+            id="banos"
+            name="BANOS"
+            class="form-check-input" />
+          <label for="banos" class="form-check-label">Baños</label>
+        </div>
+
+        <!-- Cambiador -->
+        <div class="form-group form-check mb-3">
+          <input
+            type="checkbox"
+            id="cambiador"
+            name="CAMBIADOR"
+            class="form-check-input" />
+          <label for="cambiador" class="form-check-label">Cambiador</label>
+        </div>
+
+        <!-- Estado -->
+        <div class="form-group mb-3">
+          <label for="estado">Estado:</label>
+          <select id="estado" name="ESTADO" class="form-select" required>
+            <option value="">Seleccione el estado</option>
+            <option value="D">Disponible</option>
+            <option value="I">No disponible</option>
+          </select>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Guardar Cancha</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="window.location.href='/list_canchas'">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/add_cancha.js"></script>
+  </body>
 </html>

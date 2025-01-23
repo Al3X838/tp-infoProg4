@@ -1,95 +1,120 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reserva de Canchas</title>
-    <link rel="icon" href="images/Logo.png" type="image/png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.1/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="icon" href="images/Logo.png" type="image/png" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.1/dist/sweetalert2.min.css"
+      rel="stylesheet" />
 
     <style>
-        .card {
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        .card-img-top {
-            height: 200px;
-            object-fit: cover;
-        }
-        .card.no-disponible {
-            filter: grayscale(100%);
-            opacity: 0.7;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+      .card {
+        transition: all 0.3s ease;
+        height: 100%;
+      }
+      .card-img-top {
+        height: 200px;
+        object-fit: cover;
+      }
+      .card.no-disponible {
+        filter: grayscale(100%);
+        opacity: 0.7;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="shadow navbar-div">
-        <div class="text-center">
-            <a href="/home">
-                <img src="images/Logo.png" alt="Logo" class="logo">
-            </a>
+      <div class="text-center">
+        <a href="/home">
+          <img src="images/Logo.png" alt="Logo" class="logo" />
+        </a>
+      </div>
+      <nav class="navbar navbar-expand-lg">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-center"
+          id="navbarNav">
+          <ul class="navbar-nav text-center">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/home">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_tipo_suelo">Tipo Suelos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_deportes">Deportes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/list_canchas">Canchas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_mantenimientos">Mantenimientos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_clientes">Clientes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_reservas">Reservas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_pagos">Pagos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-danger" href="/salir"
+                ><i class="bi bi-box-arrow-right"></i><strong> Salir</strong></a
+              >
+            </li>
+          </ul>
         </div>
-        <nav class="navbar navbar-expand-lg">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-                <ul class="navbar-nav text-center">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/home">Inicio</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/list_tipo_suelo">Tipo Suelos</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/list_deportes">Deportes</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/list_canchas">Canchas</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/list_mantenimientos">Mantenimientos</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link active" href="/list_clientes">Clientes</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/list_reservas">Reservas</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/list_pagos">Pagos</a>
-                      </li>
-                    <li class="nav-item"><a class="nav-link text-danger" href="/salir"><i class="bi bi-box-arrow-right"></i><strong> Salir</strong></a></li>
-                </ul>
-            </div>
-        </nav>
+      </nav>
     </div>
 
     <div class="container container-xl mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2><i class="fas fa-futbol"></i> Canchas Disponibles</h2>
-            <a class="btn btn-primary" href="/add_cancha">Agregar Cancha</a>
-        </div>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="fas fa-futbol"></i> Canchas Disponibles</h2>
+        <a class="btn btn-primary" href="/add_cancha">Agregar Cancha</a>
+      </div>
 
-        <div id="error-message" class="alert alert-danger d-none"></div>
+      <div id="error-message" class="alert alert-danger d-none"></div>
 
-        <div class="row" id="canchas-list">
-            <!-- Cards dinámicas de canchas -->
-        </div>
+      <div class="row" id="canchas-list">
+        <!-- Cards dinámicas de canchas -->
+      </div>
     </div>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toast-container"></div>
+    <div
+      class="toast-container position-fixed bottom-0 end-0 p-3"
+      id="toast-container"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"></script>
     <script src="js/list_canchas.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.1/dist/sweetalert2.all.min.js"></script>
-
-</body>
+  </body>
 </html>
