@@ -51,7 +51,7 @@ router.get('/cancha/:id', async (req, res) => {
             SELECT c.*, ts.NOMBRE as NOMBRE_TIPO_SUELO 
             FROM CANCHAS c
             LEFT JOIN TIPO_SUELOS ts ON c.TIPO_SUELO = ts.ID_TIPO_SUELO
-            WHERE c.ID_CANCHA = ?`, 
+            WHERE c.ID_CANCHA = ?`,
             [id]
         );
         await connection.close();
@@ -67,42 +67,64 @@ router.get('/cancha/:id', async (req, res) => {
 });
 // agregar cancha
 router.post('/add', async (req, res) => {
-    const { 
-        NUMERO, 
-        UBICACION, 
-        TIPO_SUELO, 
-        LUMINICA, 
-        BEBEDERO, 
-        BANOS, 
-        CAMBIADOR, 
-        ESTADO 
+    const {
+        NUMERO,
+        UBICACION,
+        TIPO_SUELO,
+        LUMINICA,
+        BEBEDERO,
+        BANOS,
+        CAMBIADOR,
+        ESTADO
     } = req.body;
 
     try {
         const connection = await getConnection();
+
+        // Agregar la nueva cancha
         await connection.query(
             `INSERT INTO CANCHAS 
             (NUMERO, UBICACION, TIPO_SUELO, LUMINICA, BEBEDERO, BANOS, CAMBIADOR, ESTADO) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
             [NUMERO, UBICACION, TIPO_SUELO, LUMINICA, BEBEDERO, BANOS, CAMBIADOR, ESTADO]
         );
+
+        // Obtener la ID de la última cancha agregada
+        const [result] = await connection.query(
+            `SELECT ID_CANCHA FROM CANCHAS WHERE NUMERO = ? ORDER BY ID_CANCHA DESC`, [NUMERO]
+        );
+
+        if (!result || result.length === 0) {
+            console.log('No se pudo obtener la ID de la nueva cancha.');
+        }
+
+        const id_cancha = result.ID_CANCHA;
+
         await connection.close();
-        res.json({ success: true, message: 'Cancha agregada correctamente.' });
+
+        // Devolver la respuesta exitosa con la nueva ID
+        res.json({
+            success: true,
+            message: 'Cancha agregada correctamente.',
+            id_cancha
+        });
     } catch (err) {
         handleDbError(err, res, 'agregando cancha');
     }
 });
+
+
 // actualizar cancha
 router.put('/update/:id', async (req, res) => {
-    const { 
-        NUMERO, 
-        UBICACION, 
-        TIPO_SUELO, 
-        LUMINICA, 
-        BEBEDERO, 
-        BANOS, 
-        CAMBIADOR, 
-        ESTADO 
+    const {
+        NUMERO,
+        UBICACION,
+        TIPO_SUELO,
+        LUMINICA,
+        BEBEDERO,
+        BANOS,
+        CAMBIADOR,
+        ESTADO
     } = req.body;
     const { id } = req.params;
 
@@ -111,7 +133,7 @@ router.put('/update/:id', async (req, res) => {
         await connection.query(
             `UPDATE CANCHAS 
             SET NUMERO = ?, UBICACION = ?, TIPO_SUELO = ?, LUMINICA = ?, BEBEDERO = ?, BANOS = ?, CAMBIADOR = ?, ESTADO = ? 
-            WHERE ID_CANCHA = ?`, 
+            WHERE ID_CANCHA = ?`,
             [NUMERO, UBICACION, TIPO_SUELO, LUMINICA, BEBEDERO, BANOS, CAMBIADOR, ESTADO, id]
         );
         await connection.close();
@@ -128,7 +150,7 @@ router.delete('/delete/:id', async (req, res) => {
         const connection = await getConnection();
         await connection.query(`DELETE FROM CANCHAS WHERE ID_CANCHA = ?`, [id]);
         await connection.close();
-        res.json({ success: true});
+        res.json({ success: true });
     } catch (err) {
         handleDbError(err, res, 'eliminando cancha');
     }

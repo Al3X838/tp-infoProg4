@@ -12,6 +12,7 @@ const mantenimientosRouter = require('./routes/mantenimientos'); // Ruta para ma
 const tiposuelosRouter = require('./routes/tiposuelos'); // Ruta para tipos de suelos
 const reservaRouter = require('./routes/reservas'); // Ruta para reservas
 const deporteRouter = require('./routes/deportes'); // Ruta para deportes
+const canchaDeporteRouter = require('./routes/canchadeporte'); // Ruta para canchaDeportes
 
 const app = express();
 const PORT = 3000;
@@ -159,6 +160,7 @@ app.use('/mantenimientos', mantenimientosRouter); //Ruta para mantenimientos
 app.use('/tiposuelos', tiposuelosRouter); //Ruta para tipos de suelos
 app.use('/reservas', reservaRouter); //Ruta para reservas
 app.use('/deportes', deporteRouter); //Ruta para deportes
+app.use('/canchadeporte', canchaDeporteRouter); //Ruta para canchaDeportes
 
 
 // Ruta para 404
