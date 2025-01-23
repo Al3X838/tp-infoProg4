@@ -42,12 +42,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para renderizar la tabla
     function renderDeportes(deportes) {
         clientsList.innerHTML = deportes.map(deporte => `
-            <tr id="tiposuelo-row-${deporte.ID_DEPORTE}">
+            <tr>
                 <th>${deporte.ID_DEPORTE}</th>
                 <td>${deporte.NOMBRE || 'N/A'}</td>
                 <td>
                   <div class="d-flex gap-2">
-                    <button class="btn btn-warning bi bi-pencil" onclick="editDeportes(${deporte.ID_DEPORTE})"></button>
+                    <button class="btn btn-warning bi bi-pencil" onclick="editDeporte(${deporte.ID_DEPORTE})"></button>
                     <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${deporte.ID_DEPORTE}, '${(deporte.NOMBRE)}')"></button>
                   </div>
                 </td>
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Cargar tabla
     loadDeportes();
 
-    window.editTipoSuelo = function (id) {
+    window.editDeporte = function (id) {
         window.location.href = `../upd_deporte?id=${id}`;
     };
 

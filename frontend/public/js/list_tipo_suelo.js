@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para renderizar la tabla
     function renderTipoSuelos(tiposuelos) {
         clientsList.innerHTML = tiposuelos.map(tiposuelos => `
-            <tr id="tiposuelo-row-${tiposuelos.ID_TIPO_SUELO}">
+            <tr>
                 <th>${tiposuelos.ID_TIPO_SUELO}</th>
                 <td>${tiposuelos.NOMBRE || 'N/A'}</td>
                 <td>
