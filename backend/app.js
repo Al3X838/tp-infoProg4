@@ -10,6 +10,7 @@ const clientesRouter = require('./routes/clientes'); // Ruta para clientes
 const canchasRouter = require('./routes/canchas'); // Ruta de las canchas
 const mantenimientosRouter = require('./routes/mantenimientos'); // Ruta para mantenimientos
 const tiposuelosRouter = require('./routes/tiposuelos'); // Ruta para tipos de suelos
+const reservaRouter = require('./routes/reservas'); // Ruta para reservas
 
 const app = express();
 const PORT = 3000;
@@ -112,7 +113,7 @@ app.get('/upd_mantenimiento', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/upd_mantenimiento.html'));
 });
 
-app.get('/list_tipo_suelos', isAuthenticated, (req, res) => {
+app.get('/list_tipo_suelo', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/list_tipo_suelo.html'));
 });
 
@@ -124,6 +125,14 @@ app.get('/upd_tipo_suelo', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/upd_tipo_suelo.html'));
 });
 
+app.get('/list_reservas', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/list_reservas.html'));
+});
+
+app.get('/add_reserva', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/add_reserva.html'));
+});
+
 
 // Usar el microservicio de conexión
 app.use('/connect', connectRouter);
@@ -132,6 +141,7 @@ app.use('/clientes', clientesRouter);  //Ruta para clientes
 app.use('/api/canchas', canchasRouter);
 app.use('/mantenimientos', mantenimientosRouter); //Ruta para mantenimientos
 app.use('/tiposuelos', tiposuelosRouter); //Ruta para tipos de suelos
+app.use('/reservas', reservaRouter); //Ruta para reservas
 
 
 // Ruta para 404
