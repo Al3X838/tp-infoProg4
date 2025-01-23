@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const clienteSelect = document.getElementById('cliente');
     const canchaSelect = document.getElementById('cancha');
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedCanchaId = urlParams.get('cancha');
+
     const loadClientes = () => {
         if (!clienteSelect) return;
 
@@ -23,9 +26,16 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(data => {
                 console.log('Data received:', data);
-                clienteSelect.innerHTML = '<option value="">Seleccione el cliente</option>';
 
                 if (data.success && Array.isArray(data.clientes)) {
+
+                    const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.textContent = 'Selecciona un cliente';
+                        defaultOption.selected = true;
+                        defaultOption.disabled = true;
+                        clienteSelect.appendChild(defaultOption);
+
                     data.clientes.forEach(cliente => {
                         const option = document.createElement('option');
                         option.value = cliente.ID_CLIENTE;
@@ -36,15 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     throw new Error('No hay clientes disponibles');
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudieron cargar los clientes',
-                    confirmButtonText: 'Aceptar'
-                });
-            });
+            .catch(error => console.error('Error loading clients:', error));
     };
 
     const loadCanchas = () => {
@@ -57,28 +59,33 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(data => {
                 console.log('Data received:', data);
-                canchaSelect.innerHTML = '<option value="">Seleccione la cancha</option>';
 
                 if (data.success && Array.isArray(data.canchas)) {
+
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Selecciona una cancha';
+                    defaultOption.selected = true;
+                    defaultOption.disabled = true;
+                    canchaSelect.appendChild(defaultOption);
+
                     data.canchas.forEach(cancha => {
-                        const option = document.createElement('option');
-                        option.value = cancha.ID_CANCHA;
-                        option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION}`;
-                        canchaSelect.appendChild(option);
+                        if (cancha.ESTADO === 'D') {
+                            const option = document.createElement('option');
+                            option.value = cancha.ID_CANCHA;
+                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION}`;
+                            canchaSelect.appendChild(option);
+                        }
                     });
+
+                    if (selectedCanchaId) {
+                        canchaSelect.value = selectedCanchaId;
+                    }
                 } else {
                     throw new Error('No hay canchas disponibles');
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudieron cargar las canchas',
-                    confirmButtonText: 'Aceptar'
-                });
-            });
+            .catch(error => console.error('Error loading canchas:', error));
     };
 
     form.addEventListener('submit', function (event) {
@@ -94,9 +101,9 @@ document.addEventListener('DOMContentLoaded', function () {
             estadoReserva: document.getElementById('estadoReserva').value,
             fechaLimiteCancelacion: document.getElementById('fechaLimiteCancelacion').value,
             estadoCancelacion: document.getElementById('estadoCancelacion').value,
-            porcentajePromocion: document.getElementById('porcentajePromocion').value
+            porcentajePromocion: parseFloat(document.getElementById('porcentajePromocion').value) || 0
         };
-
+        console.log('Reserva data:', reservaData);
         fetch('/reservas/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -117,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     text: 'La reserva se ha agregado correctamente',
                     confirmButtonText: 'Aceptar'
                 }).then(() => {
-                    window.location.href = '/list_reservas.html';
+                    window.location.href = '/list_reservas';
                 });
             }
         })
