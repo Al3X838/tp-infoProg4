@@ -37,10 +37,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         clienteSelect.appendChild(defaultOption);
 
                     data.clientes.forEach(cliente => {
+                        if (cliente.ESTADO === 'A') {
                         const option = document.createElement('option');
                         option.value = cliente.ID_CLIENTE;
                         option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO}`;
                         clienteSelect.appendChild(option);
+                        }
                     });
                 } else {
                     throw new Error('No hay clientes disponibles');
