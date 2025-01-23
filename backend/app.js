@@ -138,6 +138,17 @@ app.get('/upd_reserva', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/upd_reserva.html'));
 });
 
+app.get('/list_deportes', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/list_deportes.html'));
+});
+
+app.get('/add_deporte', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/add_deporte.html'));
+});
+
+app.get('/upd_deporte', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/upd_deporte.html'));
+});
 
 // Usar el microservicio de conexión
 app.use('/connect', connectRouter);
