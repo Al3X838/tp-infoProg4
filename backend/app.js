@@ -11,6 +11,7 @@ const canchasRouter = require('./routes/canchas'); // Ruta de las canchas
 const mantenimientosRouter = require('./routes/mantenimientos'); // Ruta para mantenimientos
 const tiposuelosRouter = require('./routes/tiposuelos'); // Ruta para tipos de suelos
 const reservaRouter = require('./routes/reservas'); // Ruta para reservas
+const deporteRouter = require('./routes/deportes'); // Ruta para deportes
 
 const app = express();
 const PORT = 3000;
@@ -146,6 +147,7 @@ app.use('/api/canchas', canchasRouter);
 app.use('/mantenimientos', mantenimientosRouter); //Ruta para mantenimientos
 app.use('/tiposuelos', tiposuelosRouter); //Ruta para tipos de suelos
 app.use('/reservas', reservaRouter); //Ruta para reservas
+app.use('/deportes', deporteRouter); //Ruta para deportes
 
 
 // Ruta para 404
