@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
         'default': '/images/canchaDefault.jpg'
     };
 
-    // sin terminar. agregar tipoCancha maybe
     function getImagenCancha(TIPO_SUELO) {
         return imagenesCanchas[TIPO_SUELO] || imagenesCanchas.default;
     }
@@ -37,13 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <strong>Tipo:</strong> ${cancha.NOMBRE_TIPO_SUELO}
                                     </p>
                                     <div class="d-grid gap-2">
-                                        <!-- Solo este botón cambia según el estado -->
                                         <button class="btn ${cancha.ESTADO === 'D' ? 'btn-primary' : 'btn-secondary'}" 
                                                 onclick="reservarCancha(${cancha.ID_CANCHA})"
                                                 ${cancha.ESTADO !== 'D' ? 'disabled' : ''}>
                                             <i class="fas fa-calendar-check"></i> Reservar
                                         </button>
-                                        <!-- Estos botones mantienen su estilo original -->
                                         <button class="btn btn-info text-white" onclick="mostrarDetalles(${cancha.ID_CANCHA})">
                                             <i class="fas fa-info-circle"></i> Ver detalles
                                         </button>
@@ -78,6 +75,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('error-message').classList.remove('d-none');
             });
     }
+
+    window.reservarCancha = function (id) {
+        window.location.href = `/add_reserva?cancha=${id}`;
+    };
+
     window.editCancha = function (id) {
         window.location.href = `/upd_cancha?id=${id}`;
     };
