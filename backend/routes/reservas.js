@@ -38,10 +38,10 @@ router.get('/', async (req, res) => {
             JOIN CLIENTES C ON R.ID_CLIENTE = C.ID_CLIENTE
             JOIN CANCHAS CA ON R.ID_CANCHA = CA.ID_CANCHA;
         `);
-        console.log('Query Result:', result); 
+         
         res.json({ success: true, reservas: result });
     } catch (err) {
-        console.error('Full Error:', err); 
+         
         handleDbError(err, res, 'obtener reservas');
     } finally {
         if (connection) {
