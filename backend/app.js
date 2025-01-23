@@ -133,6 +133,10 @@ app.get('/add_reserva', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/add_reserva.html'));
 });
 
+app.get('/upd_reserva', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/upd_reserva.html'));
+});
+
 
 // Usar el microservicio de conexión
 app.use('/connect', connectRouter);
