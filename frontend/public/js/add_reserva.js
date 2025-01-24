@@ -75,7 +75,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (cancha.ESTADO === 'D') {
                             const option = document.createElement('option');
                             option.value = cancha.ID_CANCHA;
-                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION}`;
+                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *Disponible*`;
+                            canchaSelect.appendChild(option);
+                        }else{
+                            const option = document.createElement('option');
+                            option.value = cancha.ID_CANCHA;
+                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *No Disponible en este momento*`;
                             canchaSelect.appendChild(option);
                         }
                     });
