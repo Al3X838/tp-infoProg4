@@ -106,6 +106,7 @@
                             <th onclick="sortTable(8)">Fecha Límite Cancelación</th>
                             <th onclick="sortTable(9)">Estado Cancelación</th>
                             <th onclick="sortTable(10)">Porcentaje Promoción</th>
+                            <th onclick="sortTable(11)">Reembolsable</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -122,5 +123,15 @@
             crossorigin="anonymous"></script>
         <script src="js/list_reservas.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+        </script>
+        <script type="text/javascript">
+            (function () {
+                emailjs.init({
+                    publicKey: "RloVlsEjuRN3Mdixa",
+                });
+            })();
+        </script>
+
     </body>
 </html>
