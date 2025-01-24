@@ -38,10 +38,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${reserva.FECHA_LIMITE_CANCELACION}</td>
                 <td>${reserva.ESTADO_CANCELACION === 'S' ? 'Cancelado' : 'Pago pendiente'}</td>
                 <td>${reserva.PORCENTAJE_PROMOCION}%</td>
+                <td>${reserva.REEMBOLSABLE === 'S' ? 'Si' : 'No'}</td>
                 <td>
                     <div class="d-flex gap-2">
                         <button class="btn btn-warning bi bi-pencil" onclick="editReserva(${reserva.ID_RESERVA})"></button>
                         <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${reserva.ID_RESERVA})"></button>
+                        ${reserva.ESTADO_RESERVA === 'P' ? `<button class="btn btn-success" onclick="confirmReserva(${reserva.ID_RESERVA})">Confirmar</button>` : ''}
+
                     </div>
                 </td>
             </tr>
@@ -119,6 +122,45 @@ document.addEventListener('DOMContentLoaded', function () {
                 showErrorAlert('Error en la conexión con el servidor.');
             });
     }
+
+    window.confirmReserva = function (id) {
+        fetch(`${apiUrl}/confirm/${id}`, { method: 'PUT' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    fetchData();
+                    Swal.fire('Confirmado!', 'La reserva ha sido confirmada.', 'success');
+                    console.log(data.reserva); // Verifica aquí el contenido de `reserva`
+                    sendEmail(data.reserva);
+                } else {
+                    showErrorAlert(data.error || 'Error al confirmar la reserva.');
+                }
+            })
+            .catch(error => {
+                showErrorAlert('Error en la conexión con el servidor.');
+            });
+    };
+
+    // Función para enviar un correo electrónico utilizando EmailJS
+    function sendEmail(reserva) {
+        console.log("reserva",reserva);
+        emailjs.init('RloVlsEjuRN3Mdixa'); // Reemplaza con tu User ID de EmailJS
+        const templateParams = {
+            to_name: reserva.NOMBRE_CLIENTE,
+            to_email: reserva.EMAIL_CLIENTE,
+            message: `Su reserva ha sido confirmada. Detalles de la reserva:\nFecha: ${reserva.FECHA_INICIO} - ${reserva.FECHA_FIN}\nHora: ${reserva.HORA_INICIO} - ${reserva.HORA_FIN}`
+        };
+
+        emailjs.send('service_tu7zeyh', 'template_3u6kqap', templateParams)
+            .then(response => {
+                console.log('Correo enviado exitosamente:', response.status, response.text);
+            })
+            .catch(error => {
+                console.error('Error al enviar el correo:', error);
+            });
+    }
+
+
 
     // Función para mostrar alertas de error
     function showErrorAlert(message) {
