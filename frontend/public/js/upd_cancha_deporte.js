@@ -1,3 +1,23 @@
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Cargando...',
+        text: 'Estamos obteniendo los datos de las canchas.',
+        allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
+        didOpen: () => {
+            Swal.showLoading(); // Muestra el spinner de carga
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const tabla = document.getElementById('tablaDeportes').getElementsByTagName('tbody')[0];
     const btnAgregarFila = document.getElementById('btnAgregarFila');
@@ -13,25 +33,31 @@ document.addEventListener('DOMContentLoaded', function () {
             if (data.success && Array.isArray(data.deportes)) {
                 listaDeportes = data.deportes; // Guardar la lista de deportes
             } else {
-                console.error('Error al cargar los deportes disponibles.');
+                showErrorAlert('Error al cargar los deportes disponibles.');
             }
         } catch (error) {
+            showErrorAlert('Error al conectarse con el servidor para cargar los deportes.');
             console.error('Error al conectarse con el servidor:', error);
         }
     }
 
     // Función para cargar los deportes asignados a la cancha actual
     async function cargarDeportesDeCancha() {
+        showLoadingAlert();
         try {
             const response = await fetch(`/canchadeporte/cancha/${canchaId}`);
             const data = await response.json();
             if (data.success && Array.isArray(data.canchaDeportes)) {
                 // Añadir cada deporte existente como fila en la tabla
                 data.canchaDeportes.forEach(deporte => agregarFila(deporte));
+                Swal.close(); // Cierra el popup de carga
             } else {
-                console.error('No se encontraron deportes para esta cancha.');
+                Swal.close();
+                showErrorAlert(data.error || 'No se encontraron deportes para esta cancha.');
             }
         } catch (error) {
+            Swal.close();
+            showErrorAlert('Error al cargar los deportes de la cancha.');
             console.error('Error al cargar los deportes de la cancha:', error);
         }
     }
@@ -79,7 +105,11 @@ document.addEventListener('DOMContentLoaded', function () {
         btnEliminar.textContent = 'Eliminar';
         btnEliminar.addEventListener('click', async function () {
             if (deporte.ID_CANCHA_DEPORTE) {
-                await eliminarDeporte(deporte.ID_CANCHA_DEPORTE);
+                try {
+                    await eliminarDeporte(deporte.ID_CANCHA_DEPORTE);
+                } catch (error) {
+                    showErrorAlert('Error al eliminar el deporte de la cancha.');
+                }
             }
             tabla.deleteRow(nuevaFila.rowIndex - 1);
         });
@@ -92,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch(`/canchadeporte/delete/${idCanchaDeporte}`, { method: 'DELETE' });
             const data = await response.json();
             if (!data.success) {
-                console.error('Error al eliminar el deporte de la cancha.');
+                showErrorAlert('Error al eliminar el deporte de la cancha.');
             } else {
                 Swal.fire({
                     icon: 'success',
@@ -102,6 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         } catch (error) {
+            showErrorAlert('Error al conectarse con el servidor para eliminar el deporte.');
             console.error('Error al conectarse con el servidor:', error);
         }
     }
