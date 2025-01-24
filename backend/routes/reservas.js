@@ -38,10 +38,10 @@ router.get('/', async (req, res) => {
             JOIN CLIENTES C ON R.ID_CLIENTE = C.ID_CLIENTE
             JOIN CANCHAS CA ON R.ID_CANCHA = CA.ID_CANCHA;
         `);
-         
+        
         res.json({ success: true, reservas: result });
     } catch (err) {
-         
+        
         handleDbError(err, res, 'obtener reservas');
     } finally {
         if (connection) {
@@ -104,15 +104,16 @@ router.post('/add', async (req, res) => {
 // Ruta para actualizar una reserva existente
 router.post('/update/:id', async (req, res) => {
     const { id } = req.params;
-    const { id_cliente, id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, estado_reserva, fecha_limite_cancelacion, estado_cancelacion, porcentaje_promocion } = req.body;
+    const { id_cliente, id_cancha, fecha_inicio, fecha_fin, hora_inicio, 
+        hora_fin, estado_reserva, fecha_limite_cancelacion, estado_cancelacion, porcentaje_promocion, reembolsable } = req.body;
     let connection = null;
     try {
         connection = await getConnection();
         await connection.query(
             `UPDATE RESERVAS 
-            SET ID_CLIENTE = ?, ID_CANCHA = ?, FECHA_INICIO = ?, FECHA_FIN = ?, HORA_INICIO = ?, HORA_FIN = ?, ESTADO_RESERVA = ?, FECHA_LIMITE_CANCELACION = ?, ESTADO_CANCELACION = ?, PORCENTAJE_PROMOCION = ?
+            SET ID_CLIENTE = ?, ID_CANCHA = ?, FECHA_INICIO = ?, FECHA_FIN = ?, HORA_INICIO = ?, HORA_FIN = ?, ESTADO_RESERVA = ?, FECHA_LIMITE_CANCELACION = ?, ESTADO_CANCELACION = ?, PORCENTAJE_PROMOCION = ?, REEMBOLSABLE = ?
             WHERE ID_RESERVA = ?;`,
-            [id_cliente, id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, estado_reserva, fecha_limite_cancelacion, estado_cancelacion, porcentaje_promocion, id]
+            [id_cliente, id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, estado_reserva, fecha_limite_cancelacion, estado_cancelacion, porcentaje_promocion, reembolsable ,id]
         );
         res.json({ success: true, message: 'Reserva actualizada exitosamente' });
     } catch (err) {
@@ -134,6 +135,40 @@ router.delete('/delete/:id', async (req, res) => {
         res.json({ success: true, message: 'Reserva eliminada exitosamente' });
     } catch (err) {
         handleDbError(err, res, 'eliminar una reserva');
+    } finally {
+        if (connection) {
+            await connection.close();
+        }
+    }
+});
+
+router.put('/confirm/:id', async (req, res) => {
+    const { id } = req.params;
+    let connection = null;
+    try {
+        connection = await getConnection();
+        await connection.query(
+            `UPDATE RESERVAS 
+            SET ESTADO_RESERVA = 'A'
+            WHERE ID_RESERVA = ?;`,
+            [id]
+        );
+        const result = await connection.query(`
+            SELECT 
+                R.*,
+                C.NOMBRE AS NOMBRE_CLIENTE,
+                C.APELLIDO AS APELLIDO_CLIENTE,
+                C.EMAIL AS EMAIL_CLIENTE,
+                CA.NUMERO AS NUMERO_CANCHA 
+            FROM RESERVAS R
+            JOIN CLIENTES C ON R.ID_CLIENTE = C.ID_CLIENTE
+            JOIN CANCHAS CA ON R.ID_CANCHA = CA.ID_CANCHA 
+            WHERE R.ID_RESERVA = ?;`,
+            [id]
+        );
+        res.json({ success: true, reserva: result[0] });
+    } catch (err) {
+        handleDbError(err, res, 'confirmar la reserva');
     } finally {
         if (connection) {
             await connection.close();
