@@ -11,8 +11,9 @@ const canchasRouter = require('./routes/canchas'); // Ruta de las canchas
 const mantenimientosRouter = require('./routes/mantenimientos'); // Ruta para mantenimientos
 const tiposuelosRouter = require('./routes/tiposuelos'); // Ruta para tipos de suelos
 const reservaRouter = require('./routes/reservas'); // Ruta para reservas
-const deporteRouter = require('./routes/deportes'); // Ruta para deportes
+const deportesRouter = require('./routes/deportes'); // Ruta para deportes
 const canchaDeporteRouter = require('./routes/canchadeporte'); // Ruta para canchaDeportes
+const pagosRouter = require('./routes/pagos'); // Ruta para pagos
 
 const app = express();
 const PORT = 3000;
@@ -151,6 +152,18 @@ app.get('/upd_deporte', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/upd_deporte.html'));
 });
 
+app.get('/list_pagos', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/list_pagos.html'));
+});
+
+app.get('/add_pago', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/add_pago.html'));
+});
+
+app.get('/upd_pago', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/upd_pago.html'));
+});
+
 // Usar el microservicio de conexión
 app.use('/connect', connectRouter);
 
@@ -159,8 +172,9 @@ app.use('/api/canchas', canchasRouter);
 app.use('/mantenimientos', mantenimientosRouter); //Ruta para mantenimientos
 app.use('/tiposuelos', tiposuelosRouter); //Ruta para tipos de suelos
 app.use('/reservas', reservaRouter); //Ruta para reservas
-app.use('/deportes', deporteRouter); //Ruta para deportes
+app.use('/deportes', deportesRouter); //Ruta para deportes
 app.use('/canchadeporte', canchaDeporteRouter); //Ruta para canchaDeportes
+app.use('/pagos', pagosRouter); //Ruta para pagos
 
 
 // Ruta para 404
