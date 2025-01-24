@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
         'Cemento': '/images/canchaBasquetbol.jpg',
         'Cesped Natural': '/images/canchaFutbol.jpg',
         'Cesped Sintetico': '/images/canchaFutbol.jpg',
-        'default': '/images/canchaDefault.jpg'
+        'Tierra Compactada': '/images/canchaTenis.jpg',
+        'default': '/images/canchaFutbol.jpg'
     };
 
     function getImagenCancha(TIPO_SUELO) {
