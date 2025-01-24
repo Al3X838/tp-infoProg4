@@ -42,14 +42,7 @@
                 <label for="horaFin" class="form-label">Hora Fin</label>
                 <input type="time" class="form-control" id="horaFin" name="horaFin" required>
             </div>
-            <div class="mb-3">
-                <label for="estadoReserva" class="form-label">Estado Reserva</label>
-                <select class="form-select" id="estadoReserva" name="estadoReserva" required>
-                    <option value="A">Activo</option>
-                    <option value="P">Pendiente</option>
-                    <option value="C">Finalizado</option>
-                </select>
-            </div>
+            
             <div class="mb-3">
                 <label for="fechaLimiteCancelacion" class="form-label">Fecha Límite Cancelación</label>
                 <input type="date" class="form-control" id="fechaLimiteCancelacion" name="fechaLimiteCancelacion" required>
@@ -64,6 +57,13 @@
             <div class="mb-3">
                 <label for="porcentajePromocion" class="form-label">Porcentaje Promoción</label>
                 <input type="number" class="form-control" id="porcentajePromocion" name="porcentajePromocion" required>
+            </div>
+            <div class="mb-3">
+                <label for="reembolsable" class="form-label">Reembolsable</label>
+                <select class="form-select" id="reembolsable" name="reembolsable" required>
+                    <option value="S">Sí</option>
+                    <option value="N">No</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Añadir Reserva</button>
         </form>
