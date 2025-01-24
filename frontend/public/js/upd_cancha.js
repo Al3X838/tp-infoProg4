@@ -1,3 +1,23 @@
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Cargando...',
+        text: 'Estamos obteniendo los datos de la cancha.',
+        allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
+        didOpen: () => {
+            Swal.showLoading(); // Muestra el spinner de carga
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('update-cancha-form');
     const urlParams = new URLSearchParams(window.location.search);
@@ -6,8 +26,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Método para cargar la lista de tipos de suelo
     const loadTiposSuelo = () => {
+        showLoadingAlert();
         fetch('/tiposuelos')
             .then(response => {
+                Swal.close(); // Cierra el popup de carga
                 if (!response.ok) throw new Error('Network response was not ok');
                 return response.json();
             })
@@ -21,14 +43,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         tipoSueloSelect.appendChild(option);
                     });
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.error || 'Error al cargar la lista de tipos de suelo.'
-                    });
+                    showErrorAlert(data.error || 'Error al cargar la lista de tipos de suelo.');
                 }
             })
-            .catch(error => console.error('Error al cargar tipos de suelo:', error));
+            .catch(error => {
+                Swal.close(); // Cierra el popup de carga
+                console.error('Error al cargar tipos de suelo:', error);
+                showErrorAlert('Error al cargar la lista de tipos de suelo.');
+            });
     };
 
     // Llama a la función para cargar la lista de tipos de suelo al inicio
@@ -50,20 +72,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('cambiador').checked = data.cancha.CAMBIADOR === 'S';
                     document.getElementById('estado').value = data.cancha.ESTADO;
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.error || 'Cancha no encontrada.'
-                    });
+                    showErrorAlert(data.error || 'Cancha no encontrada.');
                 }
             })
             .catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al obtener datos de la cancha.'
-                });
                 console.error('Error:', error);
+                showErrorAlert('Error al obtener datos de la cancha.');
             });
     }
 
@@ -87,13 +101,11 @@ document.addEventListener('DOMContentLoaded', function () {
         Array.from(tablaDeportes.rows).forEach(row => {
             const idDeporte = row.cells[0].getElementsByTagName('select')[0].value;
             const precioHora = row.cells[1].getElementsByTagName('input')[0].value.trim();
-            const idCanchaDeporte = row.dataset.idCanchaDeporte; // ID de la relación cancha-deporte (si existe)
+            const idCanchaDeporte = row.dataset.idCanchaDeporte;
 
-            // Verificar si hay datos válidos de deporte y precio
             if (idDeporte && precioHora) {
-                console.log({ idCanchaDeporte, idDeporte, precioHora });
                 deportesData.push({
-                    id_cancha_deporte: idCanchaDeporte || null, // Si existe, usar la ID actual; si no, es nuevo
+                    id_cancha_deporte: idCanchaDeporte || null,
                     id_deporte: idDeporte,
                     precio_hora: parseFloat(precioHora)
                 });
@@ -114,11 +126,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 return data;
             })
             .then(async () => {
-                // 4. Actualizar o agregar deportes asociados
                 if (deportesData.length > 0) {
                     const promises = deportesData.map(deporte => {
                         if (deporte.id_cancha_deporte) {
-                            // Actualizar deporte existente
                             return fetch(`/canchadeporte/update/${deporte.id_cancha_deporte}`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -129,7 +139,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                 })
                             });
                         } else {
-                            // Agregar nuevo deporte
                             return fetch('/canchadeporte/add', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -141,12 +150,9 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
                         }
                     });
-
-                    // Esperar a que todos los cambios se procesen
                     await Promise.all(promises);
                 }
 
-                // Mostrar mensaje de éxito
                 Swal.fire({
                     icon: 'success',
                     title: 'Éxito',
@@ -158,13 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error('Error:', error);
-                // Mostrar mensaje de error
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'No se pudo actualizar la cancha',
-                    confirmButtonText: 'Aceptar'
-                });
+                showErrorAlert(error.message || 'No se pudo actualizar la cancha');
             });
     });
 });

@@ -14,7 +14,7 @@ function showErrorAlert(message) {
 function showLoadingAlert() {
     Swal.fire({
         title: 'Cargando...',
-        text: 'Estamos obteniendo los datos del cliente.',
+        text: 'Estamos obteniendo los datos de las canchas.',
         allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
         didOpen: () => {
             Swal.showLoading(); // Muestra el spinner de carga
@@ -38,10 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function loadCanchas() {
+        showLoadingAlert();
         try {
             const response = await fetch('/api/canchas');
             const data = await response.json();
-
             if (data.success !== false) {
                 const canchasHtml = await Promise.all(data.canchas.map(async (cancha) => {
                     const imagen = getImagenCancha(cancha.NOMBRE_TIPO_SUELO);
@@ -96,10 +96,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 }));
 
                 canchasList.innerHTML = canchasHtml.join('');
+                Swal.close();
             } else {
+                Swal.close();
                 showErrorAlert('No se pudieron cargar las canchas.');
             }
         } catch (error) {
+            Swal.close();
             console.error('Error:', error);
             showErrorAlert('Error al obtener los datos de las canchas.');
         }
