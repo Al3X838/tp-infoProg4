@@ -100,10 +100,11 @@ document.addEventListener('DOMContentLoaded', function () {
             fechaFin: document.getElementById('fechaFin').value,
             horaInicio: document.getElementById('horaInicio').value,
             horaFin: document.getElementById('horaFin').value,
-            estadoReserva: document.getElementById('estadoReserva').value,
+            estadoReserva: 'P',
             fechaLimiteCancelacion: document.getElementById('fechaLimiteCancelacion').value,
             estadoCancelacion: document.getElementById('estadoCancelacion').value,
-            porcentajePromocion: parseFloat(document.getElementById('porcentajePromocion').value) || 0
+            porcentajePromocion: parseFloat(document.getElementById('porcentajePromocion').value) || 0,
+            reembolsable: document.getElementById('reembolsable').checked ? 'S' : 'N'
         };
         console.log('Reserva data:', reservaData);
         fetch('/reservas/add', {
