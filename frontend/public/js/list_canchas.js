@@ -1,6 +1,30 @@
+function formatPrice(price) {
+    return price.toLocaleString('es-PY');  // 'es-PY' para formato de Paraguay
+}
+
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Cargando...',
+        text: 'Estamos obteniendo los datos del cliente.',
+        allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
+        didOpen: () => {
+            Swal.showLoading(); // Muestra el spinner de carga
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const canchasList = document.getElementById('canchas-list');
-    
+
     const imagenesCanchas = {
         'Cemento': '/images/canchaBasquetbol.jpg',
         'Cesped Natural': '/images/canchaFutbol.jpg',
@@ -12,15 +36,17 @@ document.addEventListener('DOMContentLoaded', function () {
         return imagenesCanchas[TIPO_SUELO] || imagenesCanchas.default;
     }
 
-    function loadCanchas() {
-        fetch('/api/canchas')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success !== false) {
-                    canchasList.innerHTML = data.canchas.map(cancha => {
-                        const imagen = getImagenCancha(cancha.NOMBRE_TIPO_SUELO);
-                        console.log(imagen);
-                        return`
+    async function loadCanchas() {
+        try {
+            const response = await fetch('/api/canchas');
+            const data = await response.json();
+
+            if (data.success !== false) {
+                const canchasHtml = await Promise.all(data.canchas.map(async (cancha) => {
+                    const imagen = getImagenCancha(cancha.NOMBRE_TIPO_SUELO);
+                    const deportesHtml = await mostrarDeportes(cancha.ID_CANCHA);
+
+                    return `
                         <div class="col-md-4 mb-4">
                             <div class="card">
                                 <span class="status-badge ${cancha.ESTADO === 'D' ? 'bg-success' : 'bg-danger'}">
@@ -59,21 +85,41 @@ document.addEventListener('DOMContentLoaded', function () {
                                         ${cancha.BEBEDERO === 'S' ? '<strong>Bebedero:</strong> Sí<br>' : '<strong>Bebedero:</strong> No<br>'}
                                         ${cancha.BANOS === 'S' ? '<strong>Baños:</strong> Sí<br>' : '<strong>Baños:</strong> No<br>'}
                                         ${cancha.CAMBIADOR === 'S' ? '<strong>Cambiador:</strong> Sí<br>' : '<strong>Cambiador:</strong> No<br>'}
+                                        <strong>Deportes y Precios:</strong><br>
+                                        ${deportesHtml}
                                     </small>
                                 </div>
                             </div>
                         </div>
-                    `}).join('');
-                } else {
-                    document.getElementById('error-message').textContent = data.error || 'Error al cargar canchas';
-                    document.getElementById('error-message').classList.remove('d-none');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('error-message').textContent = 'Error en la conexión con el servidor';
-                document.getElementById('error-message').classList.remove('d-none');
-            });
+                    `;
+                }));
+
+                canchasList.innerHTML = canchasHtml.join('');
+            } else {
+                showErrorAlert('No se pudieron cargar las canchas.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showErrorAlert('Error al obtener los datos de las canchas.');
+        }
+    }
+
+    async function mostrarDeportes(idCancha) {
+        try {
+            const response = await fetch(`/canchadeporte/cancha/${idCancha}`);
+            const data = await response.json();
+
+            if (data.success) {
+                return data.canchaDeportes.map(deporte => {
+                    return `<strong>${deporte.DEPORTE}:</strong> Precio por hora: Gs. ${formatPrice(deporte.PRECIO_HORA)}<br>`;
+                }).join('');
+            } else {
+                return 'No hay deportes disponibles para esta cancha.';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return 'Error al obtener los deportes de la cancha.';
+        }
     }
 
     window.reservarCancha = function (id) {
@@ -114,39 +160,29 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`/api/canchas/delete/${id}`, {
             method: 'DELETE'
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la solicitud DELETE');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'Cancha eliminada exitosamente.',
-                    confirmButtonText: 'Aceptar'
-                });
-                loadCanchas(); // Recargar la lista de canchas
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.error || 'Error al eliminar la cancha.',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error en la conexión con el servidor.',
-                confirmButtonText: 'Aceptar'
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud DELETE');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: 'Cancha eliminada exitosamente.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    loadCanchas(); // Recargar la lista de canchas
+                } else {
+                    showErrorAlert(data.error || 'Error al eliminar la cancha.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrorAlert('Error en la conexión con el servidor.');
             });
-        });
     };
 
     loadCanchas();

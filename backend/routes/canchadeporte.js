@@ -57,7 +57,7 @@ router.get('/cancha/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const connection = await getConnection();
-        const result = await connection.query(`SELECT * FROM CANCHA_DEPORTE WHERE id_cancha = ?`, [id]);
+        const result = await connection.query(`SELECT cd.*, d.NOMBRE AS DEPORTE FROM CANCHA_DEPORTE cd LEFT JOIN DEPORTES d ON cd.ID_DEPORTE = d.ID_DEPORTE WHERE cd.ID_CANCHA = ?`, [id]);
         await connection.close();
 
         if (result.length > 0) {

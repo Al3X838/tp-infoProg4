@@ -163,6 +163,28 @@
           <option value="I">Inactivo</option>
         </select>
 
+        <div class="container mt-4">
+          <h3>Deportes y precios</h3>
+          <table class="table table-bordered" id="tablaDeportes">
+            <thead>
+              <tr>
+                <th>Deporte</th>
+                <th>Precio por hora (Gs)</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Las filas dinámicas se agregarán aquí -->
+            </tbody>
+          </table>
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            id="btnAgregarFila">
+            <i class="bi bi-plus-lg"></i>
+          </button>
+        </div>
+
         <button type="submit" class="btn btn-primary mt-3">
           <span class="bi bi-pencil"></span> Actualizar Cancha
         </button>
@@ -174,6 +196,7 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"></script>
     <script src="js/upd_cancha.js"></script>
+    <script src="js/upd_cancha_deporte.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.1/dist/sweetalert2.all.min.js"></script>
   </body>
 </html>

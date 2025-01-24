@@ -115,7 +115,7 @@ router.post('/add', async (req, res) => {
 
 
 // actualizar cancha
-router.put('/update/:id', async (req, res) => {
+router.post('/update/:id', async (req, res) => {
     const {
         NUMERO,
         UBICACION,
