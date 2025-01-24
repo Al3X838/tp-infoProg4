@@ -160,8 +160,30 @@
           </select>
         </div>
 
+        <div class="container mt-4">
+          <h3>Deportes y precios</h3>
+          <table class="table table-bordered" id="tablaDeportes">
+            <thead>
+              <tr>
+                <th>Deporte</th>
+                <th>Precio por hora (Gs)</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Las filas dinámicas se agregarán aquí -->
+            </tbody>
+          </table>
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            id="btnAgregarFila">
+            <i class="bi bi-plus-lg"></i>
+          </button>
+        </div>
+
         <!-- Botones de acción -->
-        <div class="form-actions">
+        <div class="form-actions mt-4">
           <button type="submit" class="btn btn-primary">Guardar Cancha</button>
           <button
             type="button"
@@ -179,5 +201,6 @@
       crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/add_cancha.js"></script>
+    <script src="/js/add_cancha_deporte.js"></script>
   </body>
 </html>
