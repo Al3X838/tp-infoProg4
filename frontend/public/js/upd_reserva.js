@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('fechaLimiteCancelacion').value = data.reserva.FECHA_LIMITE_CANCELACION;
                     document.getElementById('estadoCancelacion').value = data.reserva.ESTADO_CANCELACION;
                     document.getElementById('porcentajePromocion').value = data.reserva.PORCENTAJE_PROMOCION;
+                    document.getElementById('reembolsable').value = data.reserva.REEMBOLSABLE;
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -130,7 +131,8 @@ document.addEventListener('DOMContentLoaded', function () {
             estado_reserva: document.getElementById('estadoReserva').value,
             fecha_limite_cancelacion: document.getElementById('fechaLimiteCancelacion').value,
             estado_cancelacion: document.getElementById('estadoCancelacion').value,
-            porcentaje_promocion: document.getElementById('porcentajePromocion').value
+            porcentaje_promocion: document.getElementById('porcentajePromocion').value,
+            reembolsable: document.getElementById('reembolsable').value
         };
 
         fetch(`/reservas/update/${reservaId}`, {
