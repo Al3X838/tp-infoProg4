@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${cliente.CIUDAD || 'N/A'}</td>
                 <td>${cliente.TELEFONO || 'N/A'}</td>
                 <td>${cliente.EMAIL || 'N/A'}</td>
-                <td class="text-center">${cliente.ESTADO}</td>
+                <td class="text-center">${cliente.ESTADO == "A" ? "Activo" : "Bloqueado"}</td>
                 <td>
                   <div class="d-flex gap-2">
                     <button class="btn btn-info bi bi-info-circle" onclick='toggleDetails(${cliente.ID_CLIENTE})'></button>
