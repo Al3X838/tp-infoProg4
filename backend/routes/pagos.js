@@ -55,10 +55,11 @@ router.get('/pago/:id', async (req, res) => {
 //Falta hacer
 // Ruta para agregar un nuevo item
 router.post('/add', async (req, res) => {
-    const { nombre } = req.body;
+    const { id_reserva, monto_total, metodo_pago } = req.body;
+    const fecha_pago = new Date().toISOString().slice(0, 19).replace('T', ' ');
     try {
         const connection = await getConnection();
-        await connection.query(`INSERT INTO PAGOS (NOMBRE) VALUES (?)`, [nombre]);
+        await connection.query(`INSERT INTO PAGOS (ID_RESERVA, MONTO_TOTAL, METODO_PAGO, FECHA_PAGO) VALUES (?,?,?,?)`, [id_reserva, monto_total, metodo_pago, fecha_pago]);
         await connection.close();
         res.json({ success: true });
     } catch (err) {
