@@ -134,5 +134,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadTiposDeSuelo();
 
-    
+    // Manejar el botón de cancelar
+    if (cancelButton) {
+        cancelButton.addEventListener('click', function () {
+            window.location.href = '/list_canchas'; // Regresa a la lista de canchas
+        });
+    }
 });
