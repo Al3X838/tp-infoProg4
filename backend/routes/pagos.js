@@ -26,7 +26,7 @@ const handleDbError = (err, res, action) => {
 router.get('/', async (req, res) => {
     try {
         const connection = await getConnection();
-        const result = await connection.query('SELECT * FROM PAGOS;');
+        const result = await connection.query('SELECT p.*, c.NOMBRE AS CLIENTE_NOMBRE, c.APELLIDO AS CLIENTE_APELLIDO FROM pagos p LEFT JOIN reservas r ON p.ID_RESERVA = r.ID_RESERVA LEFT JOIN clientes c ON r.ID_CLIENTE = c.ID_CLIENTE;');
         await connection.close();
         res.json({ success: true, pagos: result });
     } catch (err) {
@@ -55,10 +55,11 @@ router.get('/pago/:id', async (req, res) => {
 //Falta hacer
 // Ruta para agregar un nuevo item
 router.post('/add', async (req, res) => {
-    const { nombre } = req.body;
+    const { id_reserva, monto_total, metodo_pago } = req.body;
+    const fecha_pago = new Date().toISOString().slice(0, 16).replace('T', ' ');
     try {
         const connection = await getConnection();
-        await connection.query(`INSERT INTO PAGOS (NOMBRE) VALUES (?)`, [nombre]);
+        await connection.query(`INSERT INTO PAGOS (ID_RESERVA, MONTO_TOTAL, METODO_PAGO, FECHA_PAGO) VALUES (?,?,?,?)`, [id_reserva, monto_total, metodo_pago, fecha_pago]);
         await connection.close();
         res.json({ success: true });
     } catch (err) {
@@ -70,10 +71,10 @@ router.post('/add', async (req, res) => {
 // Ruta para actualizar un item existente
 router.post('/update/:id', async (req, res) => {
     const { id } = req.params;
-    const { nombre } = req.body;
+    const { id_reserva, monto_total, metodo_pago, fecha_pago } = req.body;
     try {
         const connection = await getConnection();
-        await connection.query(`UPDATE PAGOS SET NOMBRE = ? WHERE id_pago = ?`, [nombre, id]);
+        await connection.query(`UPDATE PAGOS SET ID_RESERVA = ?, MONTO_TOTAL = ?, METODO_PAGO = ?, FECHA_PAGO = ? WHERE id_pago = ?`, [id_reserva, monto_total, metodo_pago, fecha_pago, id]);
         await connection.close();
         res.json({ success: true })
     } catch (err) {
