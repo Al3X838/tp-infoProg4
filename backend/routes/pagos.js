@@ -56,7 +56,7 @@ router.get('/pago/:id', async (req, res) => {
 // Ruta para agregar un nuevo item
 router.post('/add', async (req, res) => {
     const { id_reserva, monto_total, metodo_pago } = req.body;
-    const fecha_pago = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const fecha_pago = new Date().toISOString().slice(0, 16).replace('T', ' ');
     try {
         const connection = await getConnection();
         await connection.query(`INSERT INTO PAGOS (ID_RESERVA, MONTO_TOTAL, METODO_PAGO, FECHA_PAGO) VALUES (?,?,?,?)`, [id_reserva, monto_total, metodo_pago, fecha_pago]);
@@ -71,10 +71,10 @@ router.post('/add', async (req, res) => {
 // Ruta para actualizar un item existente
 router.post('/update/:id', async (req, res) => {
     const { id } = req.params;
-    const { nombre } = req.body;
+    const { id_reserva, monto_total, metodo_pago, fecha_pago } = req.body;
     try {
         const connection = await getConnection();
-        await connection.query(`UPDATE PAGOS SET NOMBRE = ? WHERE id_pago = ?`, [nombre, id]);
+        await connection.query(`UPDATE PAGOS SET ID_RESERVA = ?, MONTO_TOTAL = ?, METODO_PAGO = ?, FECHA_PAGO = ? WHERE id_pago = ?`, [id_reserva, monto_total, metodo_pago, fecha_pago, id]);
         await connection.close();
         res.json({ success: true })
     } catch (err) {

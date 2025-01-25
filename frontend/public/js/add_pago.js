@@ -122,7 +122,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const newIDReserva = document.getElementById('reserva-select').value;
         const newMontoTotal = document.getElementById('monto-total').value;
         const newMetodoPago = document.getElementById('metodo-pago').value;
-        console.log({ id_reserva: newIDReserva, monto_total: newMontoTotal, metodo_pago: newMetodoPago });
         // Realiza la solicitud POST para agregar un item
         fetch('/pagos/add', {
             method: 'POST',
