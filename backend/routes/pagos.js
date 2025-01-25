@@ -26,7 +26,7 @@ const handleDbError = (err, res, action) => {
 router.get('/', async (req, res) => {
     try {
         const connection = await getConnection();
-        const result = await connection.query('SELECT * FROM PAGOS;');
+        const result = await connection.query('SELECT p.*, c.NOMBRE AS CLIENTE_NOMBRE, c.APELLIDO AS CLIENTE_APELLIDO FROM pagos p LEFT JOIN reservas r ON p.ID_RESERVA = r.ID_RESERVA LEFT JOIN clientes c ON r.ID_CLIENTE = c.ID_CLIENTE;');
         await connection.close();
         res.json({ success: true, pagos: result });
     } catch (err) {
