@@ -84,15 +84,15 @@ router.get('/reserva/:id', async (req, res) => {
 router.post('/add', async (req, res) => {
     const {
         cliente, cancha, fechaInicio, fechaFin, horaInicio, horaFin,
-        estadoReserva, fechaLimiteCancelacion, estadoCancelacion, porcentajePromocion
+        estadoReserva, fechaLimiteCancelacion, estadoCancelacion, porcentajePromocion, deporte
     } = req.body;
 
     try {
         const connection = await getConnection();
         const result = await connection.query(`
-            INSERT INTO RESERVAS (ID_CLIENTE, ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, ESTADO_RESERVA, FECHA_LIMITE_CANCELACION, ESTADO_CANCELACION, PORCENTAJE_PROMOCION)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [parseInt(cliente), parseInt(cancha), fechaInicio, fechaFin, horaInicio, horaFin, estadoReserva, fechaLimiteCancelacion, estadoCancelacion, parseFloat(porcentajePromocion)]
+            INSERT INTO RESERVAS (ID_CLIENTE, ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, ESTADO_RESERVA, FECHA_LIMITE_CANCELACION, ESTADO_CANCELACION, PORCENTAJE_PROMOCION, ID_DEPORTE)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [parseInt(cliente), parseInt(cancha), fechaInicio, fechaFin, horaInicio, horaFin, estadoReserva, fechaLimiteCancelacion, estadoCancelacion, parseFloat(porcentajePromocion), parseFloat(deporte)]
         );
         await connection.close();
         res.json({ success: true });
