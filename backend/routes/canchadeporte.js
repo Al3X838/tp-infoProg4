@@ -24,23 +24,32 @@ const handleDbError = (err, res, action) => {
 
 // Ruta para obtener todas los items
 router.get('/', async (req, res) => {
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         const result = await connection.query('SELECT * FROM CANCHA_DEPORTE;');
-        await connection.close();
         res.json({ success: true, canchaDeportes: result });
     } catch (err) {
         handleDbError(err, res, 'fetching cancha_deporte');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
 // Ruta GET para obtener un item específica por su ID
 router.get('/canchadeporte/:id', async (req, res) => {
     const { id } = req.params;
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         const result = await connection.query(`SELECT * FROM CANCHA_DEPORTE WHERE id_cancha_deporte = ?`, [id]);
-        await connection.close();
 
         if (result.length > 0) {
             res.json({ success: true, canchaDeporte: result[0] });
@@ -49,6 +58,15 @@ router.get('/canchadeporte/:id', async (req, res) => {
         }
     } catch (err) {
         handleDbError(err, res, 'fetching canchaDeporte by ID');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
@@ -58,7 +76,6 @@ router.get('/cancha/:id', async (req, res) => {
     try {
         const connection = await getConnection();
         const result = await connection.query(`SELECT cd.*, d.NOMBRE AS DEPORTE FROM CANCHA_DEPORTE cd LEFT JOIN DEPORTES d ON cd.ID_DEPORTE = d.ID_DEPORTE WHERE cd.ID_CANCHA = ?`, [id]);
-        await connection.close();
 
         if (result.length > 0) {
             res.json({ success: true, canchaDeportes: result });
@@ -74,13 +91,22 @@ router.get('/cancha/:id', async (req, res) => {
 // Ruta para agregar un nuevo item
 router.post('/add', async (req, res) => {
     const { id_cancha, id_deporte, precio_hora } = req.body;
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         await connection.query(`INSERT INTO CANCHA_DEPORTE (ID_CANCHA, ID_DEPORTE, PRECIO_HORA) VALUES (?, ?, ?)`, [id_cancha, id_deporte, precio_hora]);
-        await connection.close();
         res.json({ success: true });
     } catch (err) {
         handleDbError(err, res, 'adding canchaDeporte');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
@@ -89,13 +115,22 @@ router.post('/add', async (req, res) => {
 router.post('/update/:id', async (req, res) => {
     const { id } = req.params;
     const { id_cancha, id_deporte, precio_hora } = req.body;
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         await connection.query(`UPDATE CANCHA_DEPORTE SET ID_CANCHA = ?, ID_DEPORTE = ?, PRECIO_HORA = ? WHERE id_cancha_deporte = ?`, [id_cancha, id_deporte, precio_hora, id]);
-        await connection.close();
         res.json({ success: true })
     } catch (err) {
         handleDbError(err, res, 'updating canchaDeporte');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 

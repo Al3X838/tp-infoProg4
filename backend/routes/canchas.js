@@ -27,26 +27,36 @@ const handleDbError = (err, res, action) => {
 
 // obtener todas las canchas
 router.get('/', async (req, res) => {
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         const result = await connection.query(`
             SELECT c.*,
             ts.NOMBRE AS NOMBRE_TIPO_SUELO 
             FROM CANCHAS c
             JOIN TIPO_SUELOS ts ON c.TIPO_SUELO = ts.ID_TIPO_SUELO 
             ORDER BY NUMERO`);
-        await connection.close();
         res.json({ success: true, canchas: result });
     } catch (err) {
         handleDbError(err, res, 'fetching canchas');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
 // obtener una cancha por id
 router.get('/cancha/:id', async (req, res) => {
     const { id } = req.params;
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         const result = await connection.query(`
             SELECT 
                 c.*,
@@ -61,7 +71,6 @@ router.get('/cancha/:id', async (req, res) => {
             WHERE c.ID_CANCHA = ?`,
             [id]
         );
-        await connection.close();
 
         if (result.length > 0) {
             res.json({ success: true, cancha: result[0] });
@@ -70,10 +79,20 @@ router.get('/cancha/:id', async (req, res) => {
         }
     } catch (err) {
         handleDbError(err, res, 'fetching cancha by ID');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 // agregar cancha
 router.post('/add', async (req, res) => {
+    let connection = null;
     const {
         NUMERO,
         UBICACION,
@@ -86,7 +105,7 @@ router.post('/add', async (req, res) => {
     } = req.body;
 
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
 
         // Agregar la nueva cancha
         await connection.query(
@@ -104,10 +123,7 @@ router.post('/add', async (req, res) => {
         if (!result || result.length === 0) {
             console.log('No se pudo obtener la ID de la nueva cancha.');
         }
-
         const id_cancha = result.ID_CANCHA;
-
-        await connection.close();
 
         // Devolver la respuesta exitosa con la nueva ID
         res.json({
@@ -117,12 +133,22 @@ router.post('/add', async (req, res) => {
         });
     } catch (err) {
         handleDbError(err, res, 'agregando cancha');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
 
 // actualizar cancha
 router.post('/update/:id', async (req, res) => {
+    let connection = null;
     const {
         NUMERO,
         UBICACION,
@@ -136,30 +162,46 @@ router.post('/update/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         await connection.query(
             `UPDATE CANCHAS 
             SET NUMERO = ?, UBICACION = ?, TIPO_SUELO = ?, LUMINICA = ?, BEBEDERO = ?, BANOS = ?, CAMBIADOR = ?, ESTADO = ? 
             WHERE ID_CANCHA = ?`,
             [NUMERO, UBICACION, TIPO_SUELO, LUMINICA, BEBEDERO, BANOS, CAMBIADOR, ESTADO, id]
         );
-        await connection.close();
         res.json({ success: true, message: 'Cancha actualizada correctamente.' });
     } catch (err) {
         handleDbError(err, res, 'actualizando cancha');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 // eliminar cancha
 router.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
-
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         await connection.query(`DELETE FROM CANCHAS WHERE ID_CANCHA = ?`, [id]);
-        await connection.close();
         res.json({ success: true });
     } catch (err) {
         handleDbError(err, res, 'eliminando cancha');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 

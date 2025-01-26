@@ -71,10 +71,11 @@ router.get('/cliente/:id', async (req, res) => {
 // Ruta para agregar un nueva cliente
 router.post('/add', async (req, res) => {
     const { documento_id, nombre, apellido, fecha_nacimiento, direccion, telefono, email, nacionalidad, ciudad } = req.body;
+    const estado = 'A';
     let connection = null;
     try {
         connection = await getConnection();
-        await connection.query(`INSERT INTO clientes (DOCUMENTO_ID, NOMBRE, APELLIDO, FECHA_NACIMIENTO, CIUDAD, DIRECCION, TELEFONO, EMAIL, NACIONALIDAD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [documento_id, nombre, apellido, fecha_nacimiento, ciudad, direccion, telefono, email, nacionalidad]);
+        await connection.query(`INSERT INTO clientes (DOCUMENTO_ID, NOMBRE, APELLIDO, FECHA_NACIMIENTO, CIUDAD, DIRECCION, TELEFONO, EMAIL, NACIONALIDAD, ESTADO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [documento_id, nombre, apellido, fecha_nacimiento, ciudad, direccion, telefono, email, nacionalidad, estado]);
         res.json({ success: true });
     } catch (err) {
         handleDbError(err, res, 'adding cliente');
