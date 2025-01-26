@@ -64,7 +64,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (cancha.ESTADO === 'D') {
                             const option = document.createElement('option');
                             option.value = cancha.ID_CANCHA;
-                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION}`;
+                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *Disponible*`;
+                            canchaSelect.appendChild(option);
+                        }else{
+                            const option = document.createElement('option');
+                            option.value = cancha.ID_CANCHA;
+                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *No Disponible en este momento*`;
                             canchaSelect.appendChild(option);
                         }
                     });
@@ -79,9 +84,43 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error loading canchas:', error));
     };
 
+    // Agregar la función loadDeportes después de loadCanchas
+    const loadDeportes = async (canchaId) => {
+        const deporteSelect = document.getElementById('deporte');
+        if (!deporteSelect) return;
+
+        deporteSelect.innerHTML = '<option value="" disabled selected>Seleccione un deporte</option>';
+
+        if (!canchaId) return;
+
+        try {
+            const response = await fetch(`/canchadeporte/cancha/${canchaId}`);
+            const data = await response.json();
+
+            if (data.success && Array.isArray(data.canchaDeportes)) {
+                data.canchaDeportes.forEach(cd => {
+                    const option = document.createElement('option');
+                    option.value = cd.ID_DEPORTE;
+                    option.textContent = `${cd.DEPORTE} - $${cd.PRECIO_HORA}/hora`;
+                    deporteSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error cargando deportes:', error);
+        }
+    };
+
     // Llama a las funciones para cargar la lista de clientes y canchas al inicio
     loadClientes();
     loadCanchas();
+
+    // Modificar el evento change del select de canchas
+    if (canchaSelect) {
+        canchaSelect.addEventListener('change', function() {
+            const selectedCanchaId = this.value;
+            loadDeportes(selectedCanchaId);
+        });
+    }
 
     // Cargar datos de la reserva actual
     if (reservaId) {
@@ -100,6 +139,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('estadoCancelacion').value = data.reserva.ESTADO_CANCELACION;
                     document.getElementById('porcentajePromocion').value = data.reserva.PORCENTAJE_PROMOCION;
                     document.getElementById('reembolsable').value = data.reserva.REEMBOLSABLE;
+                    // Cargar deportes después de establecer la cancha
+                    loadDeportes(data.reserva.ID_CANCHA).then(() => {
+                        document.getElementById('deporte').value = data.reserva.ID_DEPORTE;
+                    });
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -132,7 +175,8 @@ document.addEventListener('DOMContentLoaded', function () {
             fecha_limite_cancelacion: document.getElementById('fechaLimiteCancelacion').value,
             estado_cancelacion: document.getElementById('estadoCancelacion').value,
             porcentaje_promocion: document.getElementById('porcentajePromocion').value,
-            reembolsable: document.getElementById('reembolsable').value
+            reembolsable: document.getElementById('reembolsable').value,
+            deporte: document.getElementById('deporte').value
         };
 
         fetch(`/reservas/update/${reservaId}`, {
