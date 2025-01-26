@@ -71,11 +71,12 @@ router.get('/mantenimiento/:id', async (req, res) => {
 router.post('/add', async (req, res) => {
     const { id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, descripcion } = req.body;
     let connection = null;
+    const estado = 'P';
     try {
         connection = await getConnection();
         await connection.query(
-            `INSERT INTO mantenimiento (ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, DESCRIPCION) VALUES (?, ?, ?, ?, ?, ?)`,
-            [id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, descripcion]
+            `INSERT INTO mantenimiento (ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, DESCRIPCION, ESTADO) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, descripcion, estado]
         );
         res.json({ success: true });
     } catch (err) {
