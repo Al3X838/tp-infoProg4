@@ -48,9 +48,16 @@ router.get('/cancha/:id', async (req, res) => {
     try {
         const connection = await getConnection();
         const result = await connection.query(`
-            SELECT c.*, ts.NOMBRE as NOMBRE_TIPO_SUELO 
+            SELECT 
+                c.*,
+                ts.NOMBRE as NOMBRE_TIPO_SUELO,
+                d.ID_DEPORTE,
+                d.NOMBRE as NOMBRE_DEPORTE,
+                cd.PRECIO_HORA
             FROM CANCHAS c
             LEFT JOIN TIPO_SUELOS ts ON c.TIPO_SUELO = ts.ID_TIPO_SUELO
+            LEFT JOIN CANCHA_DEPORTE cd ON c.ID_CANCHA = cd.ID_CANCHA
+            LEFT JOIN DEPORTES d ON cd.ID_DEPORTE = d.ID_DEPORTE
             WHERE c.ID_CANCHA = ?`,
             [id]
         );
