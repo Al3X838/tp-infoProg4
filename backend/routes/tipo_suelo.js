@@ -24,23 +24,32 @@ const handleDbError = (err, res, action) => {
 
 // Ruta para obtener todas los Tipos de Suelo
 router.get('/', async (req, res) => {
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         const result = await connection.query('SELECT * FROM TIPO_SUELOS;');
-        await connection.close();
         res.json({ success: true, tipo_suelos: result });
     } catch (err) {
         handleDbError(err, res, 'fetching tipos de suelo');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
 // Ruta GET para obtener un Tipo de Suelo específica por su ID
 router.get('/tipo_suelo/:id', async (req, res) => {
     const { id } = req.params;
+    let connection = null;
     try {
         const connection = await getConnection();
         const result = await connection.query(`SELECT * FROM TIPO_SUELOS WHERE id_tipo_suelo = ?`, [id]);
-        await connection.close();
 
         if (result.length > 0) {
             res.json({ success: true, tipo_suelo: result[0] });
@@ -49,6 +58,15 @@ router.get('/tipo_suelo/:id', async (req, res) => {
         }
     } catch (err) {
         handleDbError(err, res, 'fetching tipo de suelo by ID');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
@@ -56,13 +74,22 @@ router.get('/tipo_suelo/:id', async (req, res) => {
 // Ruta para agregar un nuevo tipo de suelo
 router.post('/add', async (req, res) => {
     const { nombre } = req.body;
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         await connection.query(`INSERT INTO TIPO_SUELOS (NOMBRE) VALUES (?)`, [nombre]);
-        await connection.close();
         res.json({ success: true });
     } catch (err) {
         handleDbError(err, res, 'adding tipo de suelo');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
@@ -71,13 +98,22 @@ router.post('/add', async (req, res) => {
 router.post('/update/:id', async (req, res) => {
     const { id } = req.params;
     const { nombre } = req.body;
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         await connection.query(`UPDATE TIPO_SUELOS SET NOMBRE = ? WHERE id_tipo_suelo = ?`, [nombre, id]);
-        await connection.close();
         res.json({ success: true })
     } catch (err) {
         handleDbError(err, res, 'updating tipo de suelo');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 

@@ -38,10 +38,10 @@ router.get('/', async (req, res) => {
             JOIN CLIENTES C ON R.ID_CLIENTE = C.ID_CLIENTE
             JOIN CANCHAS CA ON R.ID_CANCHA = CA.ID_CANCHA;
         `);
-        
+
         res.json({ success: true, reservas: result });
     } catch (err) {
-        
+
         handleDbError(err, res, 'obtener reservas');
     } finally {
         if (connection) {
@@ -86,25 +86,34 @@ router.post('/add', async (req, res) => {
         cliente, cancha, fechaInicio, fechaFin, horaInicio, horaFin,
         estadoReserva, fechaLimiteCancelacion, estadoCancelacion, porcentajePromocion
     } = req.body;
+    let connection = null;
 
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         const result = await connection.query(`
             INSERT INTO RESERVAS (ID_CLIENTE, ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, ESTADO_RESERVA, FECHA_LIMITE_CANCELACION, ESTADO_CANCELACION, PORCENTAJE_PROMOCION)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [parseInt(cliente), parseInt(cancha), fechaInicio, fechaFin, horaInicio, horaFin, estadoReserva, fechaLimiteCancelacion, estadoCancelacion, parseFloat(porcentajePromocion)]
         );
-        await connection.close();
         res.json({ success: true });
     } catch (err) {
         handleDbError(err, res, 'añadir la reserva');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
 // Ruta para actualizar una reserva existente
 router.post('/update/:id', async (req, res) => {
     const { id } = req.params;
-    const { id_cliente, id_cancha, fecha_inicio, fecha_fin, hora_inicio, 
+    const { id_cliente, id_cancha, fecha_inicio, fecha_fin, hora_inicio,
         hora_fin, estado_reserva, fecha_limite_cancelacion, estado_cancelacion, porcentaje_promocion, reembolsable } = req.body;
     let connection = null;
     try {
@@ -113,14 +122,19 @@ router.post('/update/:id', async (req, res) => {
             `UPDATE RESERVAS 
             SET ID_CLIENTE = ?, ID_CANCHA = ?, FECHA_INICIO = ?, FECHA_FIN = ?, HORA_INICIO = ?, HORA_FIN = ?, ESTADO_RESERVA = ?, FECHA_LIMITE_CANCELACION = ?, ESTADO_CANCELACION = ?, PORCENTAJE_PROMOCION = ?, REEMBOLSABLE = ?
             WHERE ID_RESERVA = ?;`,
-            [id_cliente, id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, estado_reserva, fecha_limite_cancelacion, estado_cancelacion, porcentaje_promocion, reembolsable ,id]
+            [id_cliente, id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, estado_reserva, fecha_limite_cancelacion, estado_cancelacion, porcentaje_promocion, reembolsable, id]
         );
         res.json({ success: true, message: 'Reserva actualizada exitosamente' });
     } catch (err) {
         handleDbError(err, res, 'actualizar una reserva');
     } finally {
         if (connection) {
-            await connection.close();
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
         }
     }
 });
@@ -137,7 +151,12 @@ router.delete('/delete/:id', async (req, res) => {
         handleDbError(err, res, 'eliminar una reserva');
     } finally {
         if (connection) {
-            await connection.close();
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
         }
     }
 });
@@ -171,7 +190,12 @@ router.put('/confirm/:id', async (req, res) => {
         handleDbError(err, res, 'confirmar la reserva');
     } finally {
         if (connection) {
-            await connection.close();
+            try {
+                await connection.close();
+                console.log('Conexión cerrada');
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
         }
     }
 });

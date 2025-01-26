@@ -98,7 +98,7 @@ router.post('/update/:id', async (req, res) => {
     const { id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, descripcion, estado } = req.body;
     let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         await connection.query(
             `UPDATE mantenimiento SET ID_CANCHA = ?, FECHA_INICIO = ?, FECHA_FIN = ?, HORA_INICIO = ?, HORA_FIN = ?, DESCRIPCION = ?, ESTADO = ? WHERE id_mantenimiento = ?`,
             [id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, descripcion, estado, id]
@@ -110,6 +110,7 @@ router.post('/update/:id', async (req, res) => {
         if (connection) {
             try {
                 await connection.close();
+                console.log('Conexión cerrada');
             } catch (closeErr) {
                 console.error('Error al cerrar la conexión:', closeErr.message);
             }
