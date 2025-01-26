@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const selectedCanchaId = urlParams.get('cancha');
 
+
     const loadClientes = () => {
         if (!clienteSelect) return;
 
@@ -95,12 +96,39 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error loading canchas:', error));
     };
 
+    const loadDeportes = async (canchaId) => {
+        const deporteSelect = document.getElementById('deporte');
+        if (!deporteSelect) return;
+
+        // Limpiar opciones
+        deporteSelect.innerHTML = '<option value="" disabled selected>Seleccione un deporte</option>';
+
+        if (!canchaId) return;
+
+        try {
+            const response = await fetch(`/canchadeporte/cancha/${canchaId}`);
+            const data = await response.json();
+
+            if (data.success && Array.isArray(data.canchaDeportes)) {
+                data.canchaDeportes.forEach(cd => {
+                    const option = document.createElement('option');
+                    option.value = cd.ID_DEPORTE;
+                    option.textContent = `${cd.DEPORTE} - $${cd.PRECIO_HORA}/hora`;
+                    deporteSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error cargando deportes:', error);
+        }
+    };
+
     form.addEventListener('submit', function (event) {
         event.preventDefault();
 
         const reservaData = {
             cliente: document.getElementById('cliente').value.trim(),
             cancha: document.getElementById('cancha').value.trim(),
+            deporte: document.getElementById('deporte').value,
             fechaInicio: document.getElementById('fechaInicio').value,
             fechaFin: document.getElementById('fechaFin').value,
             horaInicio: document.getElementById('horaInicio').value,
@@ -149,6 +177,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadClientes();
     loadCanchas();
+
+    // Modificar el evento change del select de canchas
+    if (canchaSelect) {
+        canchaSelect.addEventListener('change', function() {
+            const selectedCanchaId = this.value;
+            loadDeportes(selectedCanchaId);
+        });
+    }
+
+    // Si hay una cancha preseleccionada, cargar sus deportes
+    if (selectedCanchaId) {
+        loadDeportes(selectedCanchaId);
+    }
 
     // Manejar el botón de cancelar
     if (cancelButton) {
