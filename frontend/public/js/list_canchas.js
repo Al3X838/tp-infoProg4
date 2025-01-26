@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     <h5 class="card-title">Cancha ${cancha.NUMERO}</h5>
                                     <p class="card-text">
                                         <strong>Ubicación:</strong> ${cancha.UBICACION}<br>
-                                        <strong>Tipo:</strong> ${cancha.NOMBRE_TIPO_SUELO}
+                                        <strong>Tipo de suelo:</strong> ${cancha.NOMBRE_TIPO_SUELO}
                                     </p>
                                     <div class="d-grid gap-2">
                                         <button class="btn ${cancha.ESTADO === 'D' ? 'btn-primary' : 'btn-secondary'}" 
@@ -80,15 +80,25 @@ document.addEventListener('DOMContentLoaded', function () {
                                     </div>
                                 </div>
                                 <div id="detalles${cancha.ID_CANCHA}" class="card-footer bg-light d-none">
-                                    <small>
-                                        <strong>Tipo de Suelo:</strong> ${cancha.NOMBRE_TIPO_SUELO}<br>
-                                        ${cancha.LUMINICA === 'S' ? '<strong>Luminica:</strong> Sí<br>' : '<strong>Luminica:</strong> No<br>'}
-                                        ${cancha.BEBEDERO === 'S' ? '<strong>Bebedero:</strong> Sí<br>' : '<strong>Bebedero:</strong> No<br>'}
-                                        ${cancha.BANOS === 'S' ? '<strong>Baños:</strong> Sí<br>' : '<strong>Baños:</strong> No<br>'}
-                                        ${cancha.CAMBIADOR === 'S' ? '<strong>Cambiador:</strong> Sí<br>' : '<strong>Cambiador:</strong> No<br>'}
-                                        <strong>Deportes y Precios:</strong><br>
-                                        ${deportesHtml}
-                                    </small>
+                                    <h6 class="text-primary mb-3">Detalles Adicionales</h6>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <strong>Luminica:</strong> ${cancha.LUMINICA === 'S' ? 'Sí' : 'No'}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Bebedero:</strong> ${cancha.BEBEDERO === 'S' ? 'Sí' : 'No'}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Baños:</strong> ${cancha.BANOS === 'S' ? 'Sí' : 'No'}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Cambiador:</strong> ${cancha.CAMBIADOR === 'S' ? 'Sí' : 'No'}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Deportes y Precios:</strong><br>
+                                            ${deportesHtml}
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
