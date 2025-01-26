@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
 });
 
 // Ruta GET para obtener un item específica por su ID
-router.get('/canchaDeporte/:id', async (req, res) => {
+router.get('/canchadeporte/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const connection = await getConnection();
