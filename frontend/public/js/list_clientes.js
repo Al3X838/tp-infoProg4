@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </td>
               </tr>
             <tr id="details-row-${cliente.ID_CLIENTE}" class="d-none">
-                <td colspan="9">
+                <td colspan="5">
                     <div class="p-3 border rounded">
                         <ul class="list-unstyled mb-0">
                             <li><strong>Fecha de Nacimiento:</strong> ${cliente.FECHA_NACIMIENTO || 'N/A'}</li>
@@ -67,6 +67,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             <li><strong>Nacionalidad:</strong> ${cliente.NACIONALIDAD || 'N/A'}</li>
                             <li><strong>Motivo Bloqueo:</strong> ${cliente.MOTIVO_BLOQUEO || 'N/A'}</li>
                         </ul>
+                        
+                    </div>
+                </td>
+                <td colspan="4">
+                    <div class="p-3 border rounded">
+                        <div id="map-${cliente.ID_CLIENTE}" style="height: 150px;"></div>
                     </div>
                 </td>
             </tr>
@@ -79,10 +85,42 @@ document.addEventListener('DOMContentLoaded', function () {
         // Alternar visibilidad
         if (detailsRow.classList.contains('d-none')) {
             detailsRow.classList.remove('d-none');
+
+            // Encontrar al cliente
+            const cliente = clientes.find(c => c.ID_CLIENTE === id);
+            if (!cliente) {
+                console.error(`Cliente con ID ${id} no encontrado.`);
+                return;
+            }
+
+            const address = `${cliente.DIRECCION}, ${cliente.CIUDAD}`;
+            const mapContainer = document.getElementById(`map-${id}`);
+
+            // Inicializar el mapa de Google Maps
+            const geocoder = new google.maps.Geocoder();
+            const map = new google.maps.Map(mapContainer, {
+                zoom: 15,
+                center: { lat: -25.2637, lng: -57.5759 }, // Coordenadas predeterminadas (por ejemplo, Asunción, Paraguay)
+            });
+
+            // Convertir la dirección en coordenadas y colocar un marcador
+            geocoder.geocode({ address: address }, (results, status) => {
+                if (status === "OK") {
+                    map.setCenter(results[0].geometry.location);
+                    new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location,
+                    });
+                } else {
+                    console.error(`Geocodificación fallida: ${status}`);
+                    mapContainer.innerHTML = `<p>No se pudo cargar la dirección.</p>`;
+                }
+            });
         } else {
             detailsRow.classList.add('d-none');
         }
-    }
+    };
+
 
     // Función para ordenar la tabla
     window.sortTable = function (columnIndex) {
