@@ -5,7 +5,7 @@ const odbc = require('odbc');
 // Función para obtener la conexión a la base de datos
 const getConnection = async () => {
     try {
-        const connection = await odbc.connect(`DSN=infoprog4;UID=${process.env.DB_USER};PWD=${process.env.DB_PASSWORD}`);
+        const connection = await odbc.connect(`DSN=infoprog4;UID=${process.env.DB_USER};PWD=${process.env.DB_PASSWORD};CHARSET=utf8;`);
         return connection;
     } catch (err) {
         console.error('Error al conectar a la base de datos:', err);
