@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
         if (connection) {
             try {
                 await connection.close();
-                console.log('Conexión cerrada');
+
             } catch (closeErr) {
                 console.error('Error al cerrar la conexión:', closeErr.message);
             }
@@ -62,7 +62,7 @@ router.get('/tiposuelo/:id', async (req, res) => {
         if (connection) {
             try {
                 await connection.close();
-                console.log('Conexión cerrada');
+
             } catch (closeErr) {
                 console.error('Error al cerrar la conexión:', closeErr.message);
             }
@@ -85,7 +85,7 @@ router.post('/add', async (req, res) => {
         if (connection) {
             try {
                 await connection.close();
-                console.log('Conexión cerrada');
+
             } catch (closeErr) {
                 console.error('Error al cerrar la conexión:', closeErr.message);
             }
@@ -109,7 +109,7 @@ router.post('/update/:id', async (req, res) => {
         if (connection) {
             try {
                 await connection.close();
-                console.log('Conexión cerrada');
+
             } catch (closeErr) {
                 console.error('Error al cerrar la conexión:', closeErr.message);
             }

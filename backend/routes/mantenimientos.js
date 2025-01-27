@@ -110,7 +110,7 @@ router.post('/update/:id', async (req, res) => {
         if (connection) {
             try {
                 await connection.close();
-                console.log('Conexión cerrada');
+
             } catch (closeErr) {
                 console.error('Error al cerrar la conexión:', closeErr.message);
             }

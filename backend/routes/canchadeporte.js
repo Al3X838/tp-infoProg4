@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
         if (connection) {
             try {
                 await connection.close();
-                console.log('Conexión cerrada');
+
             } catch (closeErr) {
                 console.error('Error al cerrar la conexión:', closeErr.message);
             }
@@ -62,7 +62,7 @@ router.get('/canchadeporte/:id', async (req, res) => {
         if (connection) {
             try {
                 await connection.close();
-                console.log('Conexión cerrada');
+
             } catch (closeErr) {
                 console.error('Error al cerrar la conexión:', closeErr.message);
             }
@@ -73,8 +73,9 @@ router.get('/canchadeporte/:id', async (req, res) => {
 // Ruta GET para obtener un items específicas por su Id de cancha
 router.get('/cancha/:id', async (req, res) => {
     const { id } = req.params;
+    let connection = null;
     try {
-        const connection = await getConnection();
+        connection = await getConnection();
         const result = await connection.query(`SELECT cd.*, d.NOMBRE AS DEPORTE FROM CANCHA_DEPORTE cd LEFT JOIN DEPORTES d ON cd.ID_DEPORTE = d.ID_DEPORTE WHERE cd.ID_CANCHA = ?`, [id]);
 
         if (result.length > 0) {
@@ -84,6 +85,15 @@ router.get('/cancha/:id', async (req, res) => {
         }
     } catch (err) {
         handleDbError(err, res, 'fetching canchaDeporte by ID');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
     }
 });
 
@@ -102,7 +112,7 @@ router.post('/add', async (req, res) => {
         if (connection) {
             try {
                 await connection.close();
-                console.log('Conexión cerrada');
+
             } catch (closeErr) {
                 console.error('Error al cerrar la conexión:', closeErr.message);
             }
@@ -126,7 +136,7 @@ router.post('/update/:id', async (req, res) => {
         if (connection) {
             try {
                 await connection.close();
-                console.log('Conexión cerrada');
+
             } catch (closeErr) {
                 console.error('Error al cerrar la conexión:', closeErr.message);
             }
