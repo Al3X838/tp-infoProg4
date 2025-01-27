@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${mantenimiento.HORA_INICIO || 'N/A'}</td>
                 <td>${mantenimiento.FECHA_FIN || 'N/A'}</td>
                 <td>${mantenimiento.HORA_FIN || 'N/A'}</td>
-                <td class="text-center">${mantenimiento.ESTADO}</td>
+                <td class="text-center">${mantenimiento.ESTADO === 'P' ?  "En proceso" : "Finalizado"}</td>
                 <td>
                   <div class="d-flex gap-2">
                     <button class="btn btn-info bi bi-info-circle" onclick='toggleDetails(${mantenimiento.ID_MANTENIMIENTO})'></button>
