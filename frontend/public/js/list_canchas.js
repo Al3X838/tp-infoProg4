@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch('/api/canchas');
             const data = await response.json();
             if (data.success !== false) {
+                // Ordenar las canchas por número
+                data.canchas.sort((a, b) => a.NUMERO - b.NUMERO);
                 const canchasHtml = await Promise.all(data.canchas.map(async (cancha) => {
                     const imagen = getImagenCancha(cancha.NOMBRE_TIPO_SUELO);
                     const deportesHtml = await mostrarDeportes(cancha.ID_CANCHA);

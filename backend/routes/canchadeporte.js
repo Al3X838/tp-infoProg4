@@ -77,14 +77,9 @@ router.get('/cancha/:id', async (req, res) => {
     try {
         connection = await getConnection();
         const result = await connection.query(`SELECT cd.*, d.NOMBRE AS DEPORTE FROM CANCHA_DEPORTE cd LEFT JOIN DEPORTES d ON cd.ID_DEPORTE = d.ID_DEPORTE WHERE cd.ID_CANCHA = ?`, [id]);
-
-        if (result.length > 0) {
-            res.json({ success: true, canchaDeportes: result });
-        } else {
-            res.json({ success: false, error: 'canchaDeportes not found.' });
-        }
+        res.json({ success: true, canchaDeportes: result });
     } catch (err) {
-        handleDbError(err, res, 'fetching canchaDeporte by ID');
+        handleDbError(err, res, 'fetching canchaDeporte by ID de cancha');
     } finally {
         if (connection) {
             try {
