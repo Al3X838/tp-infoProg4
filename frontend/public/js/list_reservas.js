@@ -144,11 +144,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para enviar un correo electrónico utilizando EmailJS
     function sendEmail(reserva) {
         console.log("reserva",reserva);
-        emailjs.init('RloVlsEjuRN3Mdixa'); // Reemplaza con tu User ID de EmailJS
+        emailjs.init('RloVlsEjuRN3Mdixa'); // user id de emailjs
         const templateParams = {
             to_name: reserva.NOMBRE_CLIENTE,
             to_email: reserva.EMAIL_CLIENTE,
-            message: `Su reserva ha sido confirmada. Detalles de la reserva:\nFecha: ${reserva.FECHA_INICIO} - ${reserva.FECHA_FIN}\nHora: ${reserva.HORA_INICIO} - ${reserva.HORA_FIN}`
+            message: `Detalles de la reserva:\nFecha: ${reserva.FECHA_INICIO} - ${reserva.FECHA_FIN}\nHora: ${reserva.HORA_INICIO} - ${reserva.HORA_FIN}`
         };
 
         emailjs.send('service_tu7zeyh', 'template_3u6kqap', templateParams)
