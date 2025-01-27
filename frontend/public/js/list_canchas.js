@@ -50,9 +50,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     return `
                         <div class="col-md-4 mb-4">
                             <div class="card">
-                                <span class="status-badge ${cancha.ESTADO === 'D' ? 'bg-success' : 'bg-danger'}">
+                                <span class="badge text-bg-${cancha.ESTADO === 'D' ? 'success' : 'danger'}">
                                     ${cancha.ESTADO === 'D' ? 'Disponible' : 'No Disponible'}
-                                </span>   
+                                </span>
                                 <img src="${imagen}" 
                                     class="card-img-top" 
                                     alt="Cancha ${cancha.NUMERO}">
