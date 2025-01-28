@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const clienteSearchInput = document.getElementById('cliente-search');
     const clienteResults = document.getElementById('cliente-results');
     const reservaSelect = document.getElementById('reserva-select');
+    const montoTotalInput = document.getElementById('monto-total');
 
     let clientes = []; // Lista global de clientes
     let reservas = []; // Lista global de reservas
@@ -73,9 +74,12 @@ document.addEventListener('DOMContentLoaded', function () {
             reservaOption.textContent = `Reserva #${reserva.ID_RESERVA} - ${reserva.ESTADO_RESERVA}`;
             reservaSelect.appendChild(reservaOption);
         });
+
+        // Limpiar el monto total cuando se cargan nuevas reservas
+        montoTotalInput.value = '';
     }
 
-    // Al seleccionar una reserva, seleccionar automáticamente el cliente asociado
+    // Al seleccionar una reserva, seleccionar automáticamente el cliente asociado y cargar el monto
     reservaSelect.addEventListener('change', function () {
         const selectedReserva = reservas.find(reserva => reserva.ID_RESERVA === parseInt(reservaSelect.value));
         if (selectedReserva) {
@@ -83,6 +87,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (cliente) {
                 clienteSearchInput.value = `${cliente.NOMBRE} ${cliente.APELLIDO}`;
             }
+            // Cargar el monto total de la reserva
+            montoTotalInput.value = selectedReserva.MONTO_TOTAL || '';
+        } else {
+            // Limpiar el monto total si no hay reserva seleccionada
+            montoTotalInput.value = '';
         }
     });
 
@@ -103,9 +112,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 clientes = clientesData.clientes || [];
-                reservas = reservasData.reservas.filter(reserva =>
-                    ['P', 'A'].includes(reserva.ESTADO_RESERVA)
+                reservas = (reservasData.reservas || []).filter(reserva =>
+                    ['P', 'A', 'C'].includes(reserva.ESTADO_RESERVA) && 
+                    reserva.ESTADO_CANCELACION === 'N'
                 );
+                console.log(reservas);
                 loadReservas();
             })
             .catch(error => {
@@ -130,6 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => response.json())
             .then(data => {
+                console.log('datos enviados', data);
                 if (data.success) {
                     // Muestra alerta de éxito y redirige
                     Swal.fire({
