@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('Data received:', data);
 
                 if (data.success && Array.isArray(data.clientes)) {
-
                     const defaultOption = document.createElement('option');
                         defaultOption.value = '';
                         defaultOption.textContent = 'Selecciona un cliente';
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (cliente.ESTADO === 'A') {
                         const option = document.createElement('option');
                         option.value = cliente.ID_CLIENTE;
-                        option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO}`;
+                        option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO} (${cliente.DOCUMENTO_ID})`;
                         clienteSelect.appendChild(option);
                         }
                     });
