@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         reservasList.innerHTML = reservas.map(reserva =>`
             <tr id="reserva-row-${reserva.ID_RESERVA}">
                 <th>${reserva.ID_RESERVA}</th>
-                <td>${reserva.NOMBRE_CLIENTE} ${reserva.APELLIDO_CLIENTE}</td>
+                <td>${reserva.NOMBRE_CLIENTE} ${reserva.APELLIDO_CLIENTE} ${reserva.DOCUMENTO_CLIENTE}</td>
                 <td>${reserva.NUMERO_CANCHA}</td>
                 <td>${reserva.FECHA_INICIO}</td>
                 <td>${reserva.FECHA_FIN}</td>

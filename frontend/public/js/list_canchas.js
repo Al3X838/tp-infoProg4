@@ -176,11 +176,12 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`/api/canchas/delete/${id}`, {
             method: 'DELETE'
         })
-            .then(response => {
+            .then(async response => {
+                const data = await response.json();
                 if (!response.ok) {
-                    throw new Error('Error en la solicitud DELETE');
+                    throw new Error(data.error || 'Error al eliminar la cancha');
                 }
-                return response.json();
+                return data;
             })
             .then(data => {
                 if (data.success) {
@@ -197,7 +198,11 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error('Error:', error);
-                showErrorAlert('Error en la conexión con el servidor.');
+                if (error.name === 'TypeError') {
+                    showErrorAlert('Error en la conexión con el servidor.');
+                } else {
+                    showErrorAlert(error.message);
+                }
             });
     };
 
