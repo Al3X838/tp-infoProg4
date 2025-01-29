@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
     try {
         connection = await getConnection();
         const result = await connection.query(`
-            SELECT p.*, c.NOMBRE AS CLIENTE_NOMBRE, c.APELLIDO AS CLIENTE_APELLIDO, r.MONTO_TOTAL 
+            SELECT p.*, c.NOMBRE AS CLIENTE_NOMBRE, c.APELLIDO AS CLIENTE_APELLIDO, r.MONTO_TOTAL, r.REEMBOLSABLE AS RESERVA_REEMBOLSABLE
             FROM pagos p 
             LEFT JOIN reservas r ON p.ID_RESERVA = r.ID_RESERVA 
             LEFT JOIN clientes c ON r.ID_CLIENTE = c.ID_CLIENTE;
