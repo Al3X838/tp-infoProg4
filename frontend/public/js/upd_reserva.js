@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     data.clientes.forEach(cliente => {
                         const option = document.createElement('option');
                         option.value = cliente.ID_CLIENTE;
-                        option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO}`;
+                        option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO} (${cliente.DOCUMENTO_ID})`;
                         clienteSelect.appendChild(option);
                     });
                 } else {
