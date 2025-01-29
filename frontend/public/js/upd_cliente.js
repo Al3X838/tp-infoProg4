@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     clienteDocumentoIdInput.value = data.cliente.DOCUMENTO_ID;
                     clienteNombreInput.value = data.cliente.NOMBRE;
                     clienteApellidoInput.value = data.cliente.APELLIDO;
-                    clienteFechaNacimientoInput.value = data.cliente.FECHA_NACIMIENTO;
+                    clienteFechaNacimientoInput.value = data.cliente.FECHA_NACIMIENTO || null;
                     clienteCiudadInput.value = data.cliente.CIUDAD;
                     clienteDireccionInput.value = data.cliente.DIRECCION;
                     clienteTelefonoInput.value = data.cliente.TELEFONO;
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
             documento_id: clienteDocumentoIdInput.value.trim(),
             nombre: clienteNombreInput.value.trim(),
             apellido: clienteApellidoInput.value.trim(),
-            fecha_nacimiento: clienteFechaNacimientoInput.value,
+            fecha_nacimiento: clienteFechaNacimientoInput.value.trim() || null,
             ciudad: clienteCiudadInput.value.trim(),
             direccion: clienteDireccionInput.value.trim(),
             telefono: clienteTelefonoInput.value.trim(),
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
             estado: clientEstadoInput.value.trim(),
             motivo_bloqueo: clienteMotivoBloqueoInput.value.trim() || null
         };
-
+        console.log(newClienteData);
         fetch(`/clientes/update/${clienteId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',

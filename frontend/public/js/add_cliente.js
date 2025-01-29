@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const newDocumentoId = document.getElementById('documento_id').value.trim();
         const newNombre = document.getElementById('nombre').value.trim();
         const newApellido = document.getElementById('apellido').value.trim();
-        const newFechaNacimiento = document.getElementById('fecha_nacimiento').value;
+        const newFechaNacimiento = document.getElementById('fecha_nacimiento').value.trim() || null;
         const newCiudad = document.getElementById('ciudad').value.trim();
         const newDireccion = document.getElementById('direccion').value.trim();
         const newTelefono = document.getElementById('telefono').value.trim();
@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
