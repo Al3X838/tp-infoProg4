@@ -1,119 +1,182 @@
 <!DOCTYPE html>
 <html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Cliente</title>
+    <link rel="icon" href="images/Logo.png" type="image/png" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Add Cliente</title>
-  <link rel="icon" href="images/Logo.png" type="image/png" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="css/styles.css" />
-</head>
-
-<body>
-  <div class="shadow navbar-div">
-    <div class="text-center">
-      <a href="/home">
-        <img src="images/Logo.png" alt="Logo" class="logo" />
-      </a>
-    </div>
-    <nav class="navbar navbar-expand-lg">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-        <ul class="navbar-nav text-center">
-          <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="/home">Inicio</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/list_tipo_suelo">Tipo Suelos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/list_deportes">Deportes</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/list_canchas">Canchas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/list_mantenimientos">Mantenimientos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" href="/list_clientes">Clientes</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/list_reservas">Reservas</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/list_pagos">Pagos</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link text-danger" href="/salir"><i class="bi bi-box-arrow-right"></i><strong>
-                Salir</strong></a>
-          </li>
-        </ul>
+  <body>
+    <div class="shadow navbar-div">
+      <div class="text-center">
+        <a href="/home">
+          <img src="images/Logo.png" alt="Logo" class="logo" />
+        </a>
       </div>
-    </nav>
-  </div>
-
-  <div class="container container-large mt-4">
-    <!-- Título y botón para agregar cliente -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>Añadir Cliente</h2>
+      <nav class="navbar navbar-expand-lg">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-center"
+          id="navbarNav">
+          <ul class="navbar-nav text-center">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/home">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_tipo_suelo">Tipo Suelos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_deportes">Deportes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_canchas">Canchas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_mantenimientos">Mantenimientos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/list_clientes">Clientes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_reservas">Reservas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_pagos">Pagos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-danger" href="/salir"
+                ><i class="bi bi-box-arrow-right"></i><strong> Salir</strong></a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
     </div>
-    <form id="add-cliente-form">
-      <label for="documento_id" class="form-label fw-bold pt-2">Numero de Documento:</label>
-      <input class="form-control" type="text" placeholder="Documento del Cliente (Sin Puntos)"
-        aria-label="default input example" id="documento_id" />
 
-      <label for="nombre" class="form-label fw-bold pt-2">Nombre:</label>
-      <input class="form-control" type="text" placeholder="Nombre del Cliente" aria-label="default input example"
-        id="nombre" />
-
-      <label for="apellido" class="form-label fw-bold pt-2">Apellido:</label>
-      <input class="form-control" type="text" placeholder="Apellido del Cliente" aria-label="default input example"
-        id="apellido" />
-
-      <label for="fecha_nacimiento" class="form-label fw-bold pt-2">Fecha de Nacimiento:</label>
-      <input class="form-control" type="date" aria-label="default input example" id="fecha_nacimiento" />
-
-      <label for="ciudad" class="form-label fw-bold pt-2">Ciudad:</label>
-      <input class="form-control" type="text" placeholder="Ciudad del Cliente" aria-label="default input example"
-        id="ciudad" />
-
-      <label for="direccion" class="form-label fw-bold pt-2">Dirección:</label>
-      <input class="form-control" type="text" placeholder="Dirección del Cliente" aria-label="default input example"
-        id="direccion" />
-
-      <label for="telefono" class="form-label fw-bold pt-2">Telefono</label>
-      <div class="input-group">
-        <input type="text" class="form-control" id="telefono" placeholder="+595981456789" />
+    <div class="container container-large mt-4">
+      <!-- Título y botón para agregar cliente -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Añadir Cliente</h2>
       </div>
+      <form id="add-cliente-form">
+        <label for="documento_id" class="form-label fw-bold pt-2"
+          >Numero de Documento:</label
+        >
+        <input
+          class="form-control"
+          type="text"
+          placeholder="Documento del Cliente (Sin Puntos)"
+          aria-label="default input example"
+          id="documento_id" />
 
-      <label for="email" class="form-label fw-bold pt-2">Email:</label>
-      <input class="form-control" type="email" placeholder="Email del Cliente" aria-label="default input example"
-        id="email" />
+        <label for="nombre" class="form-label fw-bold pt-2">Nombre:</label>
+        <input
+          class="form-control"
+          type="text"
+          placeholder="Nombre del Cliente"
+          aria-label="default input example"
+          id="nombre" />
 
-      <label for="nacionalidad" class="form-label fw-bold pt-2">Nacionalidad:</label>
-      <input class="form-control" type="text" placeholder="Nacionalidad del Cliente" aria-label="default input example"
-        id="nacionalidad" />
+        <label for="apellido" class="form-label fw-bold pt-2">Apellido:</label>
+        <input
+          class="form-control"
+          type="text"
+          placeholder="Apellido del Cliente"
+          aria-label="default input example"
+          id="apellido" />
 
-      <button type="submit" class="btn btn-primary mt-3">
-        <span class="bi bi-plus"> </span>Agregar Cliente
-      </button>
-    </form>
-  </div>
+        <label for="fecha_nacimiento" class="form-label fw-bold pt-2"
+          >Fecha de Nacimiento:</label
+        >
+        <input
+          class="form-control"
+          type="date"
+          aria-label="default input example"
+          id="fecha_nacimiento" />
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"></script>
-  <script src="js/add_cliente.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="js/script.js"></script>
-</body>
+        <label for="ciudad" class="form-label fw-bold pt-2">Ciudad:</label>
+        <input
+          class="form-control"
+          type="text"
+          placeholder="Ciudad del Cliente"
+          aria-label="default input example"
+          id="ciudad" />
 
+        <label for="direccion" class="form-label fw-bold pt-2"
+          >Dirección:</label
+        >
+        <input
+          class="form-control"
+          type="text"
+          placeholder="Dirección del Cliente"
+          aria-label="default input example"
+          id="direccion" />
+
+        <div id="mapa" style="height: 400px; width: 100%" class="mt-3"></div>
+
+        <label for="telefono" class="form-label fw-bold pt-2">Telefono</label>
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            id="telefono"
+            placeholder="+595981456789" />
+        </div>
+
+        <label for="email" class="form-label fw-bold pt-2">Email:</label>
+        <input
+          class="form-control"
+          type="email"
+          placeholder="Email del Cliente"
+          aria-label="default input example"
+          id="email" />
+
+        <label for="nacionalidad" class="form-label fw-bold pt-2"
+          >Nacionalidad:</label
+        >
+        <input
+          class="form-control"
+          type="text"
+          placeholder="Nacionalidad del Cliente"
+          aria-label="default input example"
+          id="nacionalidad" />
+
+        <button type="submit" class="btn btn-primary mt-3">
+          <span class="bi bi-plus"> </span>Agregar Cliente
+        </button>
+      </form>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWK3oIBkxoBv3gxXr_PhQR8OJuCKzt1yk&callback=initMap"
+      async
+      defer></script>
+    <script src="js/add_cliente.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/script.js"></script>
+  </body>
 </html>

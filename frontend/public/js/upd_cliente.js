@@ -10,7 +10,6 @@ function toggleMotivoBloqueo() {
     }
 }
 
-// Universelle SweetAlert-Funktionen
 function showErrorAlert(message) {
     Swal.fire({
         icon: 'error',
@@ -30,6 +29,96 @@ function showLoadingAlert() {
         }
     });
 }
+
+// Variables globales
+let mapa = null;
+let marcador = null;
+let geocodificador = null;
+
+// Función para actualizar el marcador en la posición dada
+function actualizarMarcador(posicion) {
+    // Si ya hay un marcador, eliminarlo
+    if (marcador) {
+        marcador.setMap(null);
+    }
+
+    // Crear un nuevo marcador
+    marcador = new google.maps.Marker({
+        position: posicion,
+        map: mapa,
+        draggable: true, // Permitir que el usuario lo mueva
+    });
+
+    // Evento: cuando el usuario mueve el marcador, actualizar dirección
+    marcador.addListener("dragend", function () {
+        obtenerDireccion(geocodificador, marcador.getPosition());
+    });
+}
+
+// Función para extraer la ciudad de los datos de la dirección
+function obtenerCiudad(componentes) {
+    for (const componente of componentes) {
+        if (componente.types.includes("locality")) {
+            return componente.long_name;
+        }
+    }
+    return "Ciudad desconocida";
+}
+
+// Función para convertir coordenadas en una dirección
+function obtenerDireccion(geocodificador, coordenadas) {
+    geocodificador.geocode({ location: coordenadas }, function (resultados, estado) {
+        if (estado === "OK" && resultados[0]) {
+            document.getElementById("direccion").value = resultados[0].formatted_address;
+            document.getElementById("ciudad").value = obtenerCiudad(resultados[0].address_components);
+        } else {
+            console.log("No se encontró una dirección: " + estado);
+        }
+    });
+}
+
+// Función para buscar la dirección que ahora puede ser llamada desde fuera
+function buscarDireccion(direccionInput, ciudadInput) {
+    const direccion = direccionInput || document.getElementById("direccion").value;
+    const ciudad = ciudadInput || document.getElementById("ciudad").value;
+    const consulta = `${direccion}, ${ciudad}, Paraguay`;
+
+    geocodificador.geocode({ address: consulta }, function (resultados, estado) {
+        if (estado === "OK" && resultados[0]) {
+            const ubicacion = resultados[0].geometry.location;
+            mapa.setCenter(ubicacion);
+            actualizarMarcador(ubicacion);
+        } else {
+            console.log("No se encontró la dirección ingresada.");
+        }
+    });
+}
+
+function initMap() {
+    // Posición inicial: Asunción, Paraguay
+    const paraguay = { lat: -25.2637, lng: -57.5759 };
+
+    // Crear el mapa
+    mapa = new google.maps.Map(document.getElementById("mapa"), {
+        center: paraguay,
+        zoom: 13,
+    });
+
+    // Crear un geocoder para convertir direcciones en coordenadas
+    geocodificador = new google.maps.Geocoder();
+
+    // Evento: cuando el usuario hace clic en el mapa
+    mapa.addListener("click", function (evento) {
+        actualizarMarcador(evento.latLng);
+        obtenerDireccion(geocodificador, evento.latLng);
+    });
+
+    // Evento: cuando el usuario escribe en "Ciudad" o "Dirección"
+    document.getElementById("ciudad").addEventListener("change", () => buscarDireccion());
+    document.getElementById("direccion").addEventListener("change", () => buscarDireccion());
+}
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('update-cliente-form');
@@ -75,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     clienteMotivoBloqueoInput.value = data.cliente.MOTIVO_BLOQUEO;
 
                     toggleMotivoBloqueo(); // Llama a la función para gestionar el motivo de bloqueo
+                    buscarDireccion(data.cliente.DIRECCION, data.cliente.CIUDAD); // Busca la dirección ingresada en el mapa
                 }
             })
             .catch(error => {
