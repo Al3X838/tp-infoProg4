@@ -79,14 +79,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>
                     <div class="d-flex gap-2">
                         <button class="btn btn-warning bi bi-pencil" onclick="editPago(${pago.ID_PAGO})"></button>
-                        <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${pago.ID_PAGO}, '${(pago.CLIENTE_NOMBRE + ' ' + pago.CLIENTE_APELLIDO)}')"></button>
+                        <button class="btn btn-success bi bi-arrow-counterclockwise" onclick="confirmDelete(${pago.ID_PAGO}, '${(pago.CLIENTE_NOMBRE + ' ' + pago.CLIENTE_APELLIDO)} ')" ${pago.RESERVA_REEMBOLSABLE === 'S' ? '' : 'disabled'}></button>
+                        
                     </div>
                 </td>
             </tr>
         `;
         });
     }
-
 
     // Función para ordenar la tabla
     window.sortTable = function (columnIndex) {
@@ -128,10 +128,10 @@ document.addEventListener('DOMContentLoaded', function () {
     window.confirmDelete = function (id, Name) {
         Swal.fire({
             title: '¿Estás seguro?',
-            text: `¿Deseas eliminar el pago "${Name}"?`,
+            text: `¿Deseas reembolsar el pago de "${Name}"?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
+            confirmButtonText: 'Sí, reembolsar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -151,12 +151,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     callback(); // Recargar la lista si la eliminación fue exitosa
                     Swal.fire({
                         icon: 'success',
-                        title: 'Eliminado',
-                        text: 'El pago ha sido eliminado correctamente.',
+                        title: 'Reembolso exitoso',
+                        text: 'El reembolso se ha ejecutado correctamente.',
                         confirmButtonText: 'Aceptar'
                     });
                 } else {
-                    showErrorAlert(data.error || 'Error al eliminar el Pago.');
+                    showErrorAlert(data.error || 'Error al reembolsar el Pago.');
                 }
             })
             .catch(error => {
