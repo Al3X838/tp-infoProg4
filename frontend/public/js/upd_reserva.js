@@ -1,3 +1,23 @@
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Cargando...',
+        text: 'Estamos obteniendo los datos de la reserva.',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+}
+
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('addReservaForm');
     const urlParams = new URLSearchParams(window.location.search);
@@ -5,26 +25,26 @@ document.addEventListener('DOMContentLoaded', function () {
     const clienteSelect = document.getElementById('cliente');
     const canchaSelect = document.getElementById('cancha');
 
-    // Método para cargar la lista de clientes
+    // Modified load functions to return Promises
     const loadClientes = () => {
-        if (!clienteSelect) return;
+        return new Promise((resolve, reject) => {
+            if (!clienteSelect) return resolve();
 
-        fetch('/clientes')
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                console.log('Data received:', data);
-
-                if (data.success && Array.isArray(data.clientes)) {
+            showLoadingAlert();
+            fetch('/clientes')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.close();
+                    clienteSelect.innerHTML = '';
 
                     const defaultOption = document.createElement('option');
-                        defaultOption.value = '';
-                        defaultOption.textContent = 'Selecciona un cliente';
-                        defaultOption.selected = true;
-                        defaultOption.disabled = true;
-                        clienteSelect.appendChild(defaultOption);
+                    defaultOption.textContent = 'Selecciona un cliente';
+                    defaultOption.selected = true;
+                    defaultOption.disabled = true;
+                    clienteSelect.appendChild(defaultOption);
 
                     data.clientes.forEach(cliente => {
                         const option = document.createElement('option');
@@ -32,70 +52,64 @@ document.addEventListener('DOMContentLoaded', function () {
                         option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO} (${cliente.DOCUMENTO_ID})`;
                         clienteSelect.appendChild(option);
                     });
-                } else {
-                    throw new Error('No hay clientes disponibles');
-                }
-            })
-            .catch(error => console.error('Error loading clients:', error));
+                    resolve();
+                })
+                .catch(error => {
+                    Swal.close();
+                    showErrorAlert('Error cargando clientes');
+                    reject(error);
+                });
+        });
     };
 
-    // Método para cargar la lista de canchas
     const loadCanchas = () => {
-        if (!canchaSelect) return;
+        return new Promise((resolve, reject) => {
+            if (!canchaSelect) return resolve();
 
-        fetch('/api/canchas')
-            .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response.json();
-            })
-            .then(data => {
-                console.log('Data received:', data);
-
-                if (data.success && Array.isArray(data.canchas)) {
+            showLoadingAlert();
+            fetch('/api/canchas')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.close();
+                    canchaSelect.innerHTML = '';
 
                     const defaultOption = document.createElement('option');
-                    defaultOption.value = '';
                     defaultOption.textContent = 'Selecciona una cancha';
                     defaultOption.selected = true;
                     defaultOption.disabled = true;
                     canchaSelect.appendChild(defaultOption);
 
                     data.canchas.forEach(cancha => {
-                        if (cancha.ESTADO === 'D') {
-                            const option = document.createElement('option');
-                            option.value = cancha.ID_CANCHA;
-                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *Disponible*`;
-                            canchaSelect.appendChild(option);
-                        }else{
-                            const option = document.createElement('option');
-                            option.value = cancha.ID_CANCHA;
-                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *No Disponible en este momento*`;
-                            canchaSelect.appendChild(option);
-                        }
+                        const option = document.createElement('option');
+                        option.value = cancha.ID_CANCHA;
+                        const statusText = cancha.ESTADO === 'D' ? '*Disponible*' : '*No Disponible*';
+                        option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} ${statusText}`;
+                        canchaSelect.appendChild(option);
                     });
-
-                    if (canchaSelect) {
-                        canchaSelect.value = canchaSelect;
-                    }
-                } else {
-                    throw new Error('No hay canchas disponibles');
-                }
-            })
-            .catch(error => console.error('Error loading canchas:', error));
+                    resolve();
+                })
+                .catch(error => {
+                    Swal.close();
+                    showErrorAlert('Error cargando canchas');
+                    reject(error);
+                });
+        });
     };
 
-    // Agregar la función loadDeportes después de loadCanchas
     const loadDeportes = async (canchaId) => {
         const deporteSelect = document.getElementById('deporte');
         if (!deporteSelect) return;
 
-        deporteSelect.innerHTML = '<option value="" disabled selected>Seleccione un deporte</option>';
-
-        if (!canchaId) return;
-
+        showLoadingAlert();
         try {
             const response = await fetch(`/canchadeporte/cancha/${canchaId}`);
             const data = await response.json();
+            Swal.close();
+
+            deporteSelect.innerHTML = '<option value="" disabled selected>Seleccione un deporte</option>';
 
             if (data.success && Array.isArray(data.canchaDeportes)) {
                 data.canchaDeportes.forEach(cd => {
@@ -106,65 +120,66 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         } catch (error) {
-            console.error('Error cargando deportes:', error);
+            Swal.close();
+            showErrorAlert('Error cargando deportes');
+            console.error(error);
         }
     };
 
-    // Llama a las funciones para cargar la lista de clientes y canchas al inicio
-    loadClientes();
-    loadCanchas();
+    // Initial loading sequence
+    showLoadingAlert();
+    Promise.all([loadClientes(), loadCanchas()])
+        .then(() => {
+            Swal.close();
 
-    // Modificar el evento change del select de canchas
-    if (canchaSelect) {
-        canchaSelect.addEventListener('change', function() {
-            const selectedCanchaId = this.value;
-            loadDeportes(selectedCanchaId);
+            if (reservaId) {
+                showLoadingAlert();
+                fetch(`/reservas/reserva/${reservaId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.close();
+                        if (data.success && data.reserva) {
+                            // Set basic fields
+                            document.getElementById('cliente').value = data.reserva.ID_CLIENTE;
+                            document.getElementById('cancha').value = data.reserva.ID_CANCHA;
+                            document.getElementById('fechaInicio').value = data.reserva.FECHA_INICIO;
+                            document.getElementById('fechaFin').value = data.reserva.FECHA_FIN;
+                            document.getElementById('horaInicio').value = data.reserva.HORA_INICIO;
+                            document.getElementById('horaFin').value = data.reserva.HORA_FIN;
+                            document.getElementById('estadoReserva').value = data.reserva.ESTADO_RESERVA;
+                            document.getElementById('fechaLimiteCancelacion').value = data.reserva.FECHA_LIMITE_CANCELACION;
+                            document.getElementById('estadoCancelacion').value = data.reserva.ESTADO_CANCELACION;
+                            document.getElementById('porcentajePromocion').value = data.reserva.PORCENTAJE_PROMOCION;
+                            document.getElementById('reembolsable').value = data.reserva.REEMBOLSABLE;
+
+                            // Load deportes after cancha is set
+                            loadDeportes(data.reserva.ID_CANCHA).then(() => {
+                                document.getElementById('deporte').value = data.reserva.ID_DEPORTE;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        showErrorAlert('Error al cargar los datos de la reserva');
+                        console.error(error);
+                    });
+            }
+        })
+        .catch(error => {
+            Swal.close();
+            showErrorAlert('Error inicializando el formulario');
+            console.error(error);
         });
-    }
 
-    // Cargar datos de la reserva actual
-    if (reservaId) {
-        fetch(`/reservas/reserva/${reservaId}`, { method: 'GET' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.reserva) {
-                    document.getElementById('cliente').value = data.reserva.ID_CLIENTE;
-                    document.getElementById('cancha').value = data.reserva.ID_CANCHA;
-                    document.getElementById('fechaInicio').value = data.reserva.FECHA_INICIO;
-                    document.getElementById('fechaFin').value = data.reserva.FECHA_FIN;
-                    document.getElementById('horaInicio').value = data.reserva.HORA_INICIO;
-                    document.getElementById('horaFin').value = data.reserva.HORA_FIN;
-                    document.getElementById('estadoReserva').value = data.reserva.ESTADO_RESERVA;
-                    document.getElementById('fechaLimiteCancelacion').value = data.reserva.FECHA_LIMITE_CANCELACION;
-                    document.getElementById('estadoCancelacion').value = data.reserva.ESTADO_CANCELACION;
-                    document.getElementById('porcentajePromocion').value = data.reserva.PORCENTAJE_PROMOCION;
-                    document.getElementById('reembolsable').value = data.reserva.REEMBOLSABLE;
-                    // Cargar deportes después de establecer la cancha
-                    loadDeportes(data.reserva.ID_CANCHA).then(() => {
-                        document.getElementById('deporte').value = data.reserva.ID_DEPORTE;
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.error || 'Reserva no encontrada.'
-                    });
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al obtener datos de la reserva.'
-                });
-                console.error('Error:', error);
-            });
-    }
+    // Event listeners
+    canchaSelect?.addEventListener('change', function () {
+        loadDeportes(this.value);
+    });
 
-    form.addEventListener('submit', function (event) {
+    form?.addEventListener('submit', function (event) {
         event.preventDefault();
+        showLoadingAlert();
 
-        const updatedReservaData = {
+        const formData = {
             id_cliente: document.getElementById('cliente').value,
             id_cancha: document.getElementById('cancha').value,
             fecha_inicio: document.getElementById('fechaInicio').value,
@@ -182,33 +197,25 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`/reservas/update/${reservaId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedReservaData)
+            body: JSON.stringify(formData)
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Actualizado!',
-                    text: 'La reserva ha sido actualizada correctamente.'
-                }).then(() => {
-                    window.location.href = '/list_reservas'; // Redirige tras el éxito
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: data.error || 'Error al actualizar la reserva.'
-                });
-            }
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error en la conexión con el servidor.'
+            .then(response => response.json())
+            .then(data => {
+                Swal.close();
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Actualizado!',
+                        text: 'La reserva ha sido actualizada correctamente.'
+                    }).then(() => window.location.href = '/list_reservas');
+                } else {
+                    showErrorAlert(data.error || 'Error al actualizar la reserva');
+                }
+            })
+            .catch(error => {
+                Swal.close();
+                showErrorAlert('Error de conexión con el servidor');
+                console.error(error);
             });
-            console.error('Error al actualizar reserva:', error);
-        });
     });
 });
