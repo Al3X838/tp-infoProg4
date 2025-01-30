@@ -14,6 +14,7 @@ const reservaRouter = require('./routes/reservas'); // Ruta para reservas
 const deportesRouter = require('./routes/deportes'); // Ruta para deportes
 const canchaDeporteRouter = require('./routes/canchadeporte'); // Ruta para canchaDeportes
 const pagosRouter = require('./routes/pagos'); // Ruta para pagos
+const promocionesRouter = require('./routes/promociones'); // Ruta para promociones
 
 const app = express();
 const PORT = 3000;
@@ -175,6 +176,7 @@ app.use('/reservas', reservaRouter); //Ruta para reservas
 app.use('/deportes', deportesRouter); //Ruta para deportes
 app.use('/canchadeporte', canchaDeporteRouter); //Ruta para canchaDeportes
 app.use('/pagos', pagosRouter); //Ruta para pagos
+app.use('/promociones', promocionesRouter); //Ruta para promociones
 
 
 // Ruta para 404
