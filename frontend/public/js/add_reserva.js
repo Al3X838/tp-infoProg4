@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         clienteSelect.appendChild(defaultOption);
 
                     data.clientes.forEach(cliente => {
-                        if (cliente.ESTADO === 'A') {
+                        if (cliente.ESTADO === 'A' || cliente.ESTADO === 'P') {
                         const option = document.createElement('option');
                         option.value = cliente.ID_CLIENTE;
                         option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO} (${cliente.DOCUMENTO_ID})`;
