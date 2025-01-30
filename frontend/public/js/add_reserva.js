@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fechaLimiteCancelacion: document.getElementById('fechaLimiteCancelacion').value,
             estadoCancelacion: document.getElementById('estadoCancelacion').value,
             porcentajePromocion: parseFloat(document.getElementById('porcentajePromocion').value) || 0,
-            reembolsable: document.getElementById('reembolsable').checked ? 'S' : 'N'
+            reembolsable: document.getElementById('reembolsable').value ? 'S' : 'N'
         };
         console.log('Reserva data:', reservaData);
         fetch('/reservas/add', {

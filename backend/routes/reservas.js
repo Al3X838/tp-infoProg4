@@ -89,16 +89,16 @@ router.get('/reserva/:id', async (req, res) => {
 router.post('/add', async (req, res) => {
     const {
         cliente, cancha, fechaInicio, fechaFin, horaInicio, horaFin,
-        estadoReserva, fechaLimiteCancelacion, estadoCancelacion, porcentajePromocion, deporte
+        estadoReserva, fechaLimiteCancelacion, estadoCancelacion, porcentajePromocion, deporte, reembolsable
     } = req.body;
     let connection = null;
 
     try {
         connection = await getConnection();
         const result = await connection.query(`
-            INSERT INTO RESERVAS (ID_CLIENTE, ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, ESTADO_RESERVA, FECHA_LIMITE_CANCELACION, ESTADO_CANCELACION, PORCENTAJE_PROMOCION, ID_DEPORTE)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [parseInt(cliente), parseInt(cancha), fechaInicio, fechaFin, horaInicio, horaFin, estadoReserva, fechaLimiteCancelacion, estadoCancelacion, parseFloat(porcentajePromocion), parseFloat(deporte)]
+            INSERT INTO RESERVAS (ID_CLIENTE, ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, ESTADO_RESERVA, FECHA_LIMITE_CANCELACION, ESTADO_CANCELACION, PORCENTAJE_PROMOCION, ID_DEPORTE, REEMBOLSABLE)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [parseInt(cliente), parseInt(cancha), fechaInicio, fechaFin, horaInicio, horaFin, estadoReserva, fechaLimiteCancelacion, estadoCancelacion, parseFloat(porcentajePromocion), parseFloat(deporte), reembolsable]
         );
         res.json({ success: true });
     } catch (err) {
