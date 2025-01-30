@@ -12,10 +12,73 @@ document.addEventListener('DOMContentLoaded', function () {
     const cancelButton = document.getElementById('cancel-button');
     const clienteSelect = document.getElementById('cliente');
     const canchaSelect = document.getElementById('cancha');
+    const horaInicio = document.getElementById('horaInicio');
+    const horaFin = document.getElementById('horaFin');
+    const btnSumarHora = document.getElementById('btnSumarHora');
 
     const urlParams = new URLSearchParams(window.location.search);
     const selectedCanchaId = urlParams.get('cancha');
 
+    // Seleccionar los campos de fecha de inicio y fecha de fin
+    const fechaInicio = document.getElementById('fechaInicio');
+    const fechaFin = document.getElementById('fechaFin');
+
+    // Agregar un evento "blur" al campo fechaInicio
+    fechaInicio.addEventListener('blur', function () {
+        // Verificar si se ha ingresado una fecha en fechaInicio
+        if (fechaInicio.value) {
+            // Copiar la misma fecha al campo fechaFin
+            fechaFin.value = fechaInicio.value;
+        }
+    });
+
+    // Función para obtener la fecha actual en formato YYYY-MM-DD
+    function obtenerFechaActual() {
+        const fecha = new Date(); // Obtener la fecha actual
+        const año = fecha.getFullYear(); // Obtener el año actual
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Obtener el mes (con ceros a la izquierda)
+        const dia = String(fecha.getDate()).padStart(2, '0'); // Obtener el día (con ceros a la izquierda)
+        return `${año}-${mes}-${dia}`; // Formatear como YYYY-MM-DD
+    }
+
+    // Establecer la fecha actual en los campos fechaInicio y fechaFin al cargar la página
+    const fechaActual = obtenerFechaActual();
+    fechaInicio.value = fechaActual;
+    fechaFin.value = fechaActual;
+
+    // Evento para copiar fechaInicio a fechaFin cuando se pierde el foco
+    fechaInicio.addEventListener('blur', function () {
+        if (fechaInicio.value) {
+            fechaFin.value = fechaInicio.value;
+        }
+    });
+
+    // Función para sumar una hora a una hora dada
+    function sumarUnaHora(hora) {
+        if (!hora) return null; // Si no hay hora, retornar null
+
+        // Convertir la hora en un objeto Date
+        const fecha = new Date(`1970-01-01T${hora}:00`);
+        // Sumar una hora (3600 segundos * 1000 milisegundos)
+        fecha.setTime(fecha.getTime() + 3600 * 1000);
+
+        // Formatear la nueva hora en formato HH:MM
+        const nuevaHora = fecha.toTimeString().slice(0, 5);
+        return nuevaHora;
+    }
+
+    // Evento para el botón de sumar una hora
+    btnSumarHora.addEventListener('click', function () {
+        if (!horaFin.value) {
+            // Si horaFin está vacío, tomar la hora de horaInicio y sumar una hora
+            if (horaInicio.value) {
+                horaFin.value = sumarUnaHora(horaInicio.value);
+            }
+        } else {
+            // Si horaFin ya tiene un valor, sumar una hora a ese valor
+            horaFin.value = sumarUnaHora(horaFin.value);
+        }
+    });
 
     const loadClientes = () => {
         if (!clienteSelect) return;
@@ -30,18 +93,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (data.success && Array.isArray(data.clientes)) {
                     const defaultOption = document.createElement('option');
-                        defaultOption.value = '';
-                        defaultOption.textContent = 'Selecciona un cliente';
-                        defaultOption.selected = true;
-                        defaultOption.disabled = true;
-                        clienteSelect.appendChild(defaultOption);
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Selecciona un cliente';
+                    defaultOption.selected = true;
+                    defaultOption.disabled = true;
+                    clienteSelect.appendChild(defaultOption);
 
                     data.clientes.forEach(cliente => {
                         if (cliente.ESTADO === 'A' || cliente.ESTADO === 'P') {
-                        const option = document.createElement('option');
-                        option.value = cliente.ID_CLIENTE;
-                        option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO} (${cliente.DOCUMENTO_ID})`;
-                        clienteSelect.appendChild(option);
+                            const option = document.createElement('option');
+                            option.value = cliente.ID_CLIENTE;
+                            option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO} (${cliente.DOCUMENTO_ID})`;
+                            clienteSelect.appendChild(option);
                         }
                     });
                 } else {
@@ -77,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             option.value = cancha.ID_CANCHA;
                             option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *Disponible*`;
                             canchaSelect.appendChild(option);
-                        }else{
+                        } else {
                             const option = document.createElement('option');
                             option.value = cancha.ID_CANCHA;
                             option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *No Disponible en este momento*`;
@@ -144,34 +207,34 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(reservaData)
         })
-        .then(async response => {
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.error || 'Error al agregar la reserva');
-            }
-            return data;
-        })
-        .then(data => {
-            if (data.success) {
+            .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al agregar la reserva');
+                }
+                return data;
+            })
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: 'La reserva se ha agregado correctamente',
+                        confirmButtonText: 'Aceptar'
+                    }).then(() => {
+                        window.location.href = '/list_reservas';
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'La reserva se ha agregado correctamente',
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'No se pudo agregar la reserva',
                     confirmButtonText: 'Aceptar'
-                }).then(() => {
-                    window.location.href = '/list_reservas';
                 });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message || 'No se pudo agregar la reserva',
-                confirmButtonText: 'Aceptar'
             });
-        });
     });
 
     loadClientes();
@@ -179,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Modificar el evento change del select de canchas
     if (canchaSelect) {
-        canchaSelect.addEventListener('change', function() {
+        canchaSelect.addEventListener('change', function () {
             const selectedCanchaId = this.value;
             loadDeportes(selectedCanchaId);
         });
