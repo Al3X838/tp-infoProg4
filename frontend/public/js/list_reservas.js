@@ -147,17 +147,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${reserva.FECHA_LIMITE_CANCELACION}</td>
                 <td>${reserva.ESTADO_CANCELACION === 'S' ? 'Cancelado' : 'Pago pendiente'}</td>
                 <td>${reserva.PORCENTAJE_PROMOCION}%</td>
-                <td>${reserva.REEMBOLSABLE === 'S' ? 'Si' : 'No'}</td>
+                <td>${reserva.REEMBOLSABLE === 'S' ? 'Si' : (reserva.REEMBOLSABLE === 'N' ? 'No' : 'N/A')}</td>
                 <td>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-warning bi bi-pencil" onclick="editReserva(${reserva.ID_RESERVA})"></button>
-                        <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${reserva.ID_RESERVA})"></button>
+                        <button class="btn btn-warning bi bi-pencil" onclick="editReserva(${reserva.ID_RESERVA})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar"></button>
+                        <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${reserva.ID_RESERVA})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Eleminar"></button>
                         ${reserva.ESTADO_RESERVA === 'P' ? `<button class="btn btn-success" onclick="confirmReserva(${reserva.ID_RESERVA})">Confirmar</button>` : ''}
 
                     </div>
                 </td>
             </tr>
         `).join('');
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
     }
 
     // Función para filtrar las reservas

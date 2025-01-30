@@ -75,12 +75,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${mantenimiento.HORA_INICIO || 'N/A'}</td>
                 <td>${mantenimiento.FECHA_FIN || 'N/A'}</td>
                 <td>${mantenimiento.HORA_FIN || 'N/A'}</td>
-                <td class="text-center">${mantenimiento.ESTADO === 'P' ?  "En proceso" : "Finalizado"}</td>
+                <td class="text-center">${mantenimiento.ESTADO === 'P' ? "En proceso" : "Finalizado"}</td>
                 <td>
                   <div class="d-flex gap-2">
-                    <button class="btn btn-info bi bi-info-circle" onclick='toggleDetails(${mantenimiento.ID_MANTENIMIENTO})'></button>
-                    <button class="btn btn-warning bi bi-pencil" onclick="editMantenimiento(${mantenimiento.ID_MANTENIMIENTO})"></button>
-                    <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${mantenimiento.ID_MANTENIMIENTO}, '${('Cancha: ' + mantenimiento.ID_CANCHA + ', Fecha inicio: ' + mantenimiento.FECHA_INICIO + ', ' + mantenimiento.HORA_INICIO)}')"></button>
+                    <button class="btn btn-info bi bi-info-circle" onclick='toggleDetails(${mantenimiento.ID_MANTENIMIENTO})' data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detalles"></button>
+                    <button class="btn btn-warning bi bi-pencil" onclick="editMantenimiento(${mantenimiento.ID_MANTENIMIENTO})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar"></button>
+                    <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${mantenimiento.ID_MANTENIMIENTO}, '${('Cancha: ' + mantenimiento.ID_CANCHA + ', Fecha inicio: ' + mantenimiento.FECHA_INICIO + ', ' + mantenimiento.HORA_INICIO)}')" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Eleminar"></button>
                   </div>
                 </td>
               </tr>
@@ -94,6 +94,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 </td>
             </tr>
         `).join('');
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
     }
 
     window.toggleDetails = function (id) {

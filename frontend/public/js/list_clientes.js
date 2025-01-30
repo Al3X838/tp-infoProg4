@@ -49,15 +49,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${cliente.CIUDAD || 'N/A'}</td>
                 <td>${cliente.TELEFONO || 'N/A'}</td>
                 <td>${cliente.EMAIL || 'N/A'}</td>
-                <td class="text-center">${cliente.ESTADO == "A" ? "Activo" : (cliente.ESTADO == "B" ? "Bloqueado" : (cliente.ESTADO == "P" ? "Promocional" : "Unknown"))}</td>
+                <td class="text-center">${cliente.ESTADO == "A" ? "Activo" : (cliente.ESTADO == "B" ? "Bloqueado" : (cliente.ESTADO == "P" ? "Promocional" : "N/A"))}</td>
                 <td>
                   <div class="d-flex gap-2">
-                    <button class="btn btn-info bi bi-info-circle" onclick='toggleDetails(${cliente.ID_CLIENTE})'></button>
-                    <button class="btn btn-warning bi bi-pencil" onclick="editCliente(${cliente.ID_CLIENTE})"></button>
-                    <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${cliente.ID_CLIENTE}, '${(cliente.NOMBRE + ', ' + cliente.APELLIDO)}')"></button>
+                    <button class="btn btn-info bi bi-info-circle" onclick='toggleDetails(${cliente.ID_CLIENTE})' data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detalles"></button>
+                    <button class="btn btn-warning bi bi-pencil" onclick="editCliente(${cliente.ID_CLIENTE})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar"></button>
+                    <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${cliente.ID_CLIENTE}, '${(cliente.NOMBRE + ', ' + cliente.APELLIDO)}')" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Eleminar"></button>
                   </div>
                 </td>
-              </tr>
+            </tr>
             <tr id="details-row-${cliente.ID_CLIENTE}" class="d-none">
                 <td colspan="5">
                     <div class="p-3 border rounded">
@@ -77,6 +77,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 </td>
             </tr>
         `).join('');
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
     }
 
     window.toggleDetails = function (id) {

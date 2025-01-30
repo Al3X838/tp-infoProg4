@@ -47,12 +47,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${tiposuelos.NOMBRE || 'N/A'}</td>
                 <td>
                   <div class="d-flex gap-2">
-                    <button class="btn btn-warning bi bi-pencil" onclick="editTipoSuelo(${tiposuelos.ID_TIPO_SUELO})"></button>
-                    <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${tiposuelos.ID_TIPO_SUELO}, '${(tiposuelos.NOMBRE)}')"></button>
+                    <button class="btn btn-warning bi bi-pencil" onclick="editTipoSuelo(${tiposuelos.ID_TIPO_SUELO})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar"></button>
+                    <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${tiposuelos.ID_TIPO_SUELO}, '${(tiposuelos.NOMBRE)}')" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Eleminar"></button>
                   </div>
                 </td>
             </tr>
         `).join('');
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
     }
 
     // Función para ordenar la tabla
