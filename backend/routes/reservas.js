@@ -29,16 +29,17 @@ router.get('/', async (req, res) => {
     try {
         connection = await getConnection();
         const result = await connection.query(`
-            SELECT 
-                R.*,
-                C.NOMBRE AS NOMBRE_CLIENTE,
-                C.APELLIDO AS APELLIDO_CLIENTE,
-                C.DOCUMENTO_ID AS DOCUMENTO_CLIENTE,
-                CA.NUMERO AS NUMERO_CANCHA
+            SELECT  
+            R.*, 
+            C.NOMBRE AS NOMBRE_CLIENTE, 
+            C.APELLIDO AS APELLIDO_CLIENTE, 
+            C.DOCUMENTO_ID AS DOCUMENTO_CLIENTE, 
+            CA.NUMERO AS NUMERO_CANCHA 
+            FROM RESERVAS R  
+            JOIN CLIENTES C ON R.ID_CLIENTE = C.ID_CLIENTE  
+            JOIN CANCHAS CA ON R.ID_CANCHA = CA.ID_CANCHA  
+            ORDER BY R.ID_RESERVA DESC;
 
-            FROM RESERVAS R
-            JOIN CLIENTES C ON R.ID_CLIENTE = C.ID_CLIENTE
-            JOIN CANCHAS CA ON R.ID_CANCHA = CA.ID_CANCHA;
         `);
 
         res.json({ success: true, reservas: result });

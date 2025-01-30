@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const key = Object.keys(a)[columnIndex];
             const valueA = a[key];
             const valueB = b[key];
+            console.log(key, valueA, valueB);
             if (typeof valueA === "number" && typeof valueB === "number") {
                 return direction === "ASC" ? valueA - valueB : valueB - valueA;
             } else {
