@@ -1,3 +1,109 @@
+
+// Función para mostrar alertas de error
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Cargando...',
+        text: 'Estamos obteniendo los datos de las reservas.',
+        allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
+        didOpen: () => {
+            Swal.showLoading(); // Muestra el spinner de carga
+        }
+    });
+}
+
+
+// Función para mostrar un mensaje de confirmación antes de activar la promoción
+function confirmarActivarPromocion() {
+    Swal.fire({
+        title: "¿Activar promoción?",
+        text: "Esta acción activará la promoción para todos los clientes elegibles.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#28a745", // Verde
+        cancelButtonColor: "#6c757d", // Gris
+        confirmButtonText: "Sí, activar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            activarPromocion();
+        }
+    });
+}
+
+// Función para mostrar un mensaje de confirmación antes de desactivar la promoción
+function confirmarDesactivarPromocion() {
+    Swal.fire({
+        title: "¿Desactivar promoción?",
+        text: "Esta acción desactivará la promoción.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#dc3545", // Rojo
+        cancelButtonColor: "#6c757d", // Gris
+        confirmButtonText: "Sí, desactivar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            desactivarPromocion();
+        }
+    });
+}
+
+// Función para enviar una solicitud al backend y activar la promoción
+function activarPromocion() {
+    fetch("/promociones/activar", { method: "GET", headers: { "Content-Type": "application/json" } })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Mostrar alerta de éxito
+                Swal.fire({
+                    title: "¡Promoción activada!",
+                    text: "La promoción ha sido activada con éxito.",
+                    icon: "success"
+                });
+            } else {
+                // Mostrar error si la activación falla
+                showErrorAlert(data.error || "Hubo un problema al activar la promoción.");
+            }
+        })
+        .catch(() => {
+            // Mostrar error si hay un problema de conexión
+            showErrorAlert("No se pudo conectar con el servidor.");
+        });
+}
+
+// Función para enviar una solicitud al backend y desactivar la promoción
+function desactivarPromocion() {
+    fetch("/promociones/desactivar", { method: "GET", headers: { "Content-Type": "application/json" } })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Mostrar alerta de éxito
+                Swal.fire({
+                    title: "¡Promoción desactivada!",
+                    text: "La promoción ha sido desactivada con éxito.",
+                    icon: "success"
+                });
+            } else {
+                // Mostrar error si la desactivación falla
+                showErrorAlert(data.error || "Hubo un problema al desactivar la promoción.");
+            }
+        })
+        .catch(() => {
+            // Mostrar error si hay un problema de conexión
+            showErrorAlert("No se pudo conectar con el servidor.");
+        });
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = '/reservas'; // URL base para los endpoints
     const reservasList = document.getElementById('reservas-list');
@@ -7,9 +113,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para obtener datos de la API
     function fetchData() {
+        showLoadingAlert(); // Mostrar el spinner de carga antes de la petición
         fetch(apiUrl, { method: 'GET' })
             .then(response => response.json())
             .then(data => {
+                Swal.close(); // Cerrar la alerta de carga cuando se obtiene la respuesta
                 if (data.success === false) {
                     showErrorAlert(data.error || 'Error desconocido.');
                 } else {
@@ -18,6 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch(error => {
+                Swal.close(); // Cerrar la alerta de carga en caso de error
                 showErrorAlert(error || 'Error al cargar las reservas.');
             });
     }
@@ -25,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para renderizar la tabla
     function renderReservas(reservas) {
         console.log(reservas);
-        reservasList.innerHTML = reservas.map(reserva =>`
+        reservasList.innerHTML = reservas.map(reserva => `
             <tr id="reserva-row-${reserva.ID_RESERVA}">
                 <th>${reserva.ID_RESERVA}</th>
                 <td>${reserva.NOMBRE_CLIENTE} ${reserva.APELLIDO_CLIENTE} ${reserva.DOCUMENTO_CLIENTE}</td>
@@ -119,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch(error => {
-                showErrorAlert('Error en la conexión con el servidor.');
+                showErrorAlert(error || 'Error en la conexión con el servidor.');
             });
     }
 
@@ -137,13 +246,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch(error => {
-                showErrorAlert('Error en la conexión con el servidor.');
+                showErrorAlert(error || 'Error en la conexión con el servidor.');
             });
     };
 
     // Función para enviar un correo electrónico utilizando EmailJS
     function sendEmail(reserva) {
-        console.log("reserva",reserva);
+        console.log("reserva", reserva);
         emailjs.init('RloVlsEjuRN3Mdixa'); // user id de emailjs
         const templateParams = {
             to_name: reserva.NOMBRE_CLIENTE,
@@ -158,18 +267,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => {
                 console.error('Error al enviar el correo:', error);
             });
-    }
-
-
-
-    // Función para mostrar alertas de error
-    function showErrorAlert(message) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: message,
-            confirmButtonText: 'Aceptar'
-        });
     }
 
     // Cargar datos al inicio
