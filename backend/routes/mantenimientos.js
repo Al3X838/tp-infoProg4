@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
     let connection = null;
     try {
         connection = await getConnection();
-        const result = await connection.query('SELECT m.*, c.NUMERO as NUMERO_CANCHA FROM mantenimiento m LEFT JOIN CANCHAS c ON m.ID_CANCHA = c.ID_CANCHA;');
+        const result = await connection.query('SELECT m.*, c.NUMERO as NUMERO_CANCHA FROM mantenimiento m LEFT JOIN CANCHAS c ON m.ID_CANCHA = c.ID_CANCHA ORDER BY m.ID_MANTENIMIENTO DESC;');
         res.json({ success: true, mantenimientos: result });
     } catch (err) {
         handleDbError(err, res, 'fetching mantenimientos');
