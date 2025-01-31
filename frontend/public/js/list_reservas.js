@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>
                     <div class="d-flex gap-2">
                         <button class="btn btn-warning bi bi-pencil" onclick="editReserva(${reserva.ID_RESERVA})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar"></button>
-                        <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${reserva.ID_RESERVA})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Eleminar"></button>
+                        <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${reserva.ID_RESERVA}, '${reserva.NOMBRE_CLIENTE + ' ' + reserva.APELLIDO_CLIENTE}')" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Eleminar"></button>
                         ${reserva.ESTADO_RESERVA === 'P' ? `<button class="btn btn-success" onclick="confirmReserva(${reserva.ID_RESERVA})">Confirmar</button>` : ''}
 
                     </div>

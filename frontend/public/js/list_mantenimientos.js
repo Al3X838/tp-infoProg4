@@ -97,13 +97,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td class="text-center">${mantenimiento.ESTADO === 'P' ? "En proceso" : "Finalizado"}</td>
                 <td>
                   <div class="d-flex gap-2">
-                    <button class="btn btn-info bi bi-info-circle" onclick='toggleDetails(${mantenimiento.ID_MANTENIMIENTO})'></button>
-                    <button class="btn btn-warning bi bi-pencil" onclick="editMantenimiento(${mantenimiento.ID_MANTENIMIENTO})"></button>
-                    <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${mantenimiento.ID_MANTENIMIENTO}, 'Cancha: ${mantenimiento.ID_CANCHA}, Fecha inicio: ${mantenimiento.FECHA_INICIO}, ${mantenimiento.HORA_INICIO}')"></button>
+                    <button class="btn btn-info bi bi-info-circle" onclick='toggleDetails(${mantenimiento.ID_MANTENIMIENTO})' data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detalles"></button>
+                    <button class="btn btn-warning bi bi-pencil" onclick="editMantenimiento(${mantenimiento.ID_MANTENIMIENTO})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar"></button>
+                    <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${mantenimiento.ID_MANTENIMIENTO}, 'Cancha: ${mantenimiento.ID_CANCHA}, Fecha inicio: ${mantenimiento.FECHA_INICIO}, ${mantenimiento.HORA_INICIO}')" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Eleminar"></button>
                   </div>
                 </td>
               </tr>
+              <tr id="details-row-${mantenimiento.ID_MANTENIMIENTO}" class="d-none">
+                <td colspan="9">
+                    <div class="p-3 border rounded">
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>Descripcion: </strong> ${mantenimiento.DESCRIPCION || 'N/A'}</li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
         `).join('');
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    }
+
+    window.toggleDetails = function (id) {
+        const detailsRow = document.getElementById(`details-row-${id}`);
+
+        // Alternar visibilidad
+        if (detailsRow.classList.contains('d-none')) {
+            detailsRow.classList.remove('d-none');
+        } else {
+            detailsRow.classList.add('d-none');
+        }
     }
 
     window.sortTable = function (columnIndex) {
