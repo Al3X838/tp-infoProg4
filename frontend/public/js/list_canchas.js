@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const imagenesCanchas = {
         'Cemento': '/images/canchaBasquetbol.jpg',
-        'Cesped Natural': '/images/canchaFutbol.jpg',
-        'Cesped Sintetico': '/images/canchaFutbol.jpg',
+        'Césped Natural': '/images/canchaFutbol.jpg',
+        'Césped Sintético': '/images/canchaFutbol.jpg',
         'Tierra Compactada': '/images/canchaTenis.jpg',
         'default': '/images/canchaFutbol.jpg'
     };
