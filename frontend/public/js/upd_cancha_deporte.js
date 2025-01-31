@@ -1,5 +1,5 @@
 function showErrorAlert(message) {
-    Swal.fire({
+    return Swal.fire({
         icon: 'error',
         title: 'Error',
         text: message,
@@ -122,17 +122,18 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch(`/canchadeporte/delete/${idCanchaDeporte}`, { method: 'DELETE' });
             const data = await response.json();
             if (!data.success) {
-                showErrorAlert('Error al eliminar el deporte de la cancha.');
+                showErrorAlert(data.error || 'Error al eliminar el deporte de la cancha.')
+                    .then(() => cargarDeportesDeCancha());
             } else {
                 Swal.fire({
                     icon: 'success',
                     title: 'Éxito',
                     text: 'Deporte eliminado de la cancha.',
                     confirmButtonText: 'Aceptar'
-                });
+                }).then(() => cargarDeportesDeCancha());
             }
         } catch (error) {
-            showErrorAlert('Error al conectarse con el servidor para eliminar el deporte.');
+            showErrorAlert(error || 'Error al conectarse con el servidor para eliminar el deporte.');
             console.error('Error al conectarse con el servidor:', error);
         }
     }
