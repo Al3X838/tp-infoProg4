@@ -1,3 +1,24 @@
+// Función para mostrar alertas de error con SweetAlert
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Cargando...',
+        text: 'Estamos obteniendo los datos de los clientes.',
+        allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
+        didOpen: () => {
+            Swal.showLoading(); // Muestra el spinner de carga
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = '/clientes'; // URL base para los endpoints
     const clientsList = document.getElementById('clientes-list');
@@ -7,15 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para obtener datos de la API
     function fetchData() {
         // Mostrar el popup de carga
-        Swal.fire({
-            title: 'Cargando...',
-            text: 'Por favor, espera mientras se cargan los datos.',
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading(); // Activar el indicador de carga
-            }
-        });
+        showLoadingAlert();
 
         return fetch(apiUrl, { method: 'GET' })
             .then(response => response.json())
@@ -218,13 +231,5 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // Función para mostrar alertas de error con SweetAlert
-    function showErrorAlert(message) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: message,
-            confirmButtonText: 'Aceptar'
-        });
-    }
+
 });

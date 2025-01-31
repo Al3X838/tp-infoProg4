@@ -168,15 +168,15 @@ app.get('/upd_pago', isAuthenticated, (req, res) => {
 // Usar el microservicio de conexión
 app.use('/connect', connectRouter);
 
-app.use('/clientes', clientesRouter);  //Ruta para clientes
-app.use('/api/canchas', canchasRouter);
-app.use('/mantenimientos', mantenimientosRouter); //Ruta para mantenimientos
+app.use('/clientes', isAuthenticated, clientesRouter);  //Ruta para clientes
+app.use('/api/canchas', isAuthenticated, canchasRouter);
+app.use('/mantenimientos', isAuthenticated, mantenimientosRouter); //Ruta para mantenimientos
 app.use('/tiposuelos', tiposuelosRouter); //Ruta para tipos de suelos
-app.use('/reservas', reservaRouter); //Ruta para reservas
-app.use('/deportes', deportesRouter); //Ruta para deportes
-app.use('/canchadeporte', canchaDeporteRouter); //Ruta para canchaDeportes
-app.use('/pagos', pagosRouter); //Ruta para pagos
-app.use('/promociones', promocionesRouter); //Ruta para promociones
+app.use('/reservas', isAuthenticated, reservaRouter); //Ruta para reservas
+app.use('/deportes', isAuthenticated, deportesRouter); //Ruta para deportes
+app.use('/canchadeporte', isAuthenticated, canchaDeporteRouter); //Ruta para canchaDeportes
+app.use('/pagos', isAuthenticated, pagosRouter); //Ruta para pagos
+app.use('/promociones', isAuthenticated, promocionesRouter); //Ruta para promociones
 
 
 // Ruta para 404
