@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Método para cargar la lista de tipos de suelo
     const loadTiposSuelo = () => {
         showLoadingAlert();
-        fetch('/tiposuelos')
+        return fetch('/tiposuelos')
             .then(response => {
                 Swal.close(); // Cierra el popup de carga
                 if (!response.ok) throw new Error('Network response was not ok');
@@ -53,14 +53,18 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     };
 
-    // Llama a la función para cargar la lista de tipos de suelo al inicio
-    loadTiposSuelo();
+
 
     // Cargar datos de la cancha actual
-    if (canchaId) {
-        fetch(`/api/canchas/cancha/${canchaId}`, { method: 'GET' })
-            .then(response => response.json())
-            .then(data => {
+    async function loadData() {
+        try {
+            // Espera a que los tipos de suelo se carguen
+            await loadTiposSuelo();
+
+            if (canchaId) {
+                const response = await fetch(`/api/canchas/cancha/${canchaId}`, { method: 'GET' });
+                const data = await response.json();
+
                 if (data.success && data.cancha) {
                     document.getElementById('id-cancha').value = data.cancha.ID_CANCHA;
                     document.getElementById('numero').value = data.cancha.NUMERO;
@@ -74,12 +78,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     showErrorAlert(data.error || 'Cancha no encontrada.');
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showErrorAlert('Error al obtener datos de la cancha.');
-            });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showErrorAlert('Error al obtener datos de la cancha.');
+        }
     }
+
+    // Cargar datos de la cancha
+    loadData();
+
 
     form.addEventListener('submit', function (event) {
         event.preventDefault();
