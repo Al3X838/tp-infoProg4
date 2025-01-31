@@ -92,7 +92,6 @@ router.get('/cancha/:id', async (req, res) => {
     }
 });
 
-//Falta hacer
 // Ruta para agregar un nuevo item
 router.post('/add', async (req, res) => {
     const { id_cancha, id_deporte, precio_hora } = req.body;

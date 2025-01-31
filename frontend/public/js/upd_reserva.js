@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    // Initial loading sequence
+    // Secuencia de carga inicial
     showLoadingAlert();
     Promise.all([loadClientes(), loadCanchas()])
         .then(() => {
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(data => {
                         Swal.close();
                         if (data.success && data.reserva) {
-                            // Set basic fields
+                            // Establecer campos básicos
                             document.getElementById('cliente').value = data.reserva.ID_CLIENTE;
                             document.getElementById('cancha').value = data.reserva.ID_CANCHA;
                             document.getElementById('fechaInicio').value = data.reserva.FECHA_INICIO;
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             document.getElementById('porcentajePromocion').value = data.reserva.PORCENTAJE_PROMOCION;
                             document.getElementById('reembolsable').value = data.reserva.REEMBOLSABLE;
 
-                            // Load deportes after cancha is set
+                            // Cargar deportes después de establecer la cancha
                             loadDeportes(data.reserva.ID_CANCHA).then(() => {
                                 document.getElementById('deporte').value = data.reserva.ID_DEPORTE;
                             });

@@ -67,7 +67,6 @@ router.get('/cliente/:id', async (req, res) => {
     }
 });
 
-//Falta hacer
 // Ruta para agregar un nueva cliente
 router.post('/add', async (req, res) => {
     const { documento_id, nombre, apellido, fecha_nacimiento, direccion, telefono, email, nacionalidad, ciudad } = req.body;

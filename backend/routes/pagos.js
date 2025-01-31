@@ -79,7 +79,6 @@ router.get('/pago/:id', async (req, res) => {
     }
 });
 
-//Falta hacer
 // Ruta para agregar un nuevo item
 router.post('/add', async (req, res) => {
     const { id_reserva, metodo_pago } = req.body;

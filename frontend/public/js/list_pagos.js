@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Función para renderizar la tabla con secciones por fecha
-    // Función para renderizar la tabla con secciones por fecha
     function renderPagos(pagos) {
         pagosList.innerHTML = ''; // Limpiar la tabla
         let currentDate = null; // Fecha actual del grupo

@@ -70,7 +70,6 @@ router.get('/deporte/:id', async (req, res) => {
     }
 });
 
-//Falta hacer
 // Ruta para agregar un nuevo item
 router.post('/add', async (req, res) => {
     const { nombre } = req.body;

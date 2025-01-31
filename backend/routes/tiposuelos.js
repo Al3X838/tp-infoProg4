@@ -70,7 +70,6 @@ router.get('/tiposuelo/:id', async (req, res) => {
     }
 });
 
-//Falta hacer
 // Ruta para agregar un nuevo Tipo De Suelo
 router.post('/add', async (req, res) => {
     const { nombre } = req.body;
