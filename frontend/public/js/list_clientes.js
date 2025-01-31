@@ -1,3 +1,24 @@
+// Función para mostrar alertas de error con SweetAlert
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
+function showLoadingAlert() {
+    Swal.fire({
+        title: 'Cargando...',
+        text: 'Estamos obteniendo los datos de los clientes.',
+        allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
+        didOpen: () => {
+            Swal.showLoading(); // Muestra el spinner de carga
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const apiUrl = '/clientes'; // URL base para los endpoints
     const clientsList = document.getElementById('clientes-list');
@@ -7,15 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para obtener datos de la API
     function fetchData() {
         // Mostrar el popup de carga
-        Swal.fire({
-            title: 'Cargando...',
-            text: 'Por favor, espera mientras se cargan los datos.',
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => {
-                Swal.showLoading(); // Activar el indicador de carga
-            }
-        });
+        showLoadingAlert();
 
         return fetch(apiUrl, { method: 'GET' })
             .then(response => response.json())
@@ -49,15 +62,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${cliente.CIUDAD || 'N/A'}</td>
                 <td>${cliente.TELEFONO || 'N/A'}</td>
                 <td>${cliente.EMAIL || 'N/A'}</td>
-                <td class="text-center">${cliente.ESTADO == "A" ? "Activo" : (cliente.ESTADO == "B" ? "Bloqueado" : (cliente.ESTADO == "P" ? "Promocional" : "Unknown"))}</td>
+                <td class="text-center">${cliente.ESTADO == "A" ? "Activo" : (cliente.ESTADO == "B" ? "Bloqueado" : (cliente.ESTADO == "P" ? "Promocional" : "N/A"))}</td>
                 <td>
                   <div class="d-flex gap-2">
-                    <button class="btn btn-info bi bi-info-circle" onclick='toggleDetails(${cliente.ID_CLIENTE})'></button>
-                    <button class="btn btn-warning bi bi-pencil" onclick="editCliente(${cliente.ID_CLIENTE})"></button>
-                    <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${cliente.ID_CLIENTE}, '${(cliente.NOMBRE + ', ' + cliente.APELLIDO)}')"></button>
+                    <button class="btn btn-info bi bi-info-circle" onclick='toggleDetails(${cliente.ID_CLIENTE})' data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detalles"></button>
+                    <button class="btn btn-warning bi bi-pencil" onclick="editCliente(${cliente.ID_CLIENTE})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar"></button>
+                    <button class="btn btn-danger bi bi-trash" onclick="confirmDelete(${cliente.ID_CLIENTE}, '${(cliente.NOMBRE + ', ' + cliente.APELLIDO)}')" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Eleminar"></button>
                   </div>
                 </td>
-              </tr>
+            </tr>
             <tr id="details-row-${cliente.ID_CLIENTE}" class="d-none">
                 <td colspan="5">
                     <div class="p-3 border rounded">
@@ -77,6 +90,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 </td>
             </tr>
         `).join('');
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
     }
 
     window.toggleDetails = function (id) {
@@ -216,13 +231,5 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // Función para mostrar alertas de error con SweetAlert
-    function showErrorAlert(message) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: message,
-            confirmButtonText: 'Aceptar'
-        });
-    }
+
 });

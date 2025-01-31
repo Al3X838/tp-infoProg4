@@ -1,142 +1,208 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Añadir Reserva</title>
-    <link rel="icon" href="images/Logo.png" type="image/png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.1/dist/sweetalert2.min.css" rel="stylesheet">
-</head>
-<body>
+    <link rel="icon" href="images/Logo.png" type="image/png" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.1/dist/sweetalert2.min.css"
+      rel="stylesheet" />
+  </head>
+  <body>
     <div class="shadow navbar-div">
-        <div class="text-center">
-          <a href="/home">
-            <img src="images/Logo.png" alt="Logo" class="logo" />
-          </a>
-        </div>
-        <nav class="navbar navbar-expand-lg">
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div
-            class="collapse navbar-collapse justify-content-center"
-            id="navbarNav">
-            <ul class="navbar-nav text-center">
-              <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="/home">Inicio</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/list_tipo_suelo">Tipo Suelos</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/list_deportes">Deportes</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/list_canchas">Canchas</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="/list_mantenimientos"
-                  >Mantenimientos</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/list_clientes">Clientes</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/list_reservas">Reservas</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/list_pagos">Pagos</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link text-danger" href="/salir"
-                  ><i class="bi bi-box-arrow-right"></i><strong> Salir</strong></a
-                >
-              </li>
-            </ul>
-          </div>
-        </nav>
+      <div class="text-center">
+        <a href="/home">
+          <img src="images/Logo.png" alt="Logo" class="logo" />
+        </a>
       </div>
+      <nav class="navbar navbar-expand-lg">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-center"
+          id="navbarNav">
+          <ul class="navbar-nav text-center">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/home">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_tipo_suelo">Tipo Suelos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_deportes">Deportes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_canchas">Canchas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_mantenimientos">Mantenimientos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_clientes">Clientes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="/list_reservas">Reservas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/list_pagos">Pagos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-danger" href="/salir"
+                ><i class="bi bi-box-arrow-right"></i><strong> Salir</strong></a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
     <div class="container mt-6">
-        <h2 class="mb-4">Añadir Reserva</h2>
-        <form id="addReservaForm">
-            <div class="mb-3">
-                <label for="cliente" class="form-label">Cliente</label>
-                <select id="cliente" name="cliente" class="form-select" required>
-                    
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="cancha" class="form-label">Cancha</label>
-                <select id="cancha" name="cancha" class="form-select" required>
-                    <option value="">Seleccione una cancha</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="fechaInicio" class="form-label">Fecha Inicio</label>
-                <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
-            </div>
-            <div class="mb-3">
-                <label for="fechaFin" class="form-label">Fecha Fin</label>
-                <input type="date" class="form-control" id="fechaFin" name="fechaFin" required>
-            </div>
-            <div class="mb-3">
-                <label for="horaInicio" class="form-label">Hora Inicio</label>
-                <input type="time" class="form-control" id="horaInicio" name="horaInicio" required>
-            </div>
-            <div class="mb-3">
-                <label for="horaFin" class="form-label">Hora Fin</label>
-                <input type="time" class="form-control" id="horaFin" name="horaFin" required>
-            </div>
-            <div class="mb-3">
-                <label for="fechaLimiteCancelacion" class="form-label">Fecha Límite de Cancelación</label>
-                <input type="date" class="form-control" id="fechaLimiteCancelacion" name="fechaLimiteCancelacion" required>
-            </div>
-            <div class="mb-3">
-                <label for="estadoCancelacion" class="form-label">Estado de Cancelación</label>
-                <select class="form-select" id="estadoCancelacion" name="estadoCancelacion" required>
-                    <option value="N">No Cancelado</option>
-                    <option value="S">Cancelado</option>
-                </select>
-            </div>
-            <!-- Modificar el select de deportes -->
-            <div class="mb-3">
-                <label for="deporte" class="form-label">Deporte</label>
-                <select class="form-select" id="deporte" name="deporte" required>
-                    <option value="" disabled selected>Seleccione un deporte</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="porcentajePromocion" class="form-label">Porcentaje de Promoción</label>
-                <input type="number" class="form-control" id="porcentajePromocion" name="porcentajePromocion" min="0" max="100" value="0">
-            </div>
-            <div class="mb-3">
-                <label for="reembolsable" class="form-label">Reembolsable</label>
-                <select class="form-select" id="reembolsable" name="reembolsable" required>
-                    <option value="S">Sí</option>
-                    <option value="N">No</option>
-                </select>
-            </div>
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Guardar</button>
-                <button type="button" id="cancel-button" class="btn btn-secondary">Cancelar</button>
-            </div>
-        </form>
-        <br>
+      <h2 class="mb-4">Añadir Reserva</h2>
+      <form id="addReservaForm">
+        <div class="mb-3">
+          <label for="cliente" class="form-label">Cliente</label>
+          <select
+            id="cliente"
+            name="cliente"
+            class="form-select"
+            required></select>
+        </div>
+        <div class="mb-3">
+          <label for="cancha" class="form-label">Cancha</label>
+          <select id="cancha" name="cancha" class="form-select" required>
+            <option value="">Seleccione una cancha</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+          <input
+            type="date"
+            class="form-control"
+            id="fechaInicio"
+            name="fechaInicio"
+            required />
+        </div>
+        <div class="mb-3">
+          <label for="fechaFin" class="form-label">Fecha Fin</label>
+          <input
+            type="date"
+            class="form-control"
+            id="fechaFin"
+            name="fechaFin"
+            required />
+        </div>
+        <div class="mb-3">
+          <label for="horaInicio" class="form-label">Hora Inicio</label>
+          <input
+            type="time"
+            class="form-control"
+            id="horaInicio"
+            name="horaInicio"
+            required />
+        </div>
+        <div class="mb-3">
+          <label for="horaFin" class="form-label">Hora Fin</label>
+          <div class="input-group">
+            <!-- Botón para sumar una hora -->
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              id="btnSumarHora">
+              <i class="bi bi-plus"></i>
+              <!-- Icono de Bootstrap Icons (opcional) -->
+            </button>
+            <!-- Campo de entrada para horaFin -->
+            <input
+              type="time"
+              class="form-control"
+              id="horaFin"
+              name="horaFin"
+              required />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="fechaLimiteCancelacion" class="form-label"
+            >Fecha Límite de Cancelación</label
+          >
+          <input
+            type="date"
+            class="form-control"
+            id="fechaLimiteCancelacion"
+            name="fechaLimiteCancelacion"
+            required />
+        </div>
+        <div class="mb-3">
+          <label for="estadoCancelacion" class="form-label"
+            >Estado de Cancelación</label
+          >
+          <select
+            class="form-select"
+            id="estadoCancelacion"
+            name="estadoCancelacion"
+            required>
+            <option value="N">No Cancelado</option>
+            <option value="S">Cancelado</option>
+          </select>
+        </div>
+        <!-- Modificar el select de deportes -->
+        <div class="mb-3">
+          <label for="deporte" class="form-label">Deporte</label>
+          <select class="form-select" id="deporte" name="deporte" required>
+            <option value="" disabled selected>Seleccione un deporte</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="porcentajePromocion" class="form-label"
+            >Porcentaje de Promoción</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            id="porcentajePromocion"
+            name="porcentajePromocion"
+            min="0"
+            max="100"
+            value="0" />
+        </div>
+        <div class="mb-3">
+          <label for="reembolsable" class="form-label">Reembolsable</label>
+          <select
+            class="form-select"
+            id="reembolsable"
+            name="reembolsable"
+            required>
+            <option value="S" selected>Sí</option>
+            <option value="N">No</option>
+          </select>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" id="cancel-button" class="btn btn-secondary">
+            Cancelar
+          </button>
+        </div>
+      </form>
+      <br />
     </div>
 
     <!-- Scripts necesarios -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.1/dist/sweetalert2.all.min.js"></script>
     <script src="js/add_reserva.js"></script>
-</body>
+  </body>
 </html>

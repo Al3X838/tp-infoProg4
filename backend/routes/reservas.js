@@ -29,16 +29,17 @@ router.get('/', async (req, res) => {
     try {
         connection = await getConnection();
         const result = await connection.query(`
-            SELECT 
-                R.*,
-                C.NOMBRE AS NOMBRE_CLIENTE,
-                C.APELLIDO AS APELLIDO_CLIENTE,
-                C.DOCUMENTO_ID AS DOCUMENTO_CLIENTE,
-                CA.NUMERO AS NUMERO_CANCHA
+            SELECT  
+            R.*, 
+            C.NOMBRE AS NOMBRE_CLIENTE, 
+            C.APELLIDO AS APELLIDO_CLIENTE, 
+            C.DOCUMENTO_ID AS DOCUMENTO_CLIENTE, 
+            CA.NUMERO AS NUMERO_CANCHA 
+            FROM RESERVAS R  
+            JOIN CLIENTES C ON R.ID_CLIENTE = C.ID_CLIENTE  
+            JOIN CANCHAS CA ON R.ID_CANCHA = CA.ID_CANCHA  
+            ORDER BY R.ID_RESERVA DESC;
 
-            FROM RESERVAS R
-            JOIN CLIENTES C ON R.ID_CLIENTE = C.ID_CLIENTE
-            JOIN CANCHAS CA ON R.ID_CANCHA = CA.ID_CANCHA;
         `);
 
         res.json({ success: true, reservas: result });
@@ -88,16 +89,16 @@ router.get('/reserva/:id', async (req, res) => {
 router.post('/add', async (req, res) => {
     const {
         cliente, cancha, fechaInicio, fechaFin, horaInicio, horaFin,
-        estadoReserva, fechaLimiteCancelacion, estadoCancelacion, porcentajePromocion, deporte
+        estadoReserva, fechaLimiteCancelacion, estadoCancelacion, porcentajePromocion, deporte, reembolsable
     } = req.body;
     let connection = null;
 
     try {
         connection = await getConnection();
         const result = await connection.query(`
-            INSERT INTO RESERVAS (ID_CLIENTE, ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, ESTADO_RESERVA, FECHA_LIMITE_CANCELACION, ESTADO_CANCELACION, PORCENTAJE_PROMOCION, ID_DEPORTE)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [parseInt(cliente), parseInt(cancha), fechaInicio, fechaFin, horaInicio, horaFin, estadoReserva, fechaLimiteCancelacion, estadoCancelacion, parseFloat(porcentajePromocion), parseFloat(deporte)]
+            INSERT INTO RESERVAS (ID_CLIENTE, ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, ESTADO_RESERVA, FECHA_LIMITE_CANCELACION, ESTADO_CANCELACION, PORCENTAJE_PROMOCION, ID_DEPORTE, REEMBOLSABLE)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [parseInt(cliente), parseInt(cancha), fechaInicio, fechaFin, horaInicio, horaFin, estadoReserva, fechaLimiteCancelacion, estadoCancelacion, parseFloat(porcentajePromocion), parseFloat(deporte), reembolsable]
         );
         res.json({ success: true });
     } catch (err) {

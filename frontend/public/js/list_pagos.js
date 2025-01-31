@@ -78,14 +78,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${new Date(pago.FECHA_PAGO).toLocaleString() || 'N/A'}</td>
                 <td>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-warning bi bi-pencil" onclick="editPago(${pago.ID_PAGO})"></button>
-                        <button class="btn btn-success bi bi-arrow-counterclockwise" onclick="confirmDelete(${pago.ID_PAGO}, '${(pago.CLIENTE_NOMBRE + ' ' + pago.CLIENTE_APELLIDO)} ')" ${pago.RESERVA_REEMBOLSABLE === 'S' ? '' : 'disabled'}></button>
+                        <button class="btn btn-warning bi bi-pencil" onclick="editPago(${pago.ID_PAGO})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar"></button>
+                        <button class="btn btn-success bi bi-arrow-counterclockwise" onclick="confirmDelete(${pago.ID_PAGO}, '${(pago.CLIENTE_NOMBRE + ' ' + pago.CLIENTE_APELLIDO)} ')" ${pago.RESERVA_REEMBOLSABLE === 'S' ? '' : 'disabled'} data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Reembolsar"></button>
                         
                     </div>
                 </td>
             </tr>
         `;
         });
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
     }
 
     // Función para ordenar la tabla
@@ -98,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const key = Object.keys(a)[columnIndex];
             const valueA = a[key];
             const valueB = b[key];
+            console.log(key, valueA, valueB);
             if (typeof valueA === "number" && typeof valueB === "number") {
                 return direction === "ASC" ? valueA - valueB : valueB - valueA;
             } else {
