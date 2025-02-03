@@ -45,3 +45,9 @@
 .cancha-container {
   min-width: 1200px;
 }
+
+#fechaDisplay {
+  min-width: 350px;
+  text-align: center;
+  margin-bottom: 0%;
+}

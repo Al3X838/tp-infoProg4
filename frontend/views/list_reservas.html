@@ -79,16 +79,26 @@
       <!-- Título y botón para agregar reserva -->
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Reservas</h2>
-        <button class="btn btn-success" onclick="confirmarActivarPromocion()">
-          Activar Promoción
-        </button>
-        <button class="btn btn-danger" onclick="confirmarDesactivarPromocion()">
-          Desactivar Promoción
-        </button>
-        <a class="btn btn-primary" href="/list_cancha_disponibilidad">
-          Disponibilidad de Canchas
-        </a>
-        <a class="btn btn-primary" href="/add_reserva"> Añadir Reserva </a>
+        <div>
+          <button
+            class="btn btn-success m-2"
+            onclick="confirmarActivarPromocion()">
+            Activar Promoción
+          </button>
+          <button
+            class="btn btn-danger m-2"
+            onclick="confirmarDesactivarPromocion()">
+            Desactivar Promoción
+          </button>
+        </div>
+        <div>
+          <a class="btn btn-info m-2" href="/list_cancha_disponibilidad">
+            Disponibilidad de Canchas
+          </a>
+          <a class="btn btn-primary m-2" href="/add_reserva">
+            Añadir Reserva
+          </a>
+        </div>
       </div>
 
       <!-- Campo de búsqueda -->

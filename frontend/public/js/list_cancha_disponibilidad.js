@@ -1,15 +1,44 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Establecer fecha actual como predeterminada
-  const today = new Date();
-  const fechaActual = today.toISOString().split('T')[0];
-  document.getElementById('fechaFilter').value = fechaActual;
+  const fechaInput = document.getElementById("fechaFilter");
+  const fechaDisplay = document.getElementById("fechaDisplay");
+  const prevDayBtn = document.getElementById("prevDay");
+  const nextDayBtn = document.getElementById("nextDay");
 
-  // Cargar datos iniciales
+  // Función para formatear la fecha con el día de la semana y el mes en mayúscula inicial
+  function formatearFecha(fecha) {
+    const opciones = { weekday: "long", day: "numeric", month: "long" };
+    let fechaStr = fecha.toLocaleDateString("es-ES", opciones);
+
+    // Corregir problemas de mayúsculas raras en ciertos días (MiéRcoles → Miércoles)
+    return fechaStr.replace(/(^|\s)\S/g, (l) => l.toUpperCase());
+  }
+
+  // Función para actualizar la visualización de la fecha
+  function actualizarFechaDisplay() {
+    const fecha = new Date(Date.parse(fechaInput.value + "T00:00:00")); // Ajuste para evitar desfases
+    fechaDisplay.textContent = formatearFecha(fecha);
+  }
+
+  // Función para cambiar la fecha en días (+1 o -1)
+  function cambiarFecha(dias) {
+    const fecha = new Date(Date.parse(fechaInput.value + "T00:00:00"));
+    fecha.setDate(fecha.getDate() + dias);
+    fechaInput.value = fecha.toISOString().split("T")[0]; // Actualiza el input con la nueva fecha
+    actualizarFechaDisplay();
+    cargarCanchas(); // Recargar las canchas según la nueva fecha
+  }
+
+  // Eventos para los botones de navegación de fechas
+  prevDayBtn.addEventListener("click", () => cambiarFecha(-1)); // Día anterior
+  nextDayBtn.addEventListener("click", () => cambiarFecha(1)); // Día siguiente
+  fechaInput.addEventListener("change", actualizarFechaDisplay); // Cambia la fecha manualmente
+
+  // Inicialización: establece la fecha actual al cargar la página
+  fechaInput.value = new Date().toISOString().split("T")[0];
+  actualizarFechaDisplay();
   cargarCanchas();
-
-  // Escuchar cambios en el filtro de fecha
-  document.getElementById('fechaFilter').addEventListener('change', cargarCanchas);
 });
+
 
 // Función para mostrar alertas de error
 function showErrorAlert(message) {
