@@ -34,6 +34,8 @@ function showLoadingAlert() {
 let mapa = null;
 let marcador = null;
 let geocodificador = null;
+let mapaCargado = false; // Variable para indicar si el mapa está listo
+let datosClienteCargados = false; // Indica si los datos del cliente ya se cargaron
 
 // Función para actualizar el marcador en la posición dada
 function actualizarMarcador(posicion) {
@@ -107,6 +109,12 @@ function initMap() {
     // Crear un geocoder para convertir direcciones en coordenadas
     geocodificador = new google.maps.Geocoder();
 
+    // Marcar el mapa como cargado después de 1 segundo (por seguridad)
+    mapaCargado = true;
+    if (datosClienteCargados) {
+        buscarDireccion();
+    }
+
     // Evento: cuando el usuario hace clic en el mapa
     mapa.addListener("click", function (evento) {
         actualizarMarcador(evento.latLng);
@@ -164,7 +172,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     clienteMotivoBloqueoInput.value = data.cliente.MOTIVO_BLOQUEO;
 
                     toggleMotivoBloqueo(); // Llama a la función para gestionar el motivo de bloqueo
-                    buscarDireccion(data.cliente.DIRECCION, data.cliente.CIUDAD); // Busca la dirección ingresada en el mapa
+                    datosClienteCargados = true;
+
+                    // Si el mapa ya está listo, busca la dirección
+                    if (mapaCargado) {
+                        buscarDireccion();
+                        console.log('Buscando dirección...');
+                    }
                 }
             })
             .catch(error => {

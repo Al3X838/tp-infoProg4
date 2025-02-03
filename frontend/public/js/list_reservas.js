@@ -1,3 +1,13 @@
+function formatearFecha(fecha) {
+    const partes = fecha.split("-");
+    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+}
+
+function formatearHora(hora) {
+    return hora.slice(0, 5);
+}
+
+
 
 // Función para mostrar alertas de error
 function showErrorAlert(message) {
@@ -139,10 +149,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 <th>${reserva.ID_RESERVA}</th>
                 <td>${reserva.NOMBRE_CLIENTE} ${reserva.APELLIDO_CLIENTE}</td>
                 <td>${reserva.NUMERO_CANCHA}</td>
-                <td>${reserva.FECHA_INICIO}</td>
-                <td>${reserva.FECHA_FIN}</td>
-                <td>${reserva.HORA_INICIO}</td>
-                <td>${reserva.HORA_FIN}</td>
+                <td>${formatearFecha(reserva.FECHA_INICIO)}</td>
+                <td>${formatearFecha(reserva.FECHA_FIN)}</td>
+                <td>${formatearHora(reserva.HORA_INICIO)}</td>
+                <td>${formatearHora(reserva.HORA_FIN)}</td>
                 <td>${reserva.ESTADO_RESERVA === 'A' ? 'Activo' : reserva.ESTADO_RESERVA === 'P' ? 'Pendiente' : 'Finalizado'}</td>
                 <td>${reserva.FECHA_LIMITE_CANCELACION}</td>
                 <td>${reserva.ESTADO_CANCELACION === 'S' ? 'Cancelado' : 'Pago pendiente'}</td>
