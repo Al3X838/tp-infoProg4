@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Función para actualizar la visualización de la fecha
   function actualizarFechaDisplay() {
+    cargarCanchas(); // Recargar las canchas según la nueva fecha
     const fecha = new Date(Date.parse(fechaInput.value + "T00:00:00")); // Ajuste para evitar desfases
     fechaDisplay.textContent = formatearFecha(fecha);
   }
@@ -76,6 +77,8 @@ async function cargarCanchas() {
     if (!canchas.success || !mantenimientos.success || !reservas.success) {
       throw new Error('Error en la carga de datos');
     }
+    // Ordenar las canchas por número
+    canchas.canchas.sort((a, b) => a.NUMERO - b.NUMERO);
 
     Swal.close(); // Cierra el mensaje de carga
     mostrarDisponibilidad(canchas.canchas, mantenimientos.mantenimientos, reservas.reservas, fechaSeleccionada);
