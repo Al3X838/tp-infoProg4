@@ -165,13 +165,17 @@ app.get('/upd_pago', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/views/upd_pago.html'));
 });
 
+app.get('/list_cancha_disponibilidad', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/views/list_cancha_disponibilidad.html'));
+});
+
 // Usar el microservicio de conexión
 app.use('/connect', connectRouter);
 
 app.use('/clientes', isAuthenticated, clientesRouter);  //Ruta para clientes
 app.use('/api/canchas', isAuthenticated, canchasRouter);
 app.use('/mantenimientos', isAuthenticated, mantenimientosRouter); //Ruta para mantenimientos
-app.use('/tiposuelos', tiposuelosRouter); //Ruta para tipos de suelos
+app.use('/tiposuelos', isAuthenticated, tiposuelosRouter); //Ruta para tipos de suelos
 app.use('/reservas', isAuthenticated, reservaRouter); //Ruta para reservas
 app.use('/deportes', isAuthenticated, deportesRouter); //Ruta para deportes
 app.use('/canchadeporte', isAuthenticated, canchaDeporteRouter); //Ruta para canchaDeportes

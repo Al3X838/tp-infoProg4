@@ -67,6 +67,34 @@ router.get('/mantenimiento/:id', async (req, res) => {
     }
 });
 
+// Ruta GET para obtener mantenimientos por fecha
+router.get('/fecha/:fecha', async (req, res) => {
+    const { fecha } = req.params; // Fecha en formato YYYY-MM-DD
+    let connection = null;
+    try {
+        connection = await getConnection();
+        const result = await connection.query(
+            `SELECT *
+             FROM mantenimiento
+             WHERE ? BETWEEN FECHA_INICIO AND FECHA_FIN`,
+            [fecha]
+        );
+
+        res.json({ success: true, mantenimientos: result });
+    } catch (err) {
+        handleDbError(err, res, 'fetching mantenimiento by date');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
+    }
+});
+
+
 // Ruta para agregar un nuevo mantenimiento
 router.post('/add', async (req, res) => {
     const { id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, descripcion } = req.body;

@@ -85,6 +85,33 @@ router.get('/reserva/:id', async (req, res) => {
     }
 });
 
+// Ruta GET para obtener reservas por fecha
+router.get('/fecha/:fecha', async (req, res) => {
+    const { fecha } = req.params; // Fecha en formato YYYY-MM-DD
+    let connection = null;
+    try {
+        connection = await getConnection();
+        const result = await connection.query(
+            `SELECT *
+             FROM reservas
+             WHERE ? BETWEEN FECHA_INICIO AND FECHA_FIN`,
+            [fecha]
+        );
+
+        res.json({ success: true, reservas: result });
+    } catch (err) {
+        handleDbError(err, res, 'fetching reservas by date');
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (closeErr) {
+                console.error('Error al cerrar la conexión:', closeErr.message);
+            }
+        }
+    }
+});
+
 // Ruta para agregar una nueva reserva
 router.post('/add', async (req, res) => {
     const {
