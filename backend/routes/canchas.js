@@ -2,11 +2,22 @@ const express = require('express');
 const router = express.Router();
 const odbc = require('odbc');
 
-
 // Ruta POST para conectar a la base de datos
-const getConnection = async () => {
+const getConnection = async (req) => {
     try {
-        const connection = await odbc.connect(`DSN=infoprog4;UID=${process.env.DB_USER};PWD=${process.env.DB_PASSWORD};CHARSET=utf8;`);
+        if (!req.session.isAuthenticated) {
+            throw new Error('Usuario no autenticado');
+        }
+
+        const dbUsers = JSON.parse(process.env.DB_USERS);
+
+        if (!dbUsers[req.session.userRole]) {
+            throw new Error('Rol no válido');
+        }
+
+        const { user, password } = dbUsers[req.session.userRole];
+
+        const connection = await odbc.connect(`DSN=infoprog4;UID=${user};PWD=${password};CHARSET=utf8;`);
         return connection;
     } catch (err) {
         console.error('Error al conectar a la base de datos:', err);
@@ -27,7 +38,7 @@ const handleDbError = (err, res, action) => {
 router.get('/', async (req, res) => {
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         const result = await connection.query(`
             SELECT c.*,
             ts.NOMBRE AS NOMBRE_TIPO_SUELO 
@@ -54,7 +65,7 @@ router.get('/cancha/:id', async (req, res) => {
     const { id } = req.params;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         const result = await connection.query(`
             SELECT 
                 c.*,
@@ -103,7 +114,7 @@ router.post('/add', async (req, res) => {
     } = req.body;
 
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
 
         // Agregar la nueva cancha
         await connection.query(
@@ -160,7 +171,7 @@ router.post('/update/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(
             `UPDATE CANCHAS 
             SET NUMERO = ?, UBICACION = ?, TIPO_SUELO = ?, LUMINICA = ?, BEBEDERO = ?, BANOS = ?, CAMBIADOR = ?, ESTADO = ? 
@@ -186,7 +197,7 @@ router.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(`DELETE FROM CANCHAS WHERE ID_CANCHA = ?`, [id]);
         res.json({ success: true });
     } catch (err) {

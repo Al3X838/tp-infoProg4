@@ -3,9 +3,21 @@ const router = express.Router();
 const odbc = require('odbc');
 
 // Función para obtener la conexión a la base de datos
-const getConnection = async () => {
+const getConnection = async (req) => {
     try {
-        const connection = await odbc.connect(`DSN=infoprog4;UID=${process.env.DB_USER};PWD=${process.env.DB_PASSWORD};CHARSET=utf8;`);
+        if (!req.session.isAuthenticated) {
+            throw new Error('Usuario no autenticado');
+        }
+
+        const dbUsers = JSON.parse(process.env.DB_USERS);
+
+        if (!dbUsers[req.session.userRole]) {
+            throw new Error('Rol no válido');
+        }
+
+        const { user, password } = dbUsers[req.session.userRole];
+
+        const connection = await odbc.connect(`DSN=infoprog4;UID=${user};PWD=${password};CHARSET=utf8;`);
         return connection;
     } catch (err) {
         console.error('Error al conectar a la base de datos:', err);
@@ -26,7 +38,7 @@ const handleDbError = (err, res, action) => {
 router.get('/', async (req, res) => {
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         const result = await connection.query('SELECT * FROM clientes;');
         res.json({ success: true, clientes: result });
     } catch (err) {
@@ -47,7 +59,7 @@ router.get('/cliente/:id', async (req, res) => {
     const { id } = req.params;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         const result = await connection.query(`SELECT * FROM clientes WHERE id_cliente = ?`, [id]);
         if (result.length > 0) {
             res.json({ success: true, cliente: result[0] });
@@ -73,7 +85,7 @@ router.post('/add', async (req, res) => {
     const estado = 'A';
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(`INSERT INTO clientes (DOCUMENTO_ID, NOMBRE, APELLIDO, FECHA_NACIMIENTO, CIUDAD, DIRECCION, TELEFONO, EMAIL, NACIONALIDAD, ESTADO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [documento_id, nombre, apellido, fecha_nacimiento, ciudad, direccion, telefono, email, nacionalidad, estado]);
         res.json({ success: true });
     } catch (err) {
@@ -96,7 +108,7 @@ router.post('/update/:id', async (req, res) => {
     const { documento_id, nombre, apellido, fecha_nacimiento, direccion, telefono, email, nacionalidad, ciudad, estado, motivo_bloqueo } = req.body;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(`UPDATE clientes SET DOCUMENTO_ID = ?, NOMBRE = ?, APELLIDO = ?, FECHA_NACIMIENTO = ?, DIRECCION = ?, TELEFONO = ?, EMAIL = ?, NACIONALIDAD = ?, CIUDAD = ?, ESTADO = ?, MOTIVO_BLOQUEO = ? WHERE id_cliente = ?`, [documento_id, nombre, apellido, fecha_nacimiento, direccion, telefono, email, nacionalidad, ciudad, estado, motivo_bloqueo, id]);
         res.json({ success: true });
     } catch (err) {
@@ -117,7 +129,7 @@ router.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(`DELETE FROM clientes WHERE id_cliente = ?`, [id]);
         res.json({ success: true });
     } catch (err) {

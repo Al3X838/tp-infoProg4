@@ -3,9 +3,21 @@ const router = express.Router();
 const odbc = require('odbc');
 
 // Función para obtener la conexión a la base de datos
-const getConnection = async () => {
+const getConnection = async (req) => {
     try {
-        const connection = await odbc.connect(`DSN=infoprog4;UID=${process.env.DB_USER};PWD=${process.env.DB_PASSWORD};CHARSET=utf8;`);
+        if (!req.session.isAuthenticated) {
+            throw new Error('Usuario no autenticado');
+        }
+
+        const dbUsers = JSON.parse(process.env.DB_USERS);
+
+        if (!dbUsers[req.session.userRole]) {
+            throw new Error('Rol no válido');
+        }
+
+        const { user, password } = dbUsers[req.session.userRole];
+
+        const connection = await odbc.connect(`DSN=infoprog4;UID=${user};PWD=${password};CHARSET=utf8;`);
         return connection;
     } catch (err) {
         console.error('Error al conectar a la base de datos:', err);
@@ -25,7 +37,7 @@ const handleDbError = (err, res, action) => {
 router.get('/', async (req, res) => {
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         const result = await connection.query('SELECT m.*, c.NUMERO as NUMERO_CANCHA FROM mantenimiento m LEFT JOIN CANCHAS c ON m.ID_CANCHA = c.ID_CANCHA ORDER BY m.ID_MANTENIMIENTO DESC;');
         res.json({ success: true, mantenimientos: result });
     } catch (err) {
@@ -46,7 +58,7 @@ router.get('/mantenimiento/:id', async (req, res) => {
     const { id } = req.params;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         const result = await connection.query(`SELECT m.*, c.NUMERO as NUMERO_CANCHA FROM mantenimiento m LEFT JOIN CANCHAS c ON m.ID_CANCHA = c.ID_CANCHA WHERE id_mantenimiento = ?`, [id]);
 
         if (result.length > 0) {
@@ -72,7 +84,7 @@ router.get('/fecha/:fecha', async (req, res) => {
     const { fecha } = req.params; // Fecha en formato YYYY-MM-DD
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         const result = await connection.query(
             `SELECT *
              FROM mantenimiento
@@ -101,7 +113,7 @@ router.post('/add', async (req, res) => {
     let connection = null;
     const estado = 'P';
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(
             `INSERT INTO mantenimiento (ID_CANCHA, FECHA_INICIO, FECHA_FIN, HORA_INICIO, HORA_FIN, DESCRIPCION, ESTADO) VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, descripcion, estado]
@@ -126,7 +138,7 @@ router.post('/update/:id', async (req, res) => {
     const { id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, descripcion, estado } = req.body;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(
             `UPDATE mantenimiento SET ID_CANCHA = ?, FECHA_INICIO = ?, FECHA_FIN = ?, HORA_INICIO = ?, HORA_FIN = ?, DESCRIPCION = ?, ESTADO = ? WHERE id_mantenimiento = ?`,
             [id_cancha, fecha_inicio, fecha_fin, hora_inicio, hora_fin, descripcion, estado, id]
@@ -151,7 +163,7 @@ router.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(`DELETE FROM mantenimiento WHERE id_mantenimiento = ?`, [id]);
         res.json({ success: true });
     } catch (err) {

@@ -43,21 +43,20 @@ function isAuthenticated(req, res, next) {
 
 app.post('/authenticate', (req, res) => {
     const { username, password } = req.body;
+    const webUsers = JSON.parse(process.env.WEB_USERS);
 
-    const user = { username: process.env.WEB_USER, password: process.env.WEB_PASSWORD };
+    // Suche nach einer passenden Rolle
+    const role = Object.keys(webUsers).find(role => username === role && password === webUsers[role]);
 
-    // Verificar si el nombre de usuario es incorrecto
-    if (username !== user.username) {
-        return res.status(401).send({ message: 'El usuario es incorrecto' });
+    if (!role) {
+        return res.status(401).send({ message: 'Usuario o contraseña incorrectos' });
     }
 
-    // Verificar si la contraseña es incorrecta
-    if (password !== user.password) {
-        return res.status(401).send({ message: 'La contraseña es incorrecta' });
-    }
     req.session.isAuthenticated = true;
-    res.status(200).send({ message: 'Inicio de sesión exitoso' });
+    req.session.userRole = role; // Dynamisch gespeicherte Rolle
+    res.status(200).send({ message: 'Inicio de sesión exitoso', role });
 });
+
 
 app.get('/salir', (req, res) => {
     req.session.destroy(err => {

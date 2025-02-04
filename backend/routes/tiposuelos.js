@@ -3,15 +3,28 @@ const router = express.Router();
 const odbc = require('odbc');
 
 // Función para obtener la conexión a la base de datos
-const getConnection = async () => {
+const getConnection = async (req) => {
     try {
-        const connection = await odbc.connect(`DSN=infoprog4;UID=${process.env.DB_USER};PWD=${process.env.DB_PASSWORD};CHARSET=utf8;`);
+        if (!req.session.isAuthenticated) {
+            throw new Error('Usuario no autenticado');
+        }
+
+        const dbUsers = JSON.parse(process.env.DB_USERS);
+
+        if (!dbUsers[req.session.userRole]) {
+            throw new Error('Rol no válido');
+        }
+
+        const { user, password } = dbUsers[req.session.userRole];
+
+        const connection = await odbc.connect(`DSN=infoprog4;UID=${user};PWD=${password};CHARSET=utf8;`);
         return connection;
     } catch (err) {
         console.error('Error al conectar a la base de datos:', err);
         throw new Error('Database connection error');
     }
 };
+
 
 // Función para manejo de errores de base de datos
 
@@ -26,7 +39,7 @@ const handleDbError = (err, res, action) => {
 router.get('/', async (req, res) => {
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         const result = await connection.query('SELECT * FROM TIPO_SUELOS;');
         res.json({ success: true, tiposuelos: result });
     } catch (err) {
@@ -48,7 +61,7 @@ router.get('/tiposuelo/:id', async (req, res) => {
     const { id } = req.params;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         const result = await connection.query(`SELECT * FROM TIPO_SUELOS WHERE ID_TIPO_SUELO = ?`, [id]);
 
         if (result.length > 0) {
@@ -75,7 +88,7 @@ router.post('/add', async (req, res) => {
     const { nombre } = req.body;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(`INSERT INTO TIPO_SUELOS (NOMBRE) VALUES (?)`, [nombre]);
         res.json({ success: true });
     } catch (err) {
@@ -99,7 +112,7 @@ router.post('/update/:id', async (req, res) => {
     const { nombre } = req.body;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(`UPDATE TIPO_SUELOS SET NOMBRE = ? WHERE ID_TIPO_SUELO = ?`, [nombre, id]);
         res.json({ success: true });
     } catch (err) {
@@ -121,7 +134,7 @@ router.delete('/delete/:id', async (req, res) => {
     const { id } = req.params;
     let connection = null;
     try {
-        connection = await getConnection();
+        connection = await getConnection(req);
         await connection.query(`DELETE FROM TIPO_SUELOS WHERE ID_TIPO_SUELO = ?`, [id]);
         res.json({ success: true });
     } catch (err) {
