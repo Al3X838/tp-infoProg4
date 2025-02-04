@@ -120,45 +120,40 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // 3. Actualizar los datos de la cancha
         fetch(`/api/canchas/update/${canchaId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(canchaData)
         })
-            .then(async response => {
-                const data = await response.json();
-                if (!response.ok) {
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
                     throw new Error(data.error || 'Error al actualizar la cancha');
                 }
-                return data;
+
+                return Promise.all(
+                    deportesData.map(deporte => {
+                        const url = deporte.id_cancha_deporte
+                            ? `/canchadeporte/update/${deporte.id_cancha_deporte}`
+                            : '/canchadeporte/add';
+
+                        return fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                id_cancha: canchaId,
+                                id_deporte: deporte.id_deporte,
+                                precio_hora: deporte.precio_hora
+                            })
+                        }).then(res => res.json());
+                    })
+                );
             })
-            .then(async () => {
-                if (deportesData.length > 0) {
-                    const promises = deportesData.map(deporte => {
-                        if (deporte.id_cancha_deporte) {
-                            return fetch(`/canchadeporte/update/${deporte.id_cancha_deporte}`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    id_cancha: canchaId,
-                                    id_deporte: deporte.id_deporte,
-                                    precio_hora: deporte.precio_hora
-                                })
-                            });
-                        } else {
-                            return fetch('/canchadeporte/add', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    id_cancha: canchaId,
-                                    id_deporte: deporte.id_deporte,
-                                    precio_hora: deporte.precio_hora
-                                })
-                            });
-                        }
-                    });
-                    await Promise.all(promises);
+            .then(results => {
+                const errores = results.filter(res => !res.success).map(res => res.error);
+
+                if (errores.length > 0) {
+                    throw new Error(errores.join('\n'));
                 }
 
                 Swal.fire({

@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch(`/canchadeporte/cancha/${canchaId}`);
             const data = await response.json();
+            tabla.innerHTML = ''; // Limpiar la tabla
             if (data.success && Array.isArray(data.canchaDeportes)) {
                 // Añadir cada deporte existente como fila en la tabla
                 data.canchaDeportes.forEach(deporte => agregarFila(deporte));
