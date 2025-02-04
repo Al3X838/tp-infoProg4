@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         filteredReservas.forEach(reserva => {
             const reservaOption = document.createElement('option');
             reservaOption.value = reserva.ID_RESERVA;
-            reservaOption.textContent = `Reserva #${reserva.ID_RESERVA} - ${reserva.ESTADO_RESERVA}`;
+            reservaOption.textContent = `Reserva #${reserva.ID_RESERVA} - ${reserva.NOMBRE_CLIENTE} ${reserva.APELLIDO_CLIENTE}`;
             reservaSelect.appendChild(reservaOption);
         });
 
