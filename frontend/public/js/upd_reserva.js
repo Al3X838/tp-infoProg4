@@ -19,17 +19,23 @@ function showErrorAlert(message) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Elementos del formulario y otros controles
     const form = document.getElementById('addReservaForm');
     const urlParams = new URLSearchParams(window.location.search);
     const reservaId = urlParams.get('id');
-    const clienteSelect = document.getElementById('cliente');
     const canchaSelect = document.getElementById('cancha');
 
-    // Modified load functions to return Promises
+    // Elementos para la búsqueda de clientes (nuevos)
+    const clienteSearchInput = document.getElementById('cliente-search');
+    const clienteResults = document.getElementById('cliente-results');
+    const clienteIdInput = document.getElementById('cliente-id');
+
+    // Listas globales
+    let clientes = []; // Lista global de clientes
+
     const loadClientes = () => {
         return new Promise((resolve, reject) => {
-            if (!clienteSelect) return resolve();
-
+            // Se muestra alerta de carga
             showLoadingAlert();
             fetch('/clientes')
                 .then(response => {
@@ -38,20 +44,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 })
                 .then(data => {
                     Swal.close();
-                    clienteSelect.innerHTML = '';
-
-                    const defaultOption = document.createElement('option');
-                    defaultOption.textContent = 'Selecciona un cliente';
-                    defaultOption.selected = true;
-                    defaultOption.disabled = true;
-                    clienteSelect.appendChild(defaultOption);
-
-                    data.clientes.forEach(cliente => {
-                        const option = document.createElement('option');
-                        option.value = cliente.ID_CLIENTE;
-                        option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO} (${cliente.DOCUMENTO_ID})`;
-                        clienteSelect.appendChild(option);
-                    });
+                    if (data.success && Array.isArray(data.clientes)) {
+                        // Filtrar solo clientes activos o en proceso
+                        clientes = data.clientes.filter(cliente => cliente.ESTADO === 'A' || cliente.ESTADO === 'P');
+                    } else {
+                        throw new Error('No hay clientes disponibles');
+                    }
                     resolve();
                 })
                 .catch(error => {
@@ -65,7 +63,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const loadCanchas = () => {
         return new Promise((resolve, reject) => {
             if (!canchaSelect) return resolve();
-
             showLoadingAlert();
             fetch('/api/canchas')
                 .then(response => {
@@ -102,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const loadDeportes = async (canchaId) => {
         const deporteSelect = document.getElementById('deporte');
         if (!deporteSelect) return;
-
         showLoadingAlert();
         try {
             const response = await fetch(`/canchadeporte/cancha/${canchaId}`);
@@ -126,7 +122,35 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    // Secuencia de carga inicial
+    // Buscar clientes mientras se escribe en el campo de búsqueda
+    clienteSearchInput.addEventListener('input', function () {
+        const query = clienteSearchInput.value.toLowerCase().trim(); // Convertir a minúsculas
+        clienteResults.innerHTML = ''; // Limpiar resultados previos
+        if (query) {
+            // Filtrar la lista de clientes según nombre y apellido
+            const filteredClientes = clientes.filter(cliente =>
+                `${cliente.NOMBRE} ${cliente.APELLIDO}`.toLowerCase().includes(query)
+            );
+            // Mostrar cada cliente filtrado como botón
+            filteredClientes.forEach(cliente => {
+                const clienteItem = document.createElement('button');
+                clienteItem.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO}`;
+                clienteItem.classList.add('list-group-item', 'list-group-item-action');
+                clienteItem.addEventListener('click', () => {
+                    selectCliente(cliente);
+                });
+                clienteResults.appendChild(clienteItem);
+            });
+        }
+    });
+
+    // Función para seleccionar un cliente de la lista de resultados
+    function selectCliente(cliente) {
+        clienteSearchInput.value = `${cliente.NOMBRE} ${cliente.APELLIDO}`; // Mostrar el nombre en el campo de búsqueda
+        clienteResults.innerHTML = ''; // Limpiar la lista de resultados
+        clienteIdInput.value = cliente.ID_CLIENTE; // Guardar el ID del cliente en el campo oculto
+    }
+
     showLoadingAlert();
     Promise.all([loadClientes(), loadCanchas()])
         .then(() => {
@@ -139,9 +163,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(data => {
                         Swal.close();
                         if (data.success && data.reserva) {
-                            // Establecer campos básicos
-                            document.getElementById('cliente').value = data.reserva.ID_CLIENTE;
-                            document.getElementById('cancha').value = data.reserva.ID_CANCHA;
+                            // Establecer el cliente seleccionado
+                            const idCliente = data.reserva.ID_CLIENTE;
+                            clienteIdInput.value = idCliente;
+                            // Buscar el cliente en la lista para mostrar su nombre en el campo de búsqueda
+                            const clienteEncontrado = clientes.find(c => c.ID_CLIENTE == idCliente);
+                            if (clienteEncontrado) {
+                                clienteSearchInput.value = `${clienteEncontrado.NOMBRE} ${clienteEncontrado.APELLIDO}`;
+                            }
+                            // Establecer otros campos de la reserva
+                            canchaSelect.value = data.reserva.ID_CANCHA;
                             document.getElementById('fechaInicio').value = data.reserva.FECHA_INICIO;
                             document.getElementById('fechaFin').value = data.reserva.FECHA_FIN;
                             document.getElementById('horaInicio').value = data.reserva.HORA_INICIO;
@@ -170,18 +201,19 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error(error);
         });
 
-    // Event listeners
+    // Actualizar deportes al cambiar la cancha
     canchaSelect?.addEventListener('change', function () {
         loadDeportes(this.value);
     });
 
+    // Envío del formulario de actualización
     form?.addEventListener('submit', function (event) {
         event.preventDefault();
         showLoadingAlert();
 
         const formData = {
-            id_cliente: document.getElementById('cliente').value,
-            id_cancha: document.getElementById('cancha').value,
+            id_cliente: clienteIdInput.value, // Se utiliza el campo oculto con el ID del cliente
+            id_cancha: canchaSelect.value,
             fecha_inicio: document.getElementById('fechaInicio').value,
             fecha_fin: document.getElementById('fechaFin').value,
             hora_inicio: document.getElementById('horaInicio').value,

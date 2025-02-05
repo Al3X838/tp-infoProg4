@@ -74,12 +74,15 @@
       <h2 class="mb-4 text text-center">Actualizar Reserva</h2>
       <form id="addReservaForm">
         <div class="mb-3">
-          <label for="cliente" class="form-label">Cliente</label>
-          <select
-            id="cliente"
-            name="cliente"
-            class="form-select"
-            required></select>
+          <label for="cliente-search" class="form-label">Buscar Cliente</label>
+          <input
+            type="text"
+            id="cliente-search"
+            class="form-control"
+            placeholder="Nombre o apellido del cliente" />
+          <div id="cliente-results" class="list-group mt-2"></div>
+          <!-- Campo oculto para almacenar el ID del cliente seleccionado -->
+          <input type="hidden" id="cliente-id" name="cliente" />
         </div>
         <div class="mb-3">
           <label for="cancha" class="form-label">Cancha</label>

@@ -8,146 +8,106 @@ function showErrorAlert(message) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Elementos del formulario y otros controles
     const form = document.getElementById('addReservaForm');
     const cancelButton = document.getElementById('cancel-button');
-    const clienteSelect = document.getElementById('cliente');
     const canchaSelect = document.getElementById('cancha');
     const horaInicio = document.getElementById('horaInicio');
     const horaFin = document.getElementById('horaFin');
     const btnSumarHora = document.getElementById('btnSumarHora');
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const selectedCanchaId = urlParams.get('cancha');
-
-    // Seleccionar los campos de fecha de inicio y fecha de fin
     const fechaInicio = document.getElementById('fechaInicio');
     const fechaFin = document.getElementById('fechaFin');
 
-    // Agregar un evento "blur" al campo fechaInicio
-    fechaInicio.addEventListener('blur', function () {
-        // Verificar si se ha ingresado una fecha en fechaInicio
-        if (fechaInicio.value) {
-            // Copiar la misma fecha al campo fechaFin
-            fechaFin.value = fechaInicio.value;
-        }
-    });
+    // Elementos para la búsqueda de clientes
+    const clienteSearchInput = document.getElementById('cliente-search');
+    const clienteResults = document.getElementById('cliente-results');
+    const clienteIdInput = document.getElementById('cliente-id');
+
+    // Parámetro de la URL para preseleccionar una cancha (si se requiere)
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedCanchaId = urlParams.get('cancha');
+
+    // Listas globales
+    let clientes = []; // Lista global de clientes
 
     // Función para obtener la fecha actual en formato YYYY-MM-DD
     function obtenerFechaActual() {
         const fecha = new Date(); // Obtener la fecha actual
-        const año = fecha.getFullYear(); // Obtener el año actual
-        const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Obtener el mes (con ceros a la izquierda)
-        const dia = String(fecha.getDate()).padStart(2, '0'); // Obtener el día (con ceros a la izquierda)
-        return `${año}-${mes}-${dia}`; // Formatear como YYYY-MM-DD
+        const año = fecha.getFullYear(); // Año actual
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Mes con ceros a la izquierda
+        const dia = String(fecha.getDate()).padStart(2, '0'); // Día con ceros a la izquierda
+        return `${año}-${mes}-${dia}`; // Devolver la fecha formateada
     }
 
-    // Establecer la fecha actual en los campos fechaInicio y fechaFin al cargar la página
+    // Asignar la fecha actual a los campos de fecha
     const fechaActual = obtenerFechaActual();
     fechaInicio.value = fechaActual;
     fechaFin.value = fechaActual;
 
-    // Evento para copiar fechaInicio a fechaFin cuando se pierde el foco
+    // Copiar la fecha de inicio a la fecha de fin cuando se pierde el foco
     fechaInicio.addEventListener('blur', function () {
         if (fechaInicio.value) {
             fechaFin.value = fechaInicio.value;
         }
     });
 
-    // Función para sumar una hora a una hora dada
+
     function sumarUnaHora(hora) {
         if (!hora) return null; // Si no hay hora, retornar null
-
-        // Convertir la hora en un objeto Date
-        const fecha = new Date(`1970-01-01T${hora}:00`);
-        // Sumar una hora (3600 segundos * 1000 milisegundos)
-        fecha.setTime(fecha.getTime() + 3600 * 1000);
-
-        // Formatear la nueva hora en formato HH:MM
-        const nuevaHora = fecha.toTimeString().slice(0, 5);
-        return nuevaHora;
+        const fecha = new Date(`1970-01-01T${hora}:00`); // Convertir la hora a objeto Date
+        fecha.setTime(fecha.getTime() + 3600 * 1000); // Sumar 3600 segundos (1 hora)
+        return fecha.toTimeString().slice(0, 5); // Devolver la hora en formato HH:MM
     }
 
     // Evento para el botón de sumar una hora
     btnSumarHora.addEventListener('click', function () {
         if (!horaFin.value) {
-            // Si horaFin está vacío, tomar la hora de horaInicio y sumar una hora
             if (horaInicio.value) {
                 horaFin.value = sumarUnaHora(horaInicio.value);
             }
         } else {
-            // Si horaFin ya tiene un valor, sumar una hora a ese valor
             horaFin.value = sumarUnaHora(horaFin.value);
         }
     });
 
-    const loadClientes = () => {
-        if (!clienteSelect) return;
-
+    // Cargar clientes desde el servidor
+    function loadClientes() {
         fetch('/clientes')
             .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) throw new Error('Error en la respuesta de la red');
                 return response.json();
             })
             .then(data => {
-                console.log('Data received:', data);
-
                 if (data.success && Array.isArray(data.clientes)) {
-                    const defaultOption = document.createElement('option');
-                    defaultOption.value = '';
-                    defaultOption.textContent = 'Selecciona un cliente';
-                    defaultOption.selected = true;
-                    defaultOption.disabled = true;
-                    clienteSelect.appendChild(defaultOption);
-
-                    data.clientes.forEach(cliente => {
-                        if (cliente.ESTADO === 'A' || cliente.ESTADO === 'P') {
-                            const option = document.createElement('option');
-                            option.value = cliente.ID_CLIENTE;
-                            option.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO} (${cliente.DOCUMENTO_ID})`;
-                            clienteSelect.appendChild(option);
-                        }
-                    });
+                    // Filtrar solo clientes activos o en proceso
+                    clientes = data.clientes.filter(cliente => cliente.ESTADO === 'A' || cliente.ESTADO === 'P');
                 } else {
                     throw new Error('No hay clientes disponibles');
                 }
             })
-            .catch(error => console.error('Error loading clients:', error));
-    };
+            .catch(error => console.error('Error cargando clientes:', error));
+    }
 
-    const loadCanchas = () => {
+    // Cargar canchas desde el servidor
+    function loadCanchas() {
         if (!canchaSelect) return;
-
         fetch('/api/canchas')
             .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) throw new Error('Error en la respuesta de la red');
                 return response.json();
             })
             .then(data => {
-                console.log('Data received:', data);
-
                 if (data.success && Array.isArray(data.canchas)) {
-
-                    const defaultOption = document.createElement('option');
-                    defaultOption.value = '';
-                    defaultOption.textContent = 'Selecciona una cancha';
-                    defaultOption.selected = true;
-                    defaultOption.disabled = true;
-                    canchaSelect.appendChild(defaultOption);
-
+                    canchaSelect.innerHTML = '<option value="" disabled selected>Selecciona una cancha</option>';
                     data.canchas.forEach(cancha => {
+                        // Mostrar la disponibilidad de la cancha según su estado
                         if (cancha.ESTADO === 'D') {
-                            const option = document.createElement('option');
-                            option.value = cancha.ID_CANCHA;
-                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *Disponible*`;
-                            canchaSelect.appendChild(option);
+                            canchaSelect.innerHTML += `<option value="${cancha.ID_CANCHA}">Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *Disponible*</option>`;
                         } else {
-                            const option = document.createElement('option');
-                            option.value = cancha.ID_CANCHA;
-                            option.textContent = `Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *No Disponible en este momento*`;
-                            canchaSelect.appendChild(option);
+                            canchaSelect.innerHTML += `<option value="${cancha.ID_CANCHA}">Cancha ${cancha.NUMERO} - ${cancha.UBICACION} *No Disponible en este momento*</option>`;
                         }
                     });
-
+                    // Preseleccionar la cancha si se pasó por URL
                     if (selectedCanchaId) {
                         canchaSelect.value = selectedCanchaId;
                     }
@@ -155,51 +115,82 @@ document.addEventListener('DOMContentLoaded', function () {
                     throw new Error('No hay canchas disponibles');
                 }
             })
-            .catch(error => console.error('Error loading canchas:', error));
-    };
+            .catch(error => console.error('Error cargando canchas:', error));
+    }
 
-    const loadDeportes = async (canchaId) => {
+    // Cargar deportes según la cancha seleccionada
+    async function loadDeportes(canchaId) {
         const deporteSelect = document.getElementById('deporte');
         if (!deporteSelect) return;
-
-        // Limpiar opciones
         deporteSelect.innerHTML = '<option value="" disabled selected>Seleccione un deporte</option>';
-
         if (!canchaId) return;
-
         try {
             const response = await fetch(`/canchadeporte/cancha/${canchaId}`);
             const data = await response.json();
-
             if (data.success && Array.isArray(data.canchaDeportes)) {
                 data.canchaDeportes.forEach(cd => {
-                    const option = document.createElement('option');
-                    option.value = cd.ID_DEPORTE;
-                    option.textContent = `${cd.DEPORTE} - $${cd.PRECIO_HORA}/hora`;
-                    deporteSelect.appendChild(option);
+                    deporteSelect.innerHTML += `<option value="${cd.ID_DEPORTE}">${cd.DEPORTE} - $${cd.PRECIO_HORA}/hora</option>`;
                 });
             }
         } catch (error) {
             console.error('Error cargando deportes:', error);
         }
-    };
+    }
+
+    // Buscar clientes mientras se escribe
+    clienteSearchInput.addEventListener('input', function () {
+        const query = clienteSearchInput.value.toLowerCase().trim(); // Convertir la búsqueda a minúsculas
+        clienteResults.innerHTML = ''; // Limpiar resultados previos
+        if (query) {
+            // Filtrar la lista de clientes según nombre y apellido
+            const filteredClientes = clientes.filter(cliente =>
+                `${cliente.NOMBRE} ${cliente.APELLIDO}`.toLowerCase().includes(query)
+            );
+            // Mostrar cada cliente filtrado como botón
+            filteredClientes.forEach(cliente => {
+                const clienteItem = document.createElement('button');
+                clienteItem.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO}`;
+                clienteItem.classList.add('list-group-item', 'list-group-item-action');
+                clienteItem.addEventListener('click', () => {
+                    selectCliente(cliente);
+                });
+                clienteResults.appendChild(clienteItem);
+            });
+        }
+    });
+
+    // Función para seleccionar un cliente de la lista de resultados
+    function selectCliente(cliente) {
+        clienteSearchInput.value = `${cliente.NOMBRE} ${cliente.APELLIDO}`; // Mostrar el nombre en el campo de búsqueda
+        clienteResults.innerHTML = ''; // Limpiar la lista de resultados
+        clienteIdInput.value = cliente.ID_CLIENTE; // Guardar el ID del cliente en el campo oculto
+        // Llamada opcional para cargar reservas del cliente
+        loadReservas(cliente.ID_CLIENTE);
+    }
+
+    // Función de ejemplo para cargar reservas del cliente seleccionado
+    function loadReservas(clienteId) {
+        // Implementa aquí la lógica para cargar reservas según el ID del cliente
+        console.log('Cargando reservas para el cliente con ID:', clienteId);
+    }
 
     form.addEventListener('submit', function (event) {
         event.preventDefault();
-
+        // Crear objeto con los datos de la reserva
         const reservaData = {
-            cliente: document.getElementById('cliente').value.trim(),
-            cancha: document.getElementById('cancha').value.trim(),
+            // Se utiliza el campo oculto que contiene el ID del cliente seleccionado
+            cliente: clienteIdInput.value.trim(),
+            cancha: canchaSelect.value.trim(),
             deporte: document.getElementById('deporte').value,
-            fechaInicio: document.getElementById('fechaInicio').value,
-            fechaFin: document.getElementById('fechaFin').value,
-            horaInicio: document.getElementById('horaInicio').value,
-            horaFin: document.getElementById('horaFin').value,
+            fechaInicio: fechaInicio.value,
+            fechaFin: fechaFin.value,
+            horaInicio: horaInicio.value,
+            horaFin: horaFin.value,
             estadoReserva: 'P',
             fechaLimiteCancelacion: document.getElementById('fechaLimiteCancelacion').value,
             estadoCancelacion: document.getElementById('estadoCancelacion').value,
             porcentajePromocion: parseFloat(document.getElementById('porcentajePromocion').value) || 0,
-            reembolsable: document.getElementById('reembolsable').value ? 'S' : 'N'
+            reembolsable: document.getElementById('reembolsable').checked ? 'S' : 'N'
         };
         console.log('Reserva data:', reservaData);
         fetch('/reservas/add', {
@@ -209,9 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(async response => {
                 const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(data.error || 'Error al agregar la reserva');
-                }
+                if (!response.ok) throw new Error(data.error || 'Error al agregar la reserva');
                 return data;
             })
             .then(data => {
@@ -240,23 +229,18 @@ document.addEventListener('DOMContentLoaded', function () {
     loadClientes();
     loadCanchas();
 
-    // Modificar el evento change del select de canchas
+    // Actualizar deportes al cambiar la cancha
     if (canchaSelect) {
         canchaSelect.addEventListener('change', function () {
-            const selectedCanchaId = this.value;
-            loadDeportes(selectedCanchaId);
+            loadDeportes(this.value);
         });
     }
-
-    // Si hay una cancha preseleccionada, cargar sus deportes
     if (selectedCanchaId) {
         loadDeportes(selectedCanchaId);
     }
-
-    // Manejar el botón de cancelar
     if (cancelButton) {
         cancelButton.addEventListener('click', function () {
-            window.location.href = '/list_reservas'; // Regresa a la lista de reservas
+            window.location.href = '/list_reservas'; // Regresar a la lista de reservas
         });
     }
 });
