@@ -174,13 +174,12 @@ document.addEventListener('DOMContentLoaded', function () {
     window.confirmDelete = function (id, Name) {
         // Usar SweetAlert para confirmación de eliminación
         Swal.fire({
-            title: `¿Estás seguro de eliminar el mantenimiento de ${Name}?`,
-            text: "¡Esta acción no se puede deshacer!",
+            title: '¿Estás seguro?',
+            text: `¿Deseas eliminar el mantenimiento de ${Name}?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Eliminar',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteMantenimientos(id, loadMantenimientos);

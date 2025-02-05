@@ -158,11 +158,9 @@ document.addEventListener('DOMContentLoaded', function () {
     window.confirmDelete = function (id) {
         Swal.fire({
             title: '¿Estás seguro?',
-            text: 'Esta acción eliminará la cancha de forma permanente.',
+            text: `¿Deseas eliminar la cancha de forma permanente?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {

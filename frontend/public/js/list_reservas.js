@@ -211,13 +211,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para confirmar y eliminar una reserva
     window.confirmDelete = function (id, details) {
         Swal.fire({
-            title: `¿Estás seguro de eliminar la reserva de ${details}?`,
-            text: "¡Esta acción no se puede deshacer!",
+            title: '¿Estás seguro?',
+            text: `¿Deseas eliminar la reserva de "${details}"?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Eliminar',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteReserva(id, fetchData);
