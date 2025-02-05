@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json();
             })
             .then(data => {
-                console.log('Data received:', data);
                 tipoSueloSelect.innerHTML = '<option value="">Seleccione el tipo de suelo</option>';
 
                 if (data.success && Array.isArray(data.tiposuelos)) {

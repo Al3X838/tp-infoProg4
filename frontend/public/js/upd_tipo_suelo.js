@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         const newNombre = document.getElementById('nombre').value.trim();
 
-        console.log({ nombre: newNombre });
         fetch(`/tiposuelos/update/${tipoSueloId}`, { // Método POST explícito
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

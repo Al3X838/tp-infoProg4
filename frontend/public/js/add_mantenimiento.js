@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const newFechaFin = document.getElementById('fecha_fin').value;
         const newHoraFin = document.getElementById('hora_fin').value;
         const newDescripcion = document.getElementById('descripcion').value.trim();
-        console.log({ id_cancha: newCancha, fecha_inicio: newFechaInicio, hora_inicio: newHoraInicio, fecha_fin: newFechaFin, hora_fin: newHoraFin, descripcion: newDescripcion });
 
         fetch('/mantenimientos/add', {
             method: 'POST',

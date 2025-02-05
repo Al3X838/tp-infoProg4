@@ -10,7 +10,7 @@ function showErrorAlert(message) {
 function showLoadingAlert() {
     Swal.fire({
         title: 'Cargando...',
-        text: 'Estamos obteniendo los datos de tipo suelo.',
+        text: 'Estamos obteniendo los tipos de suelos.',
         allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
         didOpen: () => {
             Swal.showLoading(); // Muestra el spinner de carga

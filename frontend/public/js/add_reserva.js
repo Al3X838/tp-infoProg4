@@ -164,14 +164,6 @@ document.addEventListener('DOMContentLoaded', function () {
         clienteSearchInput.value = `${cliente.NOMBRE} ${cliente.APELLIDO}`; // Mostrar el nombre en el campo de búsqueda
         clienteResults.innerHTML = ''; // Limpiar la lista de resultados
         clienteIdInput.value = cliente.ID_CLIENTE; // Guardar el ID del cliente en el campo oculto
-        // Llamada opcional para cargar reservas del cliente
-        loadReservas(cliente.ID_CLIENTE);
-    }
-
-    // Función de ejemplo para cargar reservas del cliente seleccionado
-    function loadReservas(clienteId) {
-        // Implementa aquí la lógica para cargar reservas según el ID del cliente
-        console.log('Cargando reservas para el cliente con ID:', clienteId);
     }
 
     form.addEventListener('submit', function (event) {
@@ -192,7 +184,6 @@ document.addEventListener('DOMContentLoaded', function () {
             porcentajePromocion: parseFloat(document.getElementById('porcentajePromocion').value) || 0,
             reembolsable: 'S'
         };
-        console.log('Reserva data:', reservaData);
         fetch('/reservas/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

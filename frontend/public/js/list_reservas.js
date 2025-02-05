@@ -22,7 +22,7 @@ function showErrorAlert(message) {
 function showLoadingAlert() {
     Swal.fire({
         title: 'Cargando...',
-        text: 'Estamos obteniendo los datos de las reservas.',
+        text: 'Estamos obteniendo las reservas.',
         allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
         didOpen: () => {
             Swal.showLoading(); // Muestra el spinner de carga
@@ -143,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para renderizar la tabla
     function renderReservas(reservas) {
-        console.log(reservas);
         reservasList.innerHTML = reservas.map(reserva => `
             <tr id="reserva-row-${reserva.ID_RESERVA}">
                 <th>${reserva.ID_RESERVA}</th>
@@ -212,13 +211,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para confirmar y eliminar una reserva
     window.confirmDelete = function (id, details) {
         Swal.fire({
-            title: `¿Estás seguro de eliminar la reserva de ${details}?`,
-            text: "¡Esta acción no se puede deshacer!",
+            title: '¿Estás seguro?',
+            text: `¿Deseas eliminar la reserva de "${details}"?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Eliminar',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteReserva(id, fetchData);
@@ -250,7 +248,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     fetchData();
                     Swal.fire('Confirmado!', 'La reserva ha sido confirmada.', 'success');
-                    console.log(data.reserva); // Verifica aquí el contenido de `reserva`
                     sendEmail(data.reserva);
                 } else {
                     showErrorAlert(data.error || 'Error al confirmar la reserva.');
@@ -263,7 +260,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para enviar un correo electrónico utilizando EmailJS
     function sendEmail(reserva) {
-        console.log("reserva", reserva);
         emailjs.init('RloVlsEjuRN3Mdixa'); // user id de emailjs
         const templateParams = {
             to_name: reserva.NOMBRE_CLIENTE,

@@ -14,7 +14,7 @@ function showErrorAlert(message) {
 function showLoadingAlert() {
     Swal.fire({
         title: 'Cargando...',
-        text: 'Estamos obteniendo los datos de las canchas.',
+        text: 'Estamos obteniendo las canchas.',
         allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
         didOpen: () => {
             Swal.showLoading(); // Muestra el spinner de carga
@@ -158,11 +158,9 @@ document.addEventListener('DOMContentLoaded', function () {
     window.confirmDelete = function (id) {
         Swal.fire({
             title: '¿Estás seguro?',
-            text: 'Esta acción eliminará la cancha de forma permanente.',
+            text: `¿Deseas eliminar la cancha de forma permanente?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
             confirmButtonText: 'Sí, eliminar',
             cancelButtonText: 'Cancelar'
         }).then((result) => {

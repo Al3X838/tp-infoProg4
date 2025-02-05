@@ -11,7 +11,7 @@ function showErrorAlert(message) {
 function showLoadingAlert() {
     Swal.fire({
         title: 'Cargando...',
-        text: 'Estamos obteniendo los datos de pagos.',
+        text: 'Estamos obteniendo los pagos.',
         allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
         didOpen: () => {
             Swal.showLoading(); // Muestra el spinner de carga
@@ -99,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const key = Object.keys(a)[columnIndex];
             const valueA = a[key];
             const valueB = b[key];
-            console.log(key, valueA, valueB);
             if (typeof valueA === "number" && typeof valueB === "number") {
                 return direction === "ASC" ? valueA - valueB : valueB - valueA;
             } else {

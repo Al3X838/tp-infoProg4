@@ -11,7 +11,7 @@ function showErrorAlert(message) {
 function showLoadingAlert() {
     Swal.fire({
         title: 'Cargando...',
-        text: 'Estamos obteniendo los datos de los clientes.',
+        text: 'Estamos obteniendo los clientes.',
         allowOutsideClick: false, // No permite cerrar el popup haciendo clic fuera
         didOpen: () => {
             Swal.showLoading(); // Muestra el spinner de carga
@@ -198,13 +198,12 @@ document.addEventListener('DOMContentLoaded', function () {
     window.confirmDelete = function (id, Name) {
         // Usar SweetAlert para confirmación de eliminación
         Swal.fire({
-            title: `¿Estás seguro de eliminar a ${Name}?`,
-            text: "¡Esta acción no se puede deshacer!",
+            title: '¿Estás seguro?',
+            text: `¿Deseas eliminar el cliente "${Name}"?`,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Eliminar',
-            cancelButtonText: 'Cancelar',
-            reverseButtons: true
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteCliente(id, loadClientes);
