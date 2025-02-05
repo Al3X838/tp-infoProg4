@@ -177,7 +177,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Si el mapa ya está listo, busca la dirección
                     if (mapaCargado) {
                         buscarDireccion();
-                        console.log('Buscando dirección...');
                     }
                 }
             })
@@ -204,7 +203,6 @@ document.addEventListener('DOMContentLoaded', function () {
             estado: clientEstadoInput.value.trim(),
             motivo_bloqueo: clienteMotivoBloqueoInput.value.trim() || null
         };
-        console.log(newClienteData);
         fetch(`/clientes/update/${clienteId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -212,7 +210,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',

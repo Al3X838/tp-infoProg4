@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 const valueA = a[sortColumn] ?? '';
                 const valueB = b[sortColumn] ?? '';
 
-                console.log(valueA, valueB);
 
                 if (typeof valueA === "number" && typeof valueB === "number") {
                     return sortDirection === "ASC" ? valueA - valueB : valueB - valueA;

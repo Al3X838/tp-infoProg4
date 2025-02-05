@@ -143,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para renderizar la tabla
     function renderReservas(reservas) {
-        console.log(reservas);
         reservasList.innerHTML = reservas.map(reserva => `
             <tr id="reserva-row-${reserva.ID_RESERVA}">
                 <th>${reserva.ID_RESERVA}</th>
@@ -250,7 +249,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     fetchData();
                     Swal.fire('Confirmado!', 'La reserva ha sido confirmada.', 'success');
-                    console.log(data.reserva); // Verifica aquí el contenido de `reserva`
                     sendEmail(data.reserva);
                 } else {
                     showErrorAlert(data.error || 'Error al confirmar la reserva.');
@@ -263,7 +261,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para enviar un correo electrónico utilizando EmailJS
     function sendEmail(reserva) {
-        console.log("reserva", reserva);
         emailjs.init('RloVlsEjuRN3Mdixa'); // user id de emailjs
         const templateParams = {
             to_name: reserva.NOMBRE_CLIENTE,

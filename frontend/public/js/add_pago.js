@@ -113,10 +113,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 clientes = clientesData.clientes || [];
                 reservas = (reservasData.reservas || []).filter(reserva =>
-                    ['P', 'A', 'C'].includes(reserva.ESTADO_RESERVA) && 
+                    ['P', 'A', 'C'].includes(reserva.ESTADO_RESERVA) &&
                     reserva.ESTADO_CANCELACION === 'N'
                 );
-                console.log(reservas);
                 loadReservas();
             })
             .catch(error => {
@@ -141,7 +140,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then(response => response.json())
             .then(data => {
-                console.log('datos enviados', data);
                 if (data.success) {
                     // Muestra alerta de éxito y redirige
                     Swal.fire({

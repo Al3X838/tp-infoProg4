@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         // Obtiene los campos del formulario
         const newNombre = document.getElementById('nombre').value.trim();
-        console.log({ nombre: newNombre });
 
         // Realiza la solicitud POST para agregar un tipo de suelo
         fetch('/tiposuelos/add', {
