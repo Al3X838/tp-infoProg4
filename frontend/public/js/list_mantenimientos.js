@@ -1,3 +1,12 @@
+function formatearFecha(fecha) {
+    const partes = fecha.split("-");
+    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+}
+
+function formatearHora(hora) {
+    return hora.slice(0, 5);
+}
+
 function showErrorAlert(message) {
     Swal.fire({
         icon: 'error',
@@ -89,10 +98,10 @@ document.addEventListener('DOMContentLoaded', function () {
             <tr id="mantenimiento-row-${mantenimiento.ID_mantenimiento}">
                 <th>${mantenimiento.ID_MANTENIMIENTO}</th>
                 <td>${mantenimiento.NUMERO_CANCHA || 'N/A'}</td>
-                <td>${mantenimiento.FECHA_INICIO || 'N/A'}</td>
-                <td>${mantenimiento.HORA_INICIO || 'N/A'}</td>
-                <td>${mantenimiento.FECHA_FIN || 'N/A'}</td>
-                <td>${mantenimiento.HORA_FIN || 'N/A'}</td>
+                <td>${formatearFecha(mantenimiento.FECHA_INICIO) || 'N/A'}</td>
+                <td>${formatearHora(mantenimiento.HORA_INICIO) || 'N/A'}</td>
+                <td>${formatearFecha(mantenimiento.FECHA_FIN) || 'N/A'}</td>
+                <td>${formatearHora(mantenimiento.HORA_FIN) || 'N/A'}</td>
                 <td class="text-center">${mantenimiento.ESTADO === 'P' ? "En proceso" : "Finalizado"}</td>
                 <td>
                   <div class="d-flex gap-2">
