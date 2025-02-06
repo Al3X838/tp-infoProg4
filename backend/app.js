@@ -53,7 +53,7 @@ app.post('/authenticate', (req, res) => {
     }
 
     req.session.isAuthenticated = true;
-    req.session.userRole = role; // Dynamisch gespeicherte Rolle
+    req.session.userRole = role;
     res.status(200).send({ message: 'Inicio de sesión exitoso', role });
 });
 
