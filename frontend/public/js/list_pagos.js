@@ -1,3 +1,7 @@
+function formatPrice(price) {
+    return price.toLocaleString('es-PY');  // 'es-PY' para formato de Paraguay
+}
+
 // Función para mostrar alertas de error con SweetAlert
 function showErrorAlert(message) {
     Swal.fire({
@@ -72,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <th>${pago.ID_PAGO}</th>
                 <td>${pago.ID_RESERVA}</td>
                 <td>${pago.CLIENTE_NOMBRE} ${pago.CLIENTE_APELLIDO}</td>
-                <td>${pago.MONTO_TOTAL || 'N/A'}</td>
+                <td>Gs. ${formatPrice(pago.MONTO_TOTAL) || 'N/A'}</td>
                 <td>${pago.METODO_PAGO || 'N/A'}</td>
                 <td>${new Date(pago.FECHA_PAGO).toLocaleString() || 'N/A'}</td>
                 <td>

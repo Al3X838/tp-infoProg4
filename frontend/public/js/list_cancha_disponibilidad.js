@@ -111,7 +111,7 @@ function mostrarDisponibilidad(canchas, mantenimientos, reservas, fechaSeleccion
       .filter(m => m.ID_CANCHA === cancha.ID_CANCHA)
       .forEach(m => {
         const { horaInicio, horaFin } = calcularHorasEvento(m, fechaSeleccionada, 'mantenimiento');
-        agregarEvento(progressStacked, horaInicio, horaFin, 'bg-danger', 'Mantenimiento');
+        agregarEvento(progressStacked, horaInicio, horaFin, 'bg-danger', 'Mantenimiento' + (m.ESTADO == 'P' ? ' en Processo' : ' Finalizado'));
       });
 
     // Procesar reservas
