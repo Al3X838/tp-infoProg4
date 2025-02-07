@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${formatearHora(reserva.HORA_INICIO)}</td>
                 <td>${formatearHora(reserva.HORA_FIN)}</td>
                 <td>${reserva.ESTADO_RESERVA === 'A' ? 'Activo' : reserva.ESTADO_RESERVA === 'P' ? 'Pendiente' : 'Finalizado'}</td>
-                <td>${reserva.FECHA_LIMITE_CANCELACION}</td>
+                <td>${formatearFecha(reserva.FECHA_LIMITE_CANCELACION)}</td>
                 <td>${reserva.ESTADO_CANCELACION === 'S' ? 'Cancelado' : 'Pago pendiente'}</td>
                 <td>${reserva.PORCENTAJE_PROMOCION}%</td>
                 <td>${reserva.REEMBOLSABLE === 'S' ? 'Si' : (reserva.REEMBOLSABLE === 'N' ? 'No' : 'N/A')}</td>
