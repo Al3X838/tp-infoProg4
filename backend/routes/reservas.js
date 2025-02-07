@@ -27,12 +27,10 @@ const getConnection = async (req) => {
 
 // Función para manejar errores de la base de datos
 const handleDbError = (err, res, action) => {
-    let errorMessage = err?.odbcErrors?.[0]?.message || err.message || 'Unknown database error';
-    if (errorMessage.includes("is referenced by foreign key")) {
-        errorMessage = "No se puede realizar la operación porque el registro está relacionado con otros datos.";
-    }
+    const errorMessage = err?.odbcErrors?.[0]?.message || err.message || 'Unknown database error';
     console.error(`Error al ${action}:`, errorMessage);
-    res.status(500).json({ success: false, error: `Error al ${action}: ${errorMessage}` });
+    const formattedMessage = errorMessage.split(':').pop().trim()
+    res.status(500).json({ success: false, error: `${formattedMessage}` });
 };
 
 // Ruta para obtener todas las reservas
