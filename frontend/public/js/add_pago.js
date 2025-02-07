@@ -38,12 +38,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (query) {
             const filteredClientes = clientes.filter(cliente =>
-                `${cliente.NOMBRE} ${cliente.APELLIDO}`.toLowerCase().includes(query)
+                `${cliente.NOMBRE} ${cliente.APELLIDO} ${cliente.DOCUMENTO_ID}`.toLowerCase().includes(query)
             );
 
             filteredClientes.forEach(cliente => {
                 const clienteItem = document.createElement('button');
-                clienteItem.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO}`;
+                clienteItem.textContent = `${cliente.NOMBRE} ${cliente.APELLIDO} (${cliente.DOCUMENTO_ID})`;
                 clienteItem.classList.add('list-group-item', 'list-group-item-action');
                 clienteItem.addEventListener('click', () => {
                     selectCliente(cliente);
