@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'Césped Natural': '/images/canchaFutbol.jpg',
         'Césped Sintético': '/images/canchaFutbol.jpg',
         'Tierra Compactada': '/images/canchaTenis.jpg',
+        'Grava': '/images/canchaTenis.jpg',
         'default': '/images/canchaFutbol.jpg'
     };
 
